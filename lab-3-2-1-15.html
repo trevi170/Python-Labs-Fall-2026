@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 3.2.1.15: Collatz's Hypothesis</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --text: #1a1a1a;
+      --text-secondary: #5c5c5c;
+      --border: #e0e0e0;
+      --primary: #1f5fa0;
+      --primary-light: #e3f2fd;
+      --success: #2e7d32;
+      --success-light: #e8f5e9;
+      --radius: 8px;
+      --font-sans: system-ui, -apple-system, sans-serif;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: #f5f5f5;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border); padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 4px; background: var(--primary-light); color: var(--primary); margin-bottom: 12px; }
+    .lab-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .lab-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem; }
+    .overview-box { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; padding: 16px; margin-bottom: 2rem; }
+    .overview-box p { color: var(--primary); font-size: 14px; margin: 0 0 8px; line-height: 1.6; font-weight: 500; }
+    .objectives-box { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 2rem; }
+    .objectives-box p { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
+    .objectives-box ul { font-size: 14px; color: var(--text-secondary); margin: 0 0 0 20px; line-height: 1.8; }
+    .progress-bar { display: flex; gap: 6px; margin-bottom: 2rem; }
+    .pip { flex: 1; height: 6px; border-radius: 3px; background: #e0e0e0; }
+    .pip.done { background: var(--success); }
+    .pip.active { background: var(--primary); }
+    .steps { display: flex; flex-direction: column; gap: 12px; }
+    .step { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .step.active { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .step.done { border-color: var(--success); }
+    .step-header { display: flex; align-items: center; gap: 12px; padding: 16px; cursor: pointer; background: var(--bg-secondary); }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; border: 2px solid var(--border); color: var(--text); background: var(--bg); }
+    .step.active .step-num { background: var(--primary); color: white; border-color: var(--primary); }
+    .step.done .step-num { background: var(--success); color: white; }
+    .step-label { font-size: 15px; font-weight: 600; flex: 1; }
+    .step-tag { font-size: 12px; padding: 4px 10px; border-radius: 4px; background: var(--primary-light); color: var(--primary); font-weight: 500; }
+    .step-body { display: none; padding: 0 16px 16px; background: var(--bg); }
+    .step.open .step-body { display: block; }
+    .step-body p { font-size: 14px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 12px; }
+    .info-box { margin: 12px 0; padding: 12px 16px; background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; }
+    .info-box p { color: var(--primary); font-size: 13px; margin: 0; line-height: 1.6; }
+    .code-block { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 10px 0; color: #d63384; white-space: pre-wrap; line-height: 1.5; }
+    .test-data { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 10px 0; }
+    .test-case { margin-bottom: 12px; }
+    .test-input { font-size: 13px; color: var(--text); font-weight: 500; }
+    .test-output { font-size: 13px; color: var(--primary); margin-top: 4px; font-family: 'Courier New', monospace; }
+    .btn { padding: 10px 20px; border-radius: 4px; border: none; font-size: 14px; cursor: pointer; font-family: var(--font-sans); font-weight: 600; background: var(--primary); color: white; margin-top: 16px; transition: all 0.2s; }
+    .btn:hover { background: #1a4a7f; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(31,95,160,0.3); }
+    .step-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .complete-banner { display: none; margin-top: 2rem; padding: 16px 20px; background: var(--success-light); border-radius: var(--radius); border: 1px solid var(--success); border-left: 4px solid var(--success); }
+    .complete-banner p { color: var(--success); font-size: 14px; margin: 0; line-height: 1.6; font-weight: 500; }
+    .screenshot-section { margin-top: 16px; }
+    .screenshot-section-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 10px; }
+    .screenshot-slot { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; }
+    .screenshot-slot-header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--bg-secondary); border-bottom: 1px solid var(--border); }
+    .slot-num { width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: white; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .slot-label { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; }
+    .slot-status { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+    .slot-status.uploaded { color: var(--success); font-weight: 600; }
+    .upload-area { padding: 24px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; background: var(--bg); transition: all 0.15s; border-top: 1px solid var(--border); }
+    .upload-area:hover { background: var(--bg-secondary); }
+    .upload-area.has-image { padding: 0; cursor: default; }
+    .upload-area span { font-size: 14px; color: var(--text-secondary); }
+    .upload-area input[type=file] { display: none; }
+    .preview-img { width: 100%; display: block; max-height: 300px; object-fit: contain; background: var(--bg-secondary); }
+    .img-actions { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--border); background: var(--bg); }
+    .img-actions button { font-size: 13px; padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); cursor: pointer; font-family: var(--font-sans); color: var(--text); }
+    .img-actions button:hover { background: var(--bg-secondary); }
+    .img-actions button.remove { color: #d32f2f; border-color: #d32f2f; }
+    .img-actions button.remove:hover { background: #ffebee; }
+    .pdf-section { margin-top: 16px; padding: 16px; background: var(--bg-secondary); border-radius: var(--radius); border: 1px solid var(--border); }
+    .pdf-section-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .pdf-section p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 12px; }
+    .pdf-name-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .pdf-name-row input { flex: 1; padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); font-family: var(--font-sans); font-size: 14px; color: var(--text); }
+    .pdf-name-row input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .pdf-status { font-size: 12px; color: var(--text-secondary); margin-top: 8px; min-height: 18px; }
+    .pdf-status.generating { color: var(--primary); font-weight: 600; }
+    .pdf-status.done { color: var(--success); font-weight: 600; }
+    .pdf-status.error { color: #d32f2f; font-weight: 600; }
+    .btn.pdf-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    ul { margin: 10px 0 10px 20px; }
+    li { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; line-height: 1.6; }
+    .hint { font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <span class="badge">📚 Python Lab</span>
+  <div class="lab-title">Lab 3.2.1.15: Collatz's Hypothesis</div>
+  <div class="lab-desc">Use a while loop to test Collatz's hypothesis for one starting number.</div>
+
+  <div class="overview-box">
+    <p>📋 Lab Overview</p>
+    <p>In this lab, you'll transform Collatz's verbal rules into Python code and count how many steps it takes to reach 1.</p>
+  </div>
+
+  <div class="objectives-box">
+    <p>✅ Upon completion, you will be able to:</p>
+    <ul>
+      <li>Use the while loop</li>
+      <li>Convert verbally defined rules into Python code</li>
+      <li>Use modulo to detect odd and even numbers</li>
+      <li>Use integer division</li>
+      <li>Count loop iterations with a step counter</li>
+    </ul>
+  </div>
+
+  <div class="progress-bar" id="pips"></div>
+  <div class="steps" id="steps-container"></div>
+  <div class="complete-banner" id="complete-banner">
+    <p><strong>Lab complete!</strong> You've practiced while loops, modulo logic, and step counting! 🎉</p>
+  </div>
+</div>
+
+<script>
+const { jsPDF } = window.jspdf;
+const savedAnswers = {};
+const screenshots = {};
+
+const steps = [
+  {
+    label: 'Understand the problem',
+    tag: 'Context',
+    body: `
+      <p><strong>Scenario:</strong> In 1937, Lothar Collatz described a sequence that starts with one natural number named <code>c0</code>. The hypothesis says that if you keep applying the rules, the sequence will eventually reach <code>1</code>.</p>
+      <p><strong>The rules:</strong></p>
+      <ul>
+        <li>If <code>c0</code> is even, the next value is <code>c0 // 2</code>.</li>
+        <li>If <code>c0</code> is odd, the next value is <code>3 * c0 + 1</code>.</li>
+        <li>Repeat while <code>c0</code> is not equal to <code>1</code>.</li>
+        <li>Count how many loop steps are needed.</li>
+      </ul>
+      <p><strong>Your task:</strong> Write a program that reads one number, prints the intermediate values, and prints the number of steps. If the input is not greater than <code>1</code>, print <code>Bad c0 value</code>.</p>`
+  },
+  {
+    label: 'Break down the logic',
+    tag: 'Guide',
+    body: `
+      <p>This lab is harder because the code is translating a written rule into loop logic. Think of each loop pass as one move in the Collatz sequence.</p>
+      <div class="info-box"><p><strong>Odd or even:</strong> <code>c0 % 2</code> gives the remainder after dividing by 2. If the remainder is not 0, the number is odd. If the remainder is 0, the number is even.</p></div>
+      <p><strong>Why use <code>cnew</code>?</strong> It temporarily stores the next Collatz value before replacing <code>c0</code>. That makes the code easier to read: first calculate the next value, then move <code>c0</code> forward.</p>
+      <p><strong>Example trace starting at 16:</strong></p>
+      <div class="test-data">
+        <div class="test-case">
+          <div class="test-input">Start: c0 = 16</div>
+          <div class="test-output">16 is even, so next is 16 // 2 = 8<br>8 is even, so next is 8 // 2 = 4<br>4 is even, so next is 4 // 2 = 2<br>2 is even, so next is 2 // 2 = 1<br>The loop stops when c0 becomes 1.</div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'Choose your platform',
+    tag: 'Setup',
+    body: `
+      <p><a href="https://colab.research.google.com/" target="_blank" style="display:inline-block; padding:8px 14px; border-radius:6px; border:1px solid var(--primary); background:var(--primary-light); color:var(--primary); font-size:12px; font-weight:500; text-decoration:none; cursor:pointer; margin:8px 0;">Open Google Colab →</a></p>
+      <p style="font-size: 12px; color: #666; margin-top: 8px;"><strong>💡 Tip:</strong> Click "Save a copy in Drive" and rename to "Lab_3.2.1.15_YourName"</p>`
+  },
+  {
+    label: 'Write your code',
+    tag: 'Code',
+    body: `
+      <p><strong>Complete solution:</strong></p>
+      <img src="images/32115.png" alt="Solution code visualization" style="width: 100%; height: auto; border: 1px solid #e0e0e0; border-radius: 4px; margin: 12px 0; display: block;">
+      <p style="font-size: 12px; color: #999; margin-top: 8px;"><em>💡 There is no starter code for this lab. Type the solution yourself so you practice the loop structure and the odd/even rules.</em></p>
+
+      <p style="margin-top: 16px; font-size: 14px; font-weight: 600;">What each part does:</p>
+      <ul style="font-size: 13px; margin-top: 8px;">
+        <li><strong>c0 = int(input(...)):</strong> Gets the starting number from the user.</li>
+        <li><strong>if c0 > 1:</strong> Only runs the Collatz process for valid values greater than 1.</li>
+        <li><strong>steps = 0:</strong> Starts the counter at zero before the loop begins.</li>
+        <li><strong>while c0 != 1:</strong> Keeps looping until the sequence reaches 1.</li>
+        <li><strong>if c0 %2 != 0:</strong> Checks whether the current number is odd.</li>
+        <li><strong>cnew = 3 * c0 + 1:</strong> Applies the odd-number rule.</li>
+        <li><strong>cnew = c0 // 2:</strong> Applies the even-number rule using integer division.</li>
+        <li><strong>print(c0):</strong> Prints the current value before moving to the next one.</li>
+        <li><strong>c0 = cnew:</strong> Updates the current value so the loop can continue.</li>
+        <li><strong>steps += 1:</strong> Counts one completed transformation.</li>
+      </ul>
+
+      <p style="margin-top: 16px;"><strong>Test data:</strong></p>
+      <div class="test-data">
+        <div class="test-case">
+          <div class="test-input">Sample input: 16</div>
+          <div class="test-output">16<br>8<br>4<br>2<br>steps = 4</div>
+        </div>
+        <div class="test-case">
+          <div class="test-input">Sample input: 15</div>
+          <div class="test-output">15<br>46<br>23<br>70<br>35<br>106<br>53<br>160<br>80<br>40<br>20<br>10<br>5<br>16<br>8<br>4<br>2<br>steps = 17</div>
+        </div>
+        <div class="test-case">
+          <div class="test-input">Sample input: 1</div>
+          <div class="test-output">Bad c0 value</div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'Upload Screenshots & Generate PDF',
+    tag: 'Submission',
+    body: `
+      <p>Upload your screenshots and download your submission:</p>
+      <div class="screenshot-section">
+        <div class="screenshot-section-title">Screenshot 1: Your code</div>
+        <div class="screenshot-slot" id="slot-ss-1">
+          <div class="screenshot-slot-header">
+            <div class="slot-num">1</div>
+            <div class="slot-label">Code implementation</div>
+            <div class="slot-status" id="status-ss-1">Not uploaded</div>
+          </div>
+          <div class="upload-area" id="area-ss-1" onclick="triggerUpload('ss-1')">
+            <span>📷 Click to upload screenshot</span>
+            <input type="file" accept="image/*" id="file-ss-1" onchange="handleUpload('ss-1', this)">
+          </div>
+        </div>
+      </div>
+      <div class="screenshot-section">
+        <div class="screenshot-section-title">Screenshot 2: Test results</div>
+        <div class="screenshot-slot" id="slot-ss-2">
+          <div class="screenshot-slot-header">
+            <div class="slot-num">2</div>
+            <div class="slot-label">Testing output</div>
+            <div class="slot-status" id="status-ss-2">Not uploaded</div>
+          </div>
+          <div class="upload-area" id="area-ss-2" onclick="triggerUpload('ss-2')">
+            <span>📷 Click to upload screenshot</span>
+            <input type="file" accept="image/*" id="file-ss-2" onchange="handleUpload('ss-2', this)">
+          </div>
+        </div>
+      </div>
+      <div class="pdf-section">
+        <div class="pdf-section-title">📄 Generate PDF Submission</div>
+        <p>Enter your name and download your submission PDF:</p>
+        <div class="pdf-name-row">
+          <input type="text" id="student-name" placeholder="Your full name">
+        </div>
+        <button class="btn pdf-btn" id="pdf-btn" onclick="generatePDF()">
+          📥 Download PDF
+        </button>
+        <div class="pdf-status" id="pdf-status"></div>
+      </div>
+    `
+  }
+];
+
+function triggerUpload(id) { if (!document.getElementById('area-' + id).classList.contains('has-image')) document.getElementById('file-' + id).click(); }
+function handleUpload(id, input) { const file = input.files[0]; if (!file) return; const r = new FileReader(); r.onload = e => { screenshots[id] = e.target.result; renderSlot(id); }; r.readAsDataURL(file); }
+function renderSlot(id) {
+  const area = document.getElementById('area-' + id);
+  const status = document.getElementById('status-' + id);
+  if (!area) return;
+  if (screenshots[id]) {
+    area.classList.add('has-image');
+    area.innerHTML = `<img class="preview-img" src="${screenshots[id]}" alt="screenshot" /><div class="img-actions"><button onclick="replaceImage('${id}')">Replace</button><button class="remove" onclick="removeImage('${id}')">Remove</button><input type="file" accept="image/*" id="file-${id}" onchange="handleUpload('${id}',this)" style="display:none"/></div>`;
+    status.textContent = 'Uploaded ✓';
+    status.classList.add('uploaded');
+  } else {
+    area.classList.remove('has-image');
+    area.innerHTML = `<span>📷 Click to upload screenshot</span><input type="file" accept="image/*" id="file-${id}" onchange="handleUpload('${id}',this)"/>`;
+    status.textContent = 'Not uploaded';
+    status.classList.remove('uploaded');
+  }
+}
+function replaceImage(id) { document.getElementById('file-' + id).click(); }
+function removeImage(id) { delete screenshots[id]; renderSlot(id); }
+function saveCurrentAnswers() { ['student-name'].forEach(id => { const el = document.getElementById(id); if (el) savedAnswers[id] = el.value; }); }
+function restoreAnswers() { ['student-name'].forEach(id => { const el = document.getElementById(id); if (el && savedAnswers[id] !== undefined) el.value = savedAnswers[id]; }); ['ss-1', 'ss-2'].forEach(id => renderSlot(id)); }
+
+function initializeLab() {
+  const container = document.getElementById('steps-container');
+  const pipsContainer = document.getElementById('pips');
+  container.innerHTML = '';
+  pipsContainer.innerHTML = '';
+  steps.forEach((step, index) => {
+    const stepEl = document.createElement('div');
+    stepEl.className = 'step';
+    if (index === 0) stepEl.classList.add('active', 'open');
+    stepEl.innerHTML = `
+      <div class="step-header" onclick="toggleStep(${index})">
+        <div class="step-num">${index + 1}</div>
+        <div class="step-label">${step.label}</div>
+        <div class="step-tag">${step.tag}</div>
+      </div>
+      <div class="step-body">${step.body}</div>
+    `;
+    container.appendChild(stepEl);
+    const pip = document.createElement('div');
+    pip.className = 'pip';
+    if (index === 0) pip.classList.add('active');
+    pipsContainer.appendChild(pip);
+  });
+  restoreAnswers();
+}
+
+function toggleStep(index) {
+  saveCurrentAnswers();
+  const steps = document.querySelectorAll('.step');
+  const pips = document.querySelectorAll('.pip');
+  steps.forEach((step, i) => {
+    step.classList.remove('active', 'open');
+    pips[i].classList.remove('active');
+    if (i === index) {
+      step.classList.add('active', 'open');
+      pips[i].classList.add('active');
+    } else if (i < index) {
+      step.classList.add('done');
+      pips[i].classList.add('done');
+    }
+  });
+  document.getElementById('complete-banner').style.display = index === steps.length - 1 ? 'block' : 'none';
+  restoreAnswers();
+}
+
+async function generatePDF() {
+  saveCurrentAnswers();
+  const btn = document.getElementById('pdf-btn');
+  const statusEl = document.getElementById('pdf-status');
+  const studentName = (savedAnswers['student-name'] || '').trim();
+  btn.disabled = true;
+  statusEl.className = 'pdf-status generating';
+  statusEl.textContent = 'Building your PDF...';
+  try {
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 20;
+    const contentW = pageW - margin * 2;
+    let y = margin;
+    function checkPage(need) { if (y + need > pageH - margin) { doc.addPage(); y = margin; } }
+    function fillRect(x, ry, w, h, r, g, b) { doc.setFillColor(r, g, b); doc.rect(x, ry, w, h, 'F'); }
+    async function drawImageBlock(imgData, maxH) {
+      const maxW = contentW;
+      let iW = maxW, iH = maxH;
+      try {
+        const img = new Image();
+        await new Promise(res => { img.onload = res; img.onerror = res; img.src = imgData; });
+        if (img.width && img.height) {
+          const ratio = img.width / img.height;
+          if (maxW / ratio <= maxH) { iW = maxW; iH = maxW / ratio; } else { iH = maxH; iW = maxH * ratio; }
+        }
+      } catch (e) { }
+      checkPage(iH + 8);
+      const fmt = imgData.includes('image/png') ? 'PNG' : 'JPEG';
+      doc.setDrawColor(31, 95, 160);
+      doc.setLineWidth(0.5);
+      doc.rect(margin, y, iW, iH);
+      doc.addImage(imgData, fmt, margin, y, iW, iH);
+      y += iH + 10;
+    }
+    fillRect(0, 0, pageW, 14, 31, 95, 160);
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text('PYTHON LAB 3.2.1.15', margin, 9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('while Loop', pageW - margin, 9, { align: 'right' });
+    y = 22;
+    doc.setTextColor(20, 20, 20);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Lab Submission', margin, y);
+    y += 8;
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(80, 80, 80);
+    doc.text(`Student: ${studentName || '(name not provided)'}`, margin, y);
+    y += 5;
+    doc.text(`Submitted: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, margin, y);
+    y += 5;
+    doc.text("Lab: Collatz's Hypothesis (3.2.1.15)", margin, y);
+    y += 10;
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, pageW - margin, y);
+    y += 8;
+    if (screenshots['ss-1']) {
+      checkPage(15);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(20, 20, 20);
+      doc.text('Code Implementation', margin, y);
+      y += 6;
+      await drawImageBlock(screenshots['ss-1'], 80);
+    }
+    if (screenshots['ss-2']) {
+      checkPage(15);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(20, 20, 20);
+      doc.text('Test Results', margin, y);
+      y += 6;
+      await drawImageBlock(screenshots['ss-2'], 80);
+    }
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let p = 1; p <= totalPages; p++) {
+      doc.setPage(p);
+      doc.setDrawColor(220, 220, 220);
+      doc.setLineWidth(0.3);
+      doc.line(margin, pageH - 12, pageW - margin, pageH - 12);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(150, 150, 150);
+      doc.text(`Lab 3.2.1.15: Collatz's Hypothesis - ${studentName || 'Student'}`, margin, pageH - 7);
+      doc.text(`Page ${p} of ${totalPages}`, pageW - margin, pageH - 7, { align: 'right' });
+    }
+    const filename = studentName ? `Lab_3.2.1.15_${studentName.replace(/\s+/g, '_')}.pdf` : 'Lab_3.2.1.15_Submission.pdf';
+    doc.save(filename);
+    statusEl.className = 'pdf-status done';
+    statusEl.textContent = `✓ PDF saved as "${filename}" - ready to submit!`;
+  } catch (err) {
+    statusEl.className = 'pdf-status error';
+    statusEl.textContent = 'Something went wrong. Please try again.';
+    console.error(err);
+  }
+  btn.disabled = false;
+}
+
+document.addEventListener('DOMContentLoaded', initializeLab);
+</script>
+</body>
+</html>
