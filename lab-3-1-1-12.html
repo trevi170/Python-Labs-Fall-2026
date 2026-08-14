@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 3.1.1.12: Essentials of the if-elif-else statement</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --text: #1a1a1a;
+      --text-secondary: #5c5c5c;
+      --border: #e0e0e0;
+      --primary: #1f5fa0;
+      --primary-light: #e3f2fd;
+      --success: #2e7d32;
+      --success-light: #e8f5e9;
+      --radius: 8px;
+      --font-sans: system-ui, -apple-system, sans-serif;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: #f5f5f5;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border); padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 4px; background: var(--primary-light); color: var(--primary); margin-bottom: 12px; }
+    .lab-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .lab-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem; }
+    .overview-box { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; padding: 16px; margin-bottom: 2rem; }
+    .overview-box p { color: var(--primary); font-size: 14px; margin: 0 0 8px; line-height: 1.6; font-weight: 500; }
+    .objectives-box { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 2rem; }
+    .objectives-box p { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
+    .objectives-box ul { font-size: 14px; color: var(--text-secondary); margin: 0 0 0 20px; line-height: 1.8; }
+    .progress-bar { display: flex; gap: 6px; margin-bottom: 2rem; }
+    .pip { flex: 1; height: 6px; border-radius: 3px; background: #e0e0e0; }
+    .pip.done { background: var(--success); }
+    .pip.active { background: var(--primary); }
+    .steps { display: flex; flex-direction: column; gap: 12px; }
+    .step { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .step.active { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .step.done { border-color: var(--success); }
+    .step-header { display: flex; align-items: center; gap: 12px; padding: 16px; cursor: pointer; background: var(--bg-secondary); }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; border: 2px solid var(--border); color: var(--text); background: var(--bg); }
+    .step.active .step-num { background: var(--primary); color: white; border-color: var(--primary); }
+    .step.done .step-num { background: var(--success); color: white; }
+    .step-label { font-size: 15px; font-weight: 600; flex: 1; }
+    .step-tag { font-size: 12px; padding: 4px 10px; border-radius: 4px; background: var(--primary-light); color: var(--primary); font-weight: 500; }
+    .step-body { display: none; padding: 0 16px 16px; background: var(--bg); }
+    .step.open .step-body { display: block; }
+    .step-body p { font-size: 14px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 12px; }
+    .info-box { margin: 12px 0; padding: 12px 16px; background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; }
+    .info-box p { color: var(--primary); font-size: 13px; margin: 0; line-height: 1.6; }
+    .code-block { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 10px 0; color: #d63384; white-space: pre-wrap; line-height: 1.5; }
+    .test-data { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 10px 0; }
+    .test-case { margin-bottom: 12px; }
+    .test-input { font-size: 13px; color: var(--text); font-weight: 500; }
+    .test-output { font-size: 13px; color: var(--primary); margin-top: 4px; font-family: 'Courier New', monospace; }
+    .btn { padding: 10px 20px; border-radius: 4px; border: none; font-size: 14px; cursor: pointer; font-weight: 600; background: var(--primary); color: white; margin-top: 16px; }
+    .step-actions { display: flex; gap: 10px; margin-top: 16px; }
+    .complete-banner { display: none; margin-top: 2rem; padding: 16px; background: var(--success-light); border-radius: var(--radius); border: 1px solid var(--success); }
+    .solution-img { width: 100%; height: auto; border: 1px solid #e0e0e0; border-radius: 4px; margin: 12px 0; display: block; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <span class="badge">📚 Python Lab</span>
+  <div class="lab-title">Lab 3.1.1.12: Essentials of the if-elif-else statement</div>
+  <div class="lab-desc">Determine if a year is a leap year or common year using nested if/elif/else logic and the modulo operator.</div>
+  <div class="overview-box">
+    <p>📋 Lab Overview</p>
+    <p>Write a program that classifies a year as either a leap year or common year using the Gregorian calendar rules with multiple conditions and the modulo (%) operator.</p>
+  </div>
+  <div class="objectives-box">
+    <p>✅ Upon completion, you will be able to:</p>
+    <ul>
+      <li>Use the if/elif/else statement structure for multiple conditions</li>
+      <li>Apply the modulo operator (%) to check divisibility</li>
+      <li>Implement nested conditional logic with multiple operators</li>
+      <li>Handle edge cases in real-world rules (leap year algorithm)</li>
+      <li>Build programs that process user input and output results</li>
+    </ul>
+  </div>
+  <div class="progress-bar" id="pips"></div>
+  <div class="steps" id="steps-container"></div>
+  <div class="complete-banner" id="complete-banner">
+    <p><strong>Lab complete!</strong> You've mastered the leap year algorithm! 🎉</p>
+  </div>
+</div>
+<script>
+const steps = [
+  {
+    label: 'Understand the problem',
+    tag: 'Context',
+    body: `
+      <p><strong>Your task:</strong> Write a program that determines if a year is a leap year or common year.</p>
+      <p><strong>Leap Year Rules (Gregorian Calendar):</strong></p>
+      <ul>
+        <li>If the year is NOT divisible by 4 → common year</li>
+        <li>Otherwise, if the year is NOT divisible by 100 → leap year</li>
+        <li>Otherwise, if the year is NOT divisible by 400 → common year</li>
+        <li>Otherwise → leap year</li>
+      </ul>
+      <p><strong>Key concepts:</strong></p>
+      <ul>
+        <li><code>if/elif/else</code> : multiple condition branches</li>
+        <li><code>%</code> (modulo) : remainder after division (divisibility check)</li>
+        <li><code>!=</code> : not equal operator</li>
+        <li>Order matters: check conditions from most restrictive first</li>
+      </ul>`
+  },
+  {
+    label: 'Choose your platform',
+    tag: 'Setup',
+    body: `
+      <p><a href="https://colab.research.google.com/" target="_blank" style="display:inline-block; padding:8px 14px; border-radius:6px; border:1px solid var(--primary); background:var(--primary-light); color:var(--primary); font-size:12px; font-weight:500; text-decoration:none; cursor:pointer; margin:8px 0;">Open Google Colab →</a></p>
+      <p style="font-size: 12px; color: #666; margin-top: 8px;"><strong>💡 Tip:</strong> Click "Save a copy in Drive" and rename to "Lab_3.1.1.12_YourName"</p>`
+  },
+  {
+    label: 'Write your code',
+    tag: 'Code',
+    body: `
+      <p><strong>Starter code:</strong></p>
+      <div class="code-block">year = int(input("Enter a year: "))
+#
+# Write your code here.
+#</div>
+      <p style="margin-top: 16px; font-size: 14px; font-weight: 600;">Complete Solution:</p>
+      <img src="images/31112.png" alt="Solution code visualization" style="width: 100%; height: auto; border: 1px solid #e0e0e0; border-radius: 4px; margin: 12px 0; display: block;">
+      <p style="margin-top: 16px; font-size: 14px; font-weight: 600;">What each line does:</p>
+      <ul style="font-size: 13px; margin-top: 8px;">
+        <li><strong>Line 1:</strong> Get year from user as an integer</li>
+        <li><strong>Line 2:</strong> Check if year is before Gregorian calendar (1582)</li>
+        <li><strong>Line 3:</strong> If before 1582, print warning message</li>
+        <li><strong>Line 4:</strong> Otherwise (year >= 1582), check leap year rules</li>
+        <li><strong>Line 5:</strong> If year NOT divisible by 4 → common year</li>
+        <li><strong>Line 6:</strong> If year NOT divisible by 100 (but is by 4) → leap year</li>
+        <li><strong>Line 7:</strong> If year NOT divisible by 400 (but is by 100) → common year</li>
+        <li><strong>Line 8:</strong> If divisible by 400 → leap year</li>
+        <li><strong>Tip:</strong> The modulo operator <code>%</code> returns the remainder. <code>year % 4 == 0</code> means divisible by 4</li>
+        <li><strong>Tip:</strong> Nested if/else handles the Gregorian calendar check first, then leap year logic</li>
+      </ul>
+      <p style="margin-top: 16px;"><strong>Test your code:</strong></p>
+      <div class="test-data">
+        <div class="test-case">
+          <div class="test-input">Input: 2000</div>
+          <div class="test-output">Output: Leap year</div>
+        </div>
+        <div class="test-case">
+          <div class="test-input">Input: 2015</div>
+          <div class="test-output">Output: Common year</div>
+        </div>
+        <div class="test-case">
+          <div class="test-input">Input: 1999</div>
+          <div class="test-output">Output: Common year</div>
+        </div>
+        <div class="test-case">
+          <div class="test-input">Input: 2020</div>
+          <div class="test-output">Output: Leap year</div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'Complete!',
+    tag: 'Done',
+    body: `<p>Excellent work! You've mastered the leap year algorithm using nested if/elif/else conditions and the modulo operator!</p>`
+  }
+];
+let openStep = 0;
+let completedSteps = new Set();
+function buildPips() { document.getElementById('pips').innerHTML = steps.map((_, i) => `<div class="pip" id="pip-${i}"></div>`).join(''); }
+function updatePips() { steps.forEach((_, i) => { const p = document.getElementById(`pip-${i}`); p.className = 'pip ' + (completedSteps.has(i) ? 'done' : i === openStep ? 'active' : ''); }); }
+function renderSteps() {
+  document.getElementById('steps-container').innerHTML = steps.map((s, i) => {
+    const isDone = completedSteps.has(i);
+    const isActive = i === openStep;
+    const isOpen = i === openStep;
+    return `<div class="step ${isActive ? 'active' : ''} ${isDone ? 'done' : ''} ${isOpen ? 'open' : ''}" id="step-${i}"><div class="step-header" onclick="toggleStep(${i})"><div class="step-num">${isDone ? '✓' : i + 1}</div><div class="step-label">${s.label}</div><div class="step-tag">${s.tag}</div></div><div class="step-body">${s.body}<div class="step-actions"><button class="btn" onclick="markDone(${i})">Mark done</button></div></div></div>`;
+  }).join('');
+}
+function toggleStep(i) { openStep = openStep === i ? -1 : i; renderSteps(); updatePips(); }
+function markDone(i) { completedSteps.add(i); if (i < steps.length - 1) openStep = i + 1; else { document.getElementById('complete-banner').style.display = 'block'; } renderSteps(); updatePips(); }
+buildPips();
+renderSteps();
+updatePips();
+</script>
+</body>
+</html>
