@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python Labs — Learn & Practice</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0e27;
+      --bg-secondary: #1a1f3a;
+      --text: #e0e6ff;
+      --text-secondary: #a8b2d1;
+      --border: rgba(0, 255, 136, 0.2);
+      --primary: #00ff88;
+      --primary-dark: #00cc6a;
+      --accent: #00d9ff;
+      --danger: #ff0055;
+      --radius: 8px;
+      --font-sans: 'Courier New', monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: linear-gradient(135deg, #0a0e27 0%, #1a0033 50%, #0a0e27 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          rgba(0, 255, 136, 0.03) 0px,
+          rgba(0, 255, 136, 0.03) 1px,
+          transparent 1px,
+          transparent 2px
+        );
+      pointer-events: none;
+      z-index: 1;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 50px;
+      animation: fadeIn 0.6s ease-in;
+      padding: 20px;
+      border: 2px solid var(--primary);
+      border-radius: var(--radius);
+      background: rgba(0, 255, 136, 0.05);
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.2), inset 0 0 20px rgba(0, 255, 136, 0.05);
+    }
+    .header h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--primary);
+      text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+      letter-spacing: 2px;
+    }
+    .header p {
+      font-size: 16px;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+      color: var(--text-secondary);
+    }
+    .labs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    .lab-card {
+      background: rgba(26, 31, 58, 0.6);
+      border-radius: var(--radius);
+      border: 1px solid var(--primary);
+      padding: 24px;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(0, 255, 136, 0.1);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    .lab-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+    .lab-card:hover::before {
+      left: 100%;
+    }
+    .lab-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 0 30px rgba(0, 255, 136, 0.3), inset 0 0 20px rgba(0, 255, 136, 0.05);
+      border-color: var(--accent);
+    }
+    .lab-badge {
+      display: inline-block;
+      background: rgba(0, 255, 136, 0.1);
+      color: var(--primary);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      width: fit-content;
+      border: 1px solid var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .lab-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--accent);
+      position: relative;
+      z-index: 1;
+    }
+    .lab-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 16px;
+      flex-grow: 1;
+      position: relative;
+      z-index: 1;
+    }
+    .lab-meta {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      position: relative;
+      z-index: 1;
+    }
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .lab-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 12px 24px;
+      border-radius: 4px;
+      border: 1px solid var(--primary);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: var(--primary);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.4s, height 0.4s;
+      z-index: -1;
+    }
+    .btn:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+    .btn-primary {
+      background: transparent;
+      color: var(--primary);
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+    }
+    .btn-primary:hover {
+      color: #0a0e27;
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+      transform: translateY(-2px);
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      background: rgba(26, 31, 58, 0.6);
+      border-radius: var(--radius);
+      border: 1px dashed var(--primary);
+      color: var(--text-secondary);
+    }
+    .empty-state p {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    .footer {
+      text-align: center;
+      color: var(--primary);
+      opacity: 0.8;
+      margin-top: 50px;
+      font-size: 13px;
+      letter-spacing: 1px;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .lab-card {
+      animation: fadeIn 0.6s ease-in;
+    }
+    .lab-card:nth-child(2) { animation-delay: 0.1s; }
+    .lab-card:nth-child(3) { animation-delay: 0.2s; }
+    .lab-card:nth-child(4) { animation-delay: 0.3s; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>> PYTHON SECURITY LABS</h1>
+    <p>Master Python fundamentals and demonstrate your security knowledge through practical coding assignments.</p>
+  </div>
+
+  <div class="labs-grid" id="labsGrid">
+    <!-- Labs will be inserted here -->
+  </div>
+
+  <div class="footer">
+    <p>> SECURE YOUR PYTHON SKILLS</p>
+  </div>
+</div>
+
+<script>
+  const labs = [
+    {
+      id: 'lab-2-1-1-6',
+      title: 'Lab 2.1.1.6: The print() Function',
+      description: 'Master Python\'s print() function and its formatting capabilities. Experiment with different ways to display output to the screen.',
+      difficulty: 'Beginner',
+      duration: '5-10 mins',
+      skills: ['Print Function', 'Output', 'Experimentation'],
+      links: [
+        { label: 'Start Lab', href: 'lab-2-1-1-6.html', primary: true }
+      ]
+    },
+    {
+      id: 'lab-2-1-1-18',
+      title: 'Lab 2.1.1.18: The print() Function - sep and end',
+      description: 'Master advanced print() function features. Learn how to customize separators and line endings to control output formatting.',
+      difficulty: 'Beginner',
+      duration: '10-15 mins',
+      skills: ['Print Parameters', 'sep', 'end'],
+      links: [
+        { label: 'Start Lab', href: 'lab-2-1-1-18.html', primary: true }
+      ]
+    },
+    {
+      id: 'lab-2-6-1-9',
+      title: 'Lab 2.6.1.9: Simple Input and Output',
+      description: 'Master input and output in Python. Get data from users and perform arithmetic operations with results displayed.',
+      difficulty: 'Easy',
+      duration: '5-10 mins',
+      skills: ['Input', 'Output', 'Arithmetic'],
+      links: [
+        { label: 'Start Lab', href: 'lab-2-6-1-9.html', primary: true }
+      ]
+    },
+    {
+      id: 'lab-2-1-1-19',
+      title: 'Lab 2.1.1.19: Formatting the Output',
+      description: 'Experiment with escape sequences, string multiplication, and the print() function. Create patterns and control output formatting.',
+      difficulty: 'Beginner',
+      duration: '10-15 mins',
+      skills: ['Escape Sequences', 'String Multiplication', 'Formatting'],
+      links: [
+        { label: 'Start Lab', href: 'lab-2-1-1-19.html', primary: true }
+      ]
+    },
+    {
+      id: 'lab-2-2-1-11',
+      title: 'Lab 2.2.1.11: Python Literals - Strings',
+      description: 'Master escape sequences in strings. Learn to use \\n for newlines and \\" for quotes to produce specific output formats.',
+      difficulty: 'Beginner',
+      duration: '5-10 mins',
+      skills: ['Escape Sequences', 'String Literals', 'Quotes'],
+      links: [
+        { label: 'Start Lab', href: 'lab-2-2-1-11.html', primary: true }
+      ]
+    },
+    {
+      id: 'lab-2-4-1-7',
+      title: 'Lab 2.4.1.7: Variables',
+      description: 'Learn to create, assign, and use variables. Perform arithmetic operations and explore different data types through practical exercises.',
+      difficulty: 'Beginner',
+      duration: '10 mins',
+      skills: ['Variables', 'Arithmetic', 'Data Types'],
+      links: [
+        { label: 'Start Lab', href: 'lab-2-4-1-7.html', primary: true }
+      ]
+    },
+    {
+      id: 'lab-2-4-1-8',
+      title: 'Lab 2.4.1.8: Unit Conversion',
+      description: 'Apply variables and arithmetic to real-world conversion problems. Learn the round() function and practice multi-argument print statements.',
+      difficulty: 'Beginner',
+      duration: '10 mins',
+      skills: ['Formulas', 'round() Function', 'Arithmetic'],
+      links: [
+        { label: 'Start Lab', href: 'lab-2-4-1-8.html', primary: true }
+      ]
+    },
+    {
+      id: 'lab-2-4-1-10',
+      title: 'Lab 2.4.1.10: Operators and Expressions',
+      description: 'Master arithmetic operators and evaluate complex mathematical expressions. Understand operator precedence and exponentiation.',
+      difficulty: 'Beginner',
+      duration: '10-15 mins',
+      skills: ['Operators', 'Expressions', 'Exponentiation'],
+      links: [
+        { label: 'Start Lab', href: 'lab-2-4-1-10.html', primary: true }
+      ]
+    },
+    {
+      id: 'lab-2-5-1-2',
+      title: 'Lab 2.5.1.2: Comments',
+      description: 'Learn to write effective comments and clean code. Remove unnecessary comments and choose meaningful variable names.',
+      difficulty: 'Very Easy',
+      duration: '5-10 mins',
+      skills: ['Comments', 'Code Readability', 'Best Practices'],
+      links: [
+        { label: 'Start Lab', href: 'lab-2-5-1-2.html', primary: true }
+      ]
+    },
+    {
+      id: 'lab-2-6-1-10',
+      title: 'Lab 2.6.1.10: Operators and Expressions',
+      description: 'Master complex nested expressions and operator precedence. Evaluate challenging formulas with proper parentheses control.',
+      difficulty: 'Intermediate',
+      duration: '15-20 mins',
+      skills: ['Operators', 'Precedence', 'Nested Expressions'],
+      links: [
+        { label: 'Start Lab', href: 'lab-2-6-1-10.html', primary: true }
+      ]
+    },
+    {
+      id: 'lab-2-6-1-11',
+      title: 'Lab 2.6.1.11: Operators and Expressions',
+      description: 'Calculate event end time using arithmetic and modulo operators. Handle midnight wrapping and multi-day events.',
+      difficulty: 'Easy',
+      duration: '15-20 mins',
+      skills: ['Modulo', 'Integer Division', 'Time Calculation'],
+      links: [
+        { label: 'Start Lab', href: 'lab-2-6-1-11.html', primary: true }
+      ]
+    },
+    {
+      id: 'lab-3-1-1-4',
+      title: 'Lab 3.1.1.4: Questions and Answers',
+      description: 'Use comparison operators to evaluate conditions. Print True or False based on whether a number is >= 100.',
+      difficulty: 'Very Easy',
+      duration: '5-10 mins',
+      skills: ['Comparison Operators', 'Boolean Values', 'input()'],
+      links: [
+        { label: 'Start Lab', href: 'lab-3-1-1-4.html', primary: true }
+      ]
+    },
+    {
+      id: 'lab-3-1-1-10',
+      title: 'Lab 3.1.1.10: Comparison Operators and Conditional Execution',
+      description: 'Use if/elif/else statements to execute different code based on conditions. Master the Spathiphyllum plant challenge!',
+      difficulty: 'Easy',
+      duration: '5-15 mins',
+      skills: ['if/elif/else', 'String Comparison', 'Conditional Logic'],
+      links: [
+        { label: 'Start Lab', href: 'lab-3-1-1-10.html', primary: true }
+      ]
+    },
+    {
+      id: 'lab-3-1-1-11',
+      title: 'Lab 3.1.1.11: Essentials of the if-else statement',
+      description: 'Calculate progressive tax using if/else logic and mathematical operations. Apply real-world problem-solving.',
+      difficulty: 'Easy/Medium',
+      duration: '10-20 mins',
+      skills: ['if/else', 'Arithmetic', 'Edge Cases'],
+      links: [
+        { label: 'Start Lab', href: 'lab-3-1-1-11.html', primary: true }
+      ]
+    },
+    {
+      id: 'lab-3-1-1-12',
+      title: 'Lab 3.1.1.12: Essentials of the if-elif-else statement',
+      description: 'Determine leap years using if/elif/else logic and the modulo operator. Master nested conditionals with real-world rules.',
+      difficulty: 'Easy/Medium',
+      duration: '10-25 mins',
+      skills: ['if/elif/else', 'Modulo Operator', 'Nested Conditions'],
+      links: [
+        { label: 'Start Lab', href: 'lab-3-1-1-12.html', primary: true }
+      ]
+    },
+    {
+      id: 'lab-3-2-1-3',
+      title: 'Lab 3.2.1.3: Essentials of the while Loop',
+      description: 'Build a secret-number guessing game that keeps asking for input until the correct number is entered.',
+      difficulty: 'Easy',
+      duration: '15 mins',
+      skills: ['while Loop', 'input()', 'Loop Conditions'],
+      links: [
+        { label: 'Start Lab', href: 'lab-3-2-1-3.html', primary: true }
+      ]
+    },
+    {
+      id: 'lab-3-2-1-6',
+      title: 'Lab 3.2.1.6: Essentials of the for Loop',
+      description: 'Use a for loop, range(), and time.sleep() to count mississippily to five before printing a final message.',
+      difficulty: 'Very Easy',
+      duration: '5-15 mins',
+      skills: ['for Loop', 'range()', 'time.sleep()'],
+      links: [
+        { label: 'Start Lab', href: 'lab-3-2-1-6.html', primary: true }
+      ]
+    },
+    {
+      id: 'lab-3-2-1-9',
+      title: 'Lab 3.2.1.9: The break Statement',
+      description: 'Use a while loop and break statement to keep asking for words until the secret exit word is entered.',
+      difficulty: 'Easy',
+      duration: '10-20 mins',
+      skills: ['break Statement', 'while Loop', 'String Comparison'],
+      links: [
+        { label: 'Start Lab', href: 'lab-3-2-1-9.html', primary: true }
+      ]
+    }
+  ];
+
+  function renderLabs() {
+    const grid = document.getElementById('labsGrid');
+
+    if (labs.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state" style="grid-column: 1/-1;">
+          <p>📝 No labs available yet</p>
+          <p style="font-size: 13px; color: var(--text-tertiary);">Check back soon for new labs!</p>
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = labs.map(lab => `
+      <div class="lab-card">
+        <div class="lab-badge">${lab.difficulty}</div>
+        <h2 class="lab-title">${lab.title}</h2>
+        <p class="lab-desc">${lab.description}</p>
+        <div class="lab-meta">
+          <div class="meta-item">⏱️ ${lab.duration}</div>
+          <div class="meta-item">🎯 ${lab.skills.join(', ')}</div>
+        </div>
+        <div class="lab-links">
+          ${lab.links.map(link => `
+            <a href="${link.href}" class="btn ${link.primary ? 'btn-primary' : 'btn-secondary'}" target="${link.href.startsWith('http') ? '_blank' : '_self'}">
+              ${link.label}
+            </a>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  renderLabs();
+</script>
+</body>
+</html>
