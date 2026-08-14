@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 2.6.1.10: Operators and Expressions</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --text: #1a1a1a;
+      --text-secondary: #5c5c5c;
+      --border: #e0e0e0;
+      --primary: #1f5fa0;
+      --primary-light: #e3f2fd;
+      --success: #2e7d32;
+      --success-light: #e8f5e9;
+      --radius: 8px;
+      --font-sans: system-ui, -apple-system, sans-serif;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: #f5f5f5;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border); padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 4px; background: var(--primary-light); color: var(--primary); margin-bottom: 12px; }
+    .lab-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .lab-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem; }
+    .overview-box { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; padding: 16px; margin-bottom: 2rem; }
+    .overview-box p { color: var(--primary); font-size: 14px; margin: 0 0 8px; line-height: 1.6; font-weight: 500; }
+    .objectives-box { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 2rem; }
+    .objectives-box p { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .objectives-box ul { font-size: 14px; color: var(--text-secondary); margin: 0 0 0 20px; line-height: 1.8; }
+    .objectives-box li { margin-bottom: 8px; }
+    .progress-bar { display: flex; gap: 6px; margin-bottom: 2rem; }
+    .pip { flex: 1; height: 6px; border-radius: 3px; background: #e0e0e0; transition: background 0.3s; }
+    .pip.done { background: var(--success); }
+    .pip.active { background: var(--primary); }
+    .steps { display: flex; flex-direction: column; gap: 12px; }
+    .step { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: box-shadow 0.2s; }
+    .step:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .step.active { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .step.done { border-color: var(--success); }
+    .step-header { display: flex; align-items: center; gap: 12px; padding: 16px; cursor: pointer; user-select: none; background: var(--bg-secondary); }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0; border: 2px solid var(--border); color: var(--text); background: var(--bg); }
+    .step.active .step-num { background: var(--primary); color: white; border-color: var(--primary); }
+    .step.done .step-num { background: var(--success); color: white; border-color: var(--success); font-size: 12px; }
+    .step-label { font-size: 15px; font-weight: 600; flex: 1; }
+    .step-tag { font-size: 12px; padding: 4px 10px; border-radius: 4px; background: var(--primary-light); color: var(--primary); font-weight: 500; }
+    .step.active .step-tag { background: var(--primary); color: white; }
+    .step-body { display: none; padding: 0 16px 16px; background: var(--bg); }
+    .step.open .step-body { display: block; }
+    .step-body p { font-size: 14px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 12px; }
+    .step-body strong { color: var(--text); font-weight: 600; }
+    .info-box { margin: 12px 0; padding: 12px 16px; background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; }
+    .info-box p { color: var(--primary); font-size: 13px; margin: 0; line-height: 1.6; }
+    .code-block { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 10px 0; color: #d63384; overflow-x: auto; max-height: 300px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; line-height: 1.5; }
+    .step-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .btn { padding: 10px 20px; border-radius: 4px; border: none; font-size: 14px; cursor: pointer; font-family: var(--font-sans); font-weight: 600; transition: all 0.2s; }
+    .btn.primary { background: var(--primary); color: white; }
+    .btn.primary:hover { background: #1a4a7f; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(31,95,160,0.3); }
+    .btn.secondary { background: var(--bg-secondary); color: var(--text); border: 1px solid var(--border); }
+    .btn.secondary:hover { background: #f0f0f0; }
+    .complete-banner { display: none; margin-top: 2rem; padding: 16px 20px; background: var(--success-light); border-radius: var(--radius); border: 1px solid var(--success); border-left: 4px solid var(--success); }
+    .complete-banner p { color: var(--success); font-size: 14px; margin: 0; line-height: 1.6; font-weight: 500; }
+    ul { margin: 10px 0 10px 20px; }
+    li { font-size: 14px; color: var(--text-secondary); margin-bottom: 8px; line-height: 1.6; }
+    .hint { font-size: 13px; color: var(--text-secondary); margin-top: 8px; font-style: italic; }
+    .screenshot-section { margin-top: 16px; }
+    .screenshot-section-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
+    .screenshot-slot { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; }
+    .screenshot-slot-header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--bg-secondary); border-bottom: 1px solid var(--border); }
+    .slot-num { width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: white; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .slot-label { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; }
+    .slot-status { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+    .slot-status.uploaded { color: var(--success); font-weight: 600; }
+    .upload-area { padding: 24px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; background: var(--bg); transition: all 0.15s; border-top: 1px solid var(--border); }
+    .upload-area:hover { background: var(--bg-secondary); }
+    .upload-area.has-image { padding: 0; cursor: default; }
+    .upload-area span { font-size: 14px; color: var(--text-secondary); }
+    .upload-area input[type=file] { display: none; }
+    .preview-img { width: 100%; display: block; max-height: 300px; object-fit: contain; background: var(--bg-secondary); }
+    .img-actions { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--border); background: var(--bg); }
+    .img-actions button { font-size: 13px; padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); cursor: pointer; font-family: var(--font-sans); color: var(--text); }
+    .img-actions button:hover { background: var(--bg-secondary); }
+    .img-actions button.remove { color: #d32f2f; border-color: #d32f2f; }
+    .img-actions button.remove:hover { background: #ffebee; }
+    .pdf-section { margin-top: 16px; padding: 16px; background: var(--bg-secondary); border-radius: var(--radius); border: 1px solid var(--border); }
+    .pdf-section-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .pdf-section p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 12px; }
+    .pdf-name-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .pdf-name-row input { flex: 1; padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); font-family: var(--font-sans); font-size: 14px; color: var(--text); }
+    .pdf-name-row input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .pdf-status { font-size: 12px; color: var(--text-secondary); margin-top: 8px; min-height: 18px; }
+    .pdf-status.generating { color: var(--primary); font-weight: 600; }
+    .pdf-status.done { color: var(--success); font-weight: 600; }
+    .pdf-status.error { color: #d32f2f; font-weight: 600; }
+    .btn.pdf-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .test-data { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 10px 0; }
+    .test-case { margin-bottom: 10px; }
+    .test-case:last-child { margin-bottom: 0; }
+    .test-input { font-size: 13px; color: var(--text); font-weight: 500; }
+    .test-output { font-size: 13px; color: var(--primary); margin-top: 4px; font-family: 'Courier New', monospace; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <span class="badge">📚 Python Lab</span>
+  <div class="lab-title">Lab 2.6.1.10: Operators and Expressions</div>
+  <div class="lab-desc">Master complex nested expressions. Evaluate a challenging formula using proper operator precedence and parentheses.</div>
+
+  <div class="overview-box">
+    <p>📋 Lab Overview</p>
+    <p>In this lab, you'll write code to evaluate a complex nested fraction expression. This requires careful attention to operator precedence, parentheses, and how Python handles division.</p>
+    <svg viewBox="0 0 400 350" style="max-width: 500px; height: auto; margin: 20px auto; display: block;">
+      <!-- Top level: 1 over denominator -->
+      <text x="200" y="30" text-anchor="middle" font-size="20" font-family="serif">1</text>
+      <line x1="120" y1="50" x2="280" y2="50" stroke="var(--primary)" stroke-width="2"/>
+
+      <!-- Level 2: x + 1/(...) -->
+      <text x="130" y="80" font-size="18" font-family="serif">x +</text>
+      <text x="200" y="95" text-anchor="middle" font-size="18" font-family="serif">1</text>
+      <line x1="160" y1="110" x2="240" y2="110" stroke="var(--primary)" stroke-width="2"/>
+
+      <!-- Level 3: x + 1/(...) -->
+      <text x="160" y="140" font-size="16" font-family="serif">x +</text>
+      <text x="215" y="152" text-anchor="middle" font-size="16" font-family="serif">1</text>
+      <line x1="185" y1="165" x2="245" y2="165" stroke="var(--primary)" stroke-width="2"/>
+
+      <!-- Level 4: x + 1/x -->
+      <text x="185" y="195" font-size="14" font-family="serif">x +</text>
+      <text x="230" y="206" text-anchor="middle" font-size="14" font-family="serif">1</text>
+      <line x1="210" y1="218" x2="250" y2="218" stroke="var(--primary)" stroke-width="2"/>
+      <text x="230" y="245" text-anchor="middle" font-size="14" font-family="serif">x</text>
+    </svg>
+  </div>
+
+  <div class="objectives-box">
+    <p>✅ Upon completion, you will be able to:</p>
+    <ul>
+      <li>Understand operator precedence and associativity</li>
+      <li>Use parentheses correctly to control expression evaluation</li>
+      <li>Work with complex nested expressions</li>
+      <li>Test code with multiple inputs</li>
+      <li>Evaluate mathematical formulas in Python</li>
+    </ul>
+  </div>
+
+  <div class="progress-bar" id="pips"></div>
+  <div class="steps" id="steps-container"></div>
+
+  <div class="complete-banner" id="complete-banner">
+    <p><strong>Lab complete!</strong> You've mastered complex operator expressions! 🎉</p>
+  </div>
+</div>
+
+<script>
+const { jsPDF } = window.jspdf;
+const savedAnswers = {};
+const screenshots = {};
+
+const steps = [
+  {
+    label: 'Understand the problem',
+    tag: 'Context',
+    body: `
+      <p><strong>The expression to evaluate:</strong></p>
+      <p style="font-size: 16px; text-align: center; margin: 16px 0;">y = 1 ÷ (x + 1 ÷ (x + 1 ÷ (x + 1 ÷ x)))</p>
+      <p><strong>Key concepts:</strong></p>
+      <ul>
+        <li><strong>Operator precedence:</strong> Division and multiplication happen before addition and subtraction</li>
+        <li><strong>Parentheses:</strong> Force evaluation order. Inner parentheses evaluate first</li>
+        <li><strong>Nesting:</strong> This expression has multiple levels of division inside addition</li>
+        <li><strong>In Python:</strong> Use <code>1.0 / (...)</code> or <code>1.0 / (x + ...)</code> with proper grouping</li>
+      </ul>
+      <div class="info-box"><p><strong>Challenge:</strong> Get the parentheses right! Start from the innermost and work outward.</p></div>`
+  },
+  {
+    label: 'Choose your platform',
+    tag: 'Setup',
+    body: `
+      <p>You can complete this lab using:</p>
+      <div class="info-box"><p><strong>Option 1:</strong> Google Colab (browser-based, no installation)</p></div>
+      <p><a href="https://colab.research.google.com/" target="_blank" style="display:inline-block; padding:8px 14px; border-radius:6px; border:1px solid var(--primary); background:var(--primary-light); color:var(--primary); font-size:12px; font-weight:500; text-decoration:none; cursor:pointer; margin:8px 0;">Open Google Colab →</a></p>
+      <p style="font-size: 12px; color: #666; margin-top: 8px;"><strong>💡 Tip:</strong> When Colab opens, click "Save a copy in Drive" and rename it to something like "Lab_2.X.X.X_YourName" so you can find it later.</p>
+      <div class="info-box"><p><strong>Option 2:</strong> Python installed locally (VS Code, IDLE, or terminal)</p></div>
+      <p>Choose whichever you prefer and proceed to the next step.</p>`
+  },
+  {
+    label: 'Exercise: Evaluate the nested expression',
+    tag: 'Experiment',
+    body: `
+      <p><strong>Starter code:</strong></p>
+      <div class="code-block">x = float(input("Enter value for x: "))
+# Write your code here.
+print("y =", y)</div>
+      <p><strong>Your task:</strong> Write the expression to evaluate the formula.</p>
+            <p><strong>Complete Solution:</strong></p>
+      <img src="data:image/png;base64,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" alt="Complete solution code" style="max-width: 100%; border: 1px solid #e0e0e0; border-radius: 4px; margin: 12px 0; display: block;">
+      <p style="font-size: 12px; color: #999; margin-top: 8px;"><em>💡 Image format prevents copy-pasting - type it out to learn!</em></p>
+      
+      <p style="margin-top: 16px; font-size: 14px; font-weight: 600;">What each line does:</p>
+      <ul style="font-size: 13px; margin-top: 8px;">
+        <li><strong>Line 1:</strong> Ask user for input value and store as float</li>
+        <li><strong>Line 2:</strong> Calculate y using nested fractions formula - work from innermost parentheses outward</li>
+        <li><strong>Line 3:</strong> Print the calculated result</li>
+      </ul>
+      
+      <p style="margin-top: 16px;"><strong>Test your code:</strong></p>
+      <p><strong>Breaking down the expression:</strong></p>
+      <ul>
+        <li>Start innermost: <code>1/x</code></li>
+        <li>Next layer: <code>x + 1/x</code></li>
+        <li>Next layer: <code>1/(x + 1/x)</code></li>
+        <li>Next layer: <code>x + 1/(x + 1/x)</code></li>
+        <li>Outermost: <code>1/(x + 1/(x + 1/x))</code></li>
+        <li>Full formula: <code>1/(x + 1/(x + 1/(x + 1/x)))</code></li>
+      </ul>
+      `;
+  }).join('');
+  restoreAnswers();
+}
+function toggleStep(i) { openStep = openStep === i ? -1 : i; renderSteps(); updatePips(); }
+function markDone(i) { completedSteps.add(i); if (i < steps.length - 1) openStep = i + 1; else { openStep = -1; document.getElementById('complete-banner').style.display = 'block'; } renderSteps(); updatePips(); }
+function goTo(i) { openStep = i; renderSteps(); updatePips(); }
+async function generatePDF() {
+  saveCurrentAnswers();
+  const btn = document.getElementById('pdf-btn');
+  const statusEl = document.getElementById('pdf-status');
+  const studentName = (savedAnswers['student-name'] || '').trim();
+  btn.disabled = true;
+  statusEl.className = 'pdf-status generating';
+  statusEl.textContent = 'Building your PDF…';
+  try {
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 20;
+    const contentW = pageW - margin * 2;
+    let y = margin;
+    function checkPage(need) { if (y + need > pageH - margin) { doc.addPage(); y = margin; } }
+    function fillRect(x, ry, w, h, r, g, b) { doc.setFillColor(r, g, b); doc.rect(x, ry, w, h, 'F'); }
+    async function drawImageBlock(imgData, maxH) {
+      const maxW = contentW;
+      let iW = maxW, iH = maxH;
+      try {
+        const img = new Image();
+        await new Promise(res => { img.onload = res; img.onerror = res; img.src = imgData; });
+        if (img.width && img.height) {
+          const ratio = img.width / img.height;
+          if (maxW / ratio <= maxH) { iW = maxW; iH = maxW / ratio; } else { iH = maxH; iW = maxH * ratio; }
+        }
+      } catch (e) { }
+      checkPage(iH + 8);
+      const fmt = imgData.includes('image/png') ? 'PNG' : 'JPEG';
+      doc.setDrawColor(31, 95, 160);
+      doc.setLineWidth(0.5);
+      doc.rect(margin, y, iW, iH);
+      doc.addImage(imgData, fmt, margin, y, iW, iH);
+      y += iH + 10;
+    }
+    fillRect(0, 0, pageW, 14, 31, 95, 160);
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text('PYTHON LAB 2.6.1.10', margin, 9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Operators and Expressions', pageW - margin, 9, { align: 'right' });
+    y = 22;
+    doc.setTextColor(20, 20, 20);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Lab Submission', margin, y);
+    y += 8;
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(80, 80, 80);
+    doc.text(`Student: ${studentName || '(name not provided)'}`, margin, y);
+    y += 5;
+    doc.text(`Submitted: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, margin, y);
+    y += 5;
+    doc.text('Lab: Operators and Expressions (2.6.1.10)', margin, y);
+    y += 10;
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, pageW - margin, y);
+    y += 8;
+    if (screenshots['ss-results']) {
+      checkPage(15);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(20, 20, 20);
+      doc.text('Program Output', margin, y);
+      y += 6;
+      await drawImageBlock(screenshots['ss-results'], 100);
+    }
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let p = 1; p <= totalPages; p++) {
+      doc.setPage(p);
+      doc.setDrawColor(220, 220, 220);
+      doc.setLineWidth(0.3);
+      doc.line(margin, pageH - 12, pageW - margin, pageH - 12);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(150, 150, 150);
+      doc.text(`Lab 2.6.1.10: Operators and Expressions — ${studentName || 'Student'}`, margin, pageH - 7);
+      doc.text(`Page ${p} of ${totalPages}`, pageW - margin, pageH - 7, { align: 'right' });
+    }
+    const filename = studentName ? `Lab_2.6.1.10_${studentName.replace(/\s+/g, '_')}.pdf` : 'Lab_2.6.1.10_Submission.pdf';
+    doc.save(filename);
+    statusEl.className = 'pdf-status done';
+    statusEl.textContent = `✓ PDF saved as "${filename}" — ready to submit!`;
+  } catch (err) {
+    statusEl.className = 'pdf-status error';
+    statusEl.textContent = 'Something went wrong. Please try again.';
+    console.error(err);
+  }
+  btn.disabled = false;
+}
+buildPips();
+renderSteps();
+updatePips();
+</script>
+</body>
+</html>

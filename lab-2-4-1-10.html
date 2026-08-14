@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 2.4.1.10: Operators and Expressions</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --text: #1a1a1a;
+      --text-secondary: #5c5c5c;
+      --border: #e0e0e0;
+      --primary: #1f5fa0;
+      --primary-light: #e3f2fd;
+      --success: #2e7d32;
+      --success-light: #e8f5e9;
+      --radius: 8px;
+      --font-sans: system-ui, -apple-system, sans-serif;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: #f5f5f5;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border); padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 4px; background: var(--primary-light); color: var(--primary); margin-bottom: 12px; }
+    .lab-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .lab-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem; }
+    .overview-box { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; padding: 16px; margin-bottom: 2rem; }
+    .overview-box p { color: var(--primary); font-size: 14px; margin: 0 0 8px; line-height: 1.6; font-weight: 500; }
+    .objectives-box { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 2rem; }
+    .objectives-box p { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .objectives-box ul { font-size: 14px; color: var(--text-secondary); margin: 0 0 0 20px; line-height: 1.8; }
+    .objectives-box li { margin-bottom: 8px; }
+    .progress-bar { display: flex; gap: 6px; margin-bottom: 2rem; }
+    .pip { flex: 1; height: 6px; border-radius: 3px; background: #e0e0e0; transition: background 0.3s; }
+    .pip.done { background: var(--success); }
+    .pip.active { background: var(--primary); }
+    .steps { display: flex; flex-direction: column; gap: 12px; }
+    .step { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: box-shadow 0.2s; }
+    .step:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .step.active { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .step.done { border-color: var(--success); }
+    .step-header { display: flex; align-items: center; gap: 12px; padding: 16px; cursor: pointer; user-select: none; background: var(--bg-secondary); }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0; border: 2px solid var(--border); color: var(--text); background: var(--bg); }
+    .step.active .step-num { background: var(--primary); color: white; border-color: var(--primary); }
+    .step.done .step-num { background: var(--success); color: white; border-color: var(--success); font-size: 12px; }
+    .step-label { font-size: 15px; font-weight: 600; flex: 1; }
+    .step-tag { font-size: 12px; padding: 4px 10px; border-radius: 4px; background: var(--primary-light); color: var(--primary); font-weight: 500; }
+    .step.active .step-tag { background: var(--primary); color: white; }
+    .step-body { display: none; padding: 0 16px 16px; background: var(--bg); }
+    .step.open .step-body { display: block; }
+    .step-body p { font-size: 14px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 12px; }
+    .step-body strong { color: var(--text); font-weight: 600; }
+    .info-box { margin: 12px 0; padding: 12px 16px; background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; }
+    .info-box p { color: var(--primary); font-size: 13px; margin: 0; line-height: 1.6; }
+    .code-block { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 10px 0; color: #d63384; overflow-x: auto; max-height: 300px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; line-height: 1.5; }
+    .step-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .btn { padding: 10px 20px; border-radius: 4px; border: none; font-size: 14px; cursor: pointer; font-family: var(--font-sans); font-weight: 600; transition: all 0.2s; }
+    .btn.primary { background: var(--primary); color: white; }
+    .btn.primary:hover { background: #1a4a7f; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(31,95,160,0.3); }
+    .btn.secondary { background: var(--bg-secondary); color: var(--text); border: 1px solid var(--border); }
+    .btn.secondary:hover { background: #f0f0f0; }
+    .complete-banner { display: none; margin-top: 2rem; padding: 16px 20px; background: var(--success-light); border-radius: var(--radius); border: 1px solid var(--success); border-left: 4px solid var(--success); }
+    .complete-banner p { color: var(--success); font-size: 14px; margin: 0; line-height: 1.6; font-weight: 500; }
+    ul { margin: 10px 0 10px 20px; }
+    li { font-size: 14px; color: var(--text-secondary); margin-bottom: 8px; line-height: 1.6; }
+    .hint { font-size: 13px; color: var(--text-secondary); margin-top: 8px; font-style: italic; }
+    .screenshot-section { margin-top: 16px; }
+    .screenshot-section-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
+    .screenshot-slot { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; }
+    .screenshot-slot-header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--bg-secondary); border-bottom: 1px solid var(--border); }
+    .slot-num { width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: white; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .slot-label { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; }
+    .slot-status { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+    .slot-status.uploaded { color: var(--success); font-weight: 600; }
+    .upload-area { padding: 24px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; background: var(--bg); transition: all 0.15s; border-top: 1px solid var(--border); }
+    .upload-area:hover { background: var(--bg-secondary); }
+    .upload-area.has-image { padding: 0; cursor: default; }
+    .upload-area span { font-size: 14px; color: var(--text-secondary); }
+    .upload-area input[type=file] { display: none; }
+    .preview-img { width: 100%; display: block; max-height: 300px; object-fit: contain; background: var(--bg-secondary); }
+    .img-actions { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--border); background: var(--bg); }
+    .img-actions button { font-size: 13px; padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); cursor: pointer; font-family: var(--font-sans); color: var(--text); }
+    .img-actions button:hover { background: var(--bg-secondary); }
+    .img-actions button.remove { color: #d32f2f; border-color: #d32f2f; }
+    .img-actions button.remove:hover { background: #ffebee; }
+    .pdf-section { margin-top: 16px; padding: 16px; background: var(--bg-secondary); border-radius: var(--radius); border: 1px solid var(--border); }
+    .pdf-section-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .pdf-section p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 12px; }
+    .pdf-name-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .pdf-name-row input { flex: 1; padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); font-family: var(--font-sans); font-size: 14px; color: var(--text); }
+    .pdf-name-row input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .pdf-status { font-size: 12px; color: var(--text-secondary); margin-top: 8px; min-height: 18px; }
+    .pdf-status.generating { color: var(--primary); font-weight: 600; }
+    .pdf-status.done { color: var(--success); font-weight: 600; }
+    .pdf-status.error { color: #d32f2f; font-weight: 600; }
+    .btn.pdf-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <span class="badge">📚 Python Lab</span>
+  <div class="lab-title">Lab 2.4.1.10: Operators and Expressions</div>
+  <div class="lab-desc">Master arithmetic operators and mathematical expressions. Evaluate polynomials using explicit operators and understand operator precedence.</div>
+
+  <div class="overview-box">
+    <p>📋 Lab Overview</p>
+    <p>In this lab, you'll work with arithmetic operators and complex expressions. You'll evaluate a polynomial equation and learn how Python handles mathematical operations.</p>
+  </div>
+
+  <div class="objectives-box">
+    <p>✅ Upon completion, you will be able to:</p>
+    <ul>
+      <li>Use arithmetic operators: +, -, *, /, ** (exponentiation)</li>
+      <li>Understand operator precedence (order of operations)</li>
+      <li>Write complex mathematical expressions in Python</li>
+      <li>Convert between data types (int to float)</li>
+      <li>Evaluate polynomials and complex formulas</li>
+    </ul>
+  </div>
+
+  <div class="progress-bar" id="pips"></div>
+  <div class="steps" id="steps-container"></div>
+
+  <div class="complete-banner" id="complete-banner">
+    <p><strong>Lab complete!</strong> You have mastered working with operators and expressions! 🎉</p>
+  </div>
+</div>
+
+<script>
+const { jsPDF } = window.jspdf;
+const savedAnswers = {};
+const screenshots = {};
+
+const steps = [
+  {
+    label: 'Understand operators',
+    tag: 'Context',
+    body: `
+      <p><strong>Arithmetic operators in Python:</strong></p>
+      <ul>
+        <li><code>+</code> = addition</li>
+        <li><code>-</code> = subtraction</li>
+        <li><code>*</code> = multiplication (explicit, unlike math notation)</li>
+        <li><code>/</code> = division (returns float)</li>
+        <li><code>//</code> = integer division (rounds down)</li>
+        <li><code>**</code> = exponentiation (power)</li>
+        <li><code>%</code> = modulo (remainder)</li>
+      </ul>
+      <div class="info-box"><p><strong>Key difference:</strong> In math, <code>3x</code> means 3×x. In Python, you must write <code>3 * x</code> explicitly.</p></div>`
+  },
+  {
+    label: 'Choose your platform',
+    tag: 'Setup',
+    body: `
+      <p>You can complete this lab using:</p>
+      <div class="info-box"><p><strong>Option 1:</strong> Google Colab (browser-based, no installation)</p></div>
+      <p><a href="https://colab.research.google.com/" target="_blank" style="display:inline-block; padding:8px 14px; border-radius:6px; border:1px solid var(--primary); background:var(--primary-light); color:var(--primary); font-size:12px; font-weight:500; text-decoration:none; cursor:pointer; margin:8px 0;">Open Google Colab →</a></p>
+      <p style="font-size: 12px; color: #666; margin-top: 8px;"><strong>💡 Tip:</strong> When Colab opens, click "Save a copy in Drive" and rename it to something like "Lab_2.X.X.X_YourName" so you can find it later.</p>
+      <div class="info-box"><p><strong>Option 2:</strong> Python installed locally (VS Code, IDLE, or terminal)</p></div>
+      <p>Choose whichever you prefer and proceed to the next step.</p>`
+  },
+  {
+    label: 'Exercise 1: Evaluate the polynomial',
+    tag: 'Experiment',
+    body: `
+      <p><strong>Expression:</strong> 3x³ - 2x² + 3x - 1</p>
+      <p><strong>Your task:</strong> Complete the code to evaluate this polynomial.</p>
+            <p><strong>Complete Solution:</strong></p>
+      <img src="data:image/png;base64,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" alt="Complete solution code" style="max-width: 100%; border: 1px solid #e0e0e0; border-radius: 4px; margin: 12px 0; display: block;">
+      <p style="font-size: 12px; color: #999; margin-top: 8px;"><em>💡 Image format prevents copy-pasting - type it out to learn!</em></p>
+      
+      <p style="margin-top: 16px; font-size: 14px; font-weight: 600;">What each line does:</p>
+      <ul style="font-size: 13px; margin-top: 8px;">
+        <li><strong>Line 1:</strong> Ask user for input value and store as float in variable x</li>
+        <li><strong>Line 2:</strong> Calculate y using polynomial formula 3x³ - 2x² + 3x - 1 (** means exponent)</li>
+        <li><strong>Line 3:</strong> Print the calculated y value</li>
+      </ul>
+      
+      <p style="margin-top: 16px;"><strong>Test your code:</strong></p>
+      <p><strong>Starter code:</strong></p>
+      <div class="code-block">x =  # hardcode your test data here
+x = float(x)
+# write your code here
+print("y =", y)</div>
+      <p><strong>Steps:</strong></p>
+      <ul>
+        <li>Line 1: Enter a test value for x (try 0, 1, -1)</li>
+        <li>Line 2: Convert x to float (already provided)</li>
+        <li>Line 3: Write the expression: <code>y = 3 * x**3 - 2 * x**2 + 3 * x - 1</code></li>
+        <li>Line 4: Print the result (already provided)</li>
+      </ul>
+      <p><strong>Expected outputs for different x values:</strong></p>
+      <div class="code-block">x = 0: y = -1.0
+x = 1: y = 3.0
+x = -1: y = -9.0</div>
+      <div class="hint">Use <code>**</code> for exponentiation and <code>*</code> for multiplication. Python follows standard order of operations.</div>`
+  },
+  {
+    label: 'Upload screenshot: Polynomial evaluation',
+    tag: 'Submission',
+    body: `
+      <p>Upload your screenshot from Exercise 1:</p>
+      <div class="screenshot-section">
+        <div class="screenshot-section-title">Screenshot: Polynomial evaluation</div>
+        <div class="screenshot-slot" id="slot-ss-polynomial">
+          <div class="screenshot-slot-header">
+            <div class="slot-num">1</div>
+            <div class="slot-label">Code evaluating 3x³ - 2x² + 3x - 1</div>
+            <div class="slot-status" id="status-ss-polynomial">Not uploaded</div>
+          </div>
+          <div class="upload-area" id="area-ss-polynomial" onclick="triggerUpload('ss-polynomial')">
+            <span>📷 Click to upload screenshot</span>
+            <input type="file" accept="image/*" id="file-ss-polynomial" onchange="handleUpload('ss-polynomial', this)">
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'Exercise 2: Test with multiple values',
+    tag: 'Experiment',
+    body: `
+      <p>Test your expression with different input values to verify it works:</p>
+      <ul>
+        <li>Test with x = 0, 1, -1 (given test cases)</li>
+        <li>Try decimal values like 0.5, -2.5</li>
+        <li>Verify calculations match expected output</li>
+      </ul>
+      <p><strong>Complete code with multiple tests:</strong></p>
+      <div class="code-block">x = 0
+x = float(x)
+y = 3 * x**3 - 2 * x**2 + 3 * x - 1
+print("y =", y)
+
+x = 1
+x = float(x)
+y = 3 * x**3 - 2 * x**2 + 3 * x - 1
+print("y =", y)
+
+x = -1
+x = float(x)
+y = 3 * x**3 - 2 * x**2 + 3 * x - 1
+print("y =", y)</div>
+      <p><strong>Expected output:</strong></p>
+      <div class="code-block">y = -1.0
+y = 3.0
+y = -9.0</div>
+      <div class="hint">The float() conversion ensures results are decimal numbers even when input is integer.</div>`
+  },
+  {
+    label: 'Upload screenshot: Multiple tests',
+    tag: 'Submission',
+    body: `
+      <p>Upload your screenshot from Exercise 2:</p>
+      <div class="screenshot-section">
+        <div class="screenshot-section-title">Screenshot: Testing multiple values</div>
+        <div class="screenshot-slot" id="slot-ss-multiple">
+          <div class="screenshot-slot-header">
+            <div class="slot-num">2</div>
+            <div class="slot-label">Code testing with x = 0, 1, -1</div>
+            <div class="slot-status" id="status-ss-multiple">Not uploaded</div>
+          </div>
+          <div class="upload-area" id="area-ss-multiple" onclick="triggerUpload('ss-multiple')">
+            <span>📷 Click to upload screenshot</span>
+            <input type="file" accept="image/*" id="file-ss-multiple" onchange="handleUpload('ss-multiple', this)">
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'Exercise 3: Try different expressions',
+    tag: 'Experiment',
+    body: `
+      <p>Challenge: Create and evaluate your own mathematical expressions:</p>
+      <ul>
+        <li>Try a different polynomial: x⁴ - 3x² + 2</li>
+        <li>Or a different formula: √x (using x**0.5)</li>
+        <li>Or a quadratic: x² + 5x + 6</li>
+        <li>Test with multiple values</li>
+      </ul>
+      <p><strong>Example: Different polynomial x⁴ - 3x² + 2</strong></p>
+      <div class="code-block">x = 2
+x = float(x)
+y = x**4 - 3 * x**2 + 2
+print("y =", y)</div>
+      <p><strong>Expected output for x = 2:</strong></p>
+      <div class="code-block">y = 6.0
+
+x = 1
+x = float(x)
+y = x**4 - 3 * x**2 + 2
+print("y =", y)
+Expected: y = 0.0
+
+x = 3
+x = float(x)
+y = x**4 - 3 * x**2 + 2
+print("y =", y)
+Expected: y = 56.0</div>
+      <div class="hint">Fractional exponents work too! x**0.5 = √x, x**0.333... ≈ ∛x</div>`
+  },
+  {
+    label: 'Upload screenshot: Custom expressions',
+    tag: 'Submission',
+    body: `
+      <p>Upload your screenshot from Exercise 3:</p>
+      <div class="screenshot-section">
+        <div class="screenshot-section-title">Screenshot: Custom expressions</div>
+        <div class="screenshot-slot" id="slot-ss-custom">
+          <div class="screenshot-slot-header">
+            <div class="slot-num">3</div>
+            <div class="slot-label">Code with your own expressions</div>
+            <div class="slot-status" id="status-ss-custom">Not uploaded</div>
+          </div>
+          <div class="upload-area" id="area-ss-custom" onclick="triggerUpload('ss-custom')">
+            <span>📷 Click to upload screenshot</span>
+            <input type="file" accept="image/*" id="file-ss-custom" onchange="handleUpload('ss-custom', this)">
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'Download submission PDF',
+    tag: 'Final',
+    body: `
+      <p>Generate and download your lab submission as a PDF file.</p>
+      <div class="pdf-section">
+        <div class="pdf-section-title">📄 Generate your PDF</div>
+        <p>Enter your name and click the button to create your submission PDF.</p>
+        <div class="pdf-name-row">
+          <input type="text" id="student-name" placeholder="Your full name">
+        </div>
+        <button class="btn primary" id="pdf-btn" onclick="generatePDF()">
+          📥 Download PDF
+        </button>
+        <div class="pdf-status" id="pdf-status"></div>
+      </div>`
+  }
+];
+
+let openStep = 0;
+let completedSteps = new Set();
+
+function triggerUpload(id) { if (!document.getElementById('area-' + id).classList.contains('has-image')) document.getElementById('file-' + id).click(); }
+function handleUpload(id, input) { const file = input.files[0]; if (!file) return; const r = new FileReader(); r.onload = e => { screenshots[id] = e.target.result; renderSlot(id); }; r.readAsDataURL(file); }
+function renderSlot(id) {
+  const area = document.getElementById('area-' + id);
+  const status = document.getElementById('status-' + id);
+  if (!area) return;
+  if (screenshots[id]) {
+    area.classList.add('has-image');
+    area.innerHTML = `<img class="preview-img" src="${screenshots[id]}" alt="screenshot" /><div class="img-actions"><button onclick="replaceImage('${id}')">Replace</button><button class="remove" onclick="removeImage('${id}')">Remove</button><input type="file" accept="image/*" id="file-${id}" onchange="handleUpload('${id}',this)" style="display:none"/></div>`;
+    status.textContent = 'Uploaded ✓';
+    status.classList.add('uploaded');
+  } else {
+    area.classList.remove('has-image');
+    area.innerHTML = `<span>📷 Click to upload screenshot</span><input type="file" accept="image/*" id="file-${id}" onchange="handleUpload('${id}',this)"/>`;
+    status.textContent = 'Not uploaded';
+    status.classList.remove('uploaded');
+  }
+}
+function replaceImage(id) { document.getElementById('file-' + id).click(); }
+function removeImage(id) { delete screenshots[id]; renderSlot(id); }
+function saveCurrentAnswers() { ['student-name'].forEach(id => { const el = document.getElementById(id); if (el) savedAnswers[id] = el.value; }); }
+function restoreAnswers() { ['student-name'].forEach(id => { const el = document.getElementById(id); if (el && savedAnswers[id] !== undefined) el.value = savedAnswers[id]; }); ['ss-polynomial', 'ss-multiple', 'ss-custom'].forEach(id => renderSlot(id)); }
+function buildPips() { document.getElementById('pips').innerHTML = steps.map((_, i) => `<div class="pip" id="pip-${i}"></div>`).join(''); }
+function updatePips() { steps.forEach((_, i) => { const p = document.getElementById(`pip-${i}`); p.className = 'pip ' + (completedSteps.has(i) ? 'done' : i === openStep ? 'active' : ''); }); }
+function renderSteps() {
+  saveCurrentAnswers();
+  document.getElementById('steps-container').innerHTML = steps.map((s, i) => {
+    const isDone = completedSteps.has(i);
+    const isActive = i === openStep;
+    const isOpen = i === openStep;
+    return `<div class="step ${isActive ? 'active' : ''} ${isDone ? 'done' : ''} ${isOpen ? 'open' : ''}" id="step-${i}"><div class="step-header" onclick="toggleStep(${i})"><div class="step-num">${isDone ? '✓' : i + 1}</div><div class="step-label">${s.label}</div><div class="step-tag">${s.tag}</div></div><div class="step-body">${s.body}<div class="step-actions">${i < steps.length - 1 ? `<button class="btn primary" onclick="markDone(${i})">Mark done & continue</button>` : `<button class="btn primary" onclick="markDone(${i})">Complete lab</button>`}${i > 0 ? `<button class="btn secondary" onclick="goTo(${i - 1})">← Back</button>` : ''}</div></div></div>`;
+  }).join('');
+  restoreAnswers();
+}
+function toggleStep(i) { openStep = openStep === i ? -1 : i; renderSteps(); updatePips(); }
+function markDone(i) { completedSteps.add(i); if (i < steps.length - 1) openStep = i + 1; else { openStep = -1; document.getElementById('complete-banner').style.display = 'block'; } renderSteps(); updatePips(); }
+function goTo(i) { openStep = i; renderSteps(); updatePips(); }
+async function generatePDF() {
+  saveCurrentAnswers();
+  const btn = document.getElementById('pdf-btn');
+  const statusEl = document.getElementById('pdf-status');
+  const studentName = (savedAnswers['student-name'] || '').trim();
+  btn.disabled = true;
+  statusEl.className = 'pdf-status generating';
+  statusEl.textContent = 'Building your PDF…';
+  try {
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 20;
+    const contentW = pageW - margin * 2;
+    let y = margin;
+    function checkPage(need) { if (y + need > pageH - margin) { doc.addPage(); y = margin; } }
+    function fillRect(x, ry, w, h, r, g, b) { doc.setFillColor(r, g, b); doc.rect(x, ry, w, h, 'F'); }
+    async function drawImageBlock(imgData, maxH) {
+      const maxW = contentW;
+      let iW = maxW, iH = maxH;
+      try {
+        const img = new Image();
+        await new Promise(res => { img.onload = res; img.onerror = res; img.src = imgData; });
+        if (img.width && img.height) {
+          const ratio = img.width / img.height;
+          if (maxW / ratio <= maxH) { iW = maxW; iH = maxW / ratio; } else { iH = maxH; iW = maxH * ratio; }
+        }
+      } catch (e) { }
+      checkPage(iH + 8);
+      const fmt = imgData.includes('image/png') ? 'PNG' : 'JPEG';
+      doc.setDrawColor(31, 95, 160);
+      doc.setLineWidth(0.5);
+      doc.rect(margin, y, iW, iH);
+      doc.addImage(imgData, fmt, margin, y, iW, iH);
+      y += iH + 10;
+    }
+    fillRect(0, 0, pageW, 14, 31, 95, 160);
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text('PYTHON LAB 2.4.1.10', margin, 9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Operators and Expressions', pageW - margin, 9, { align: 'right' });
+    y = 22;
+    doc.setTextColor(20, 20, 20);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Lab Submission', margin, y);
+    y += 8;
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(80, 80, 80);
+    doc.text(`Student: ${studentName || '(name not provided)'}`, margin, y);
+    y += 5;
+    doc.text(`Submitted: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, margin, y);
+    y += 5;
+    doc.text('Lab: Operators and Expressions (2.4.1.10)', margin, y);
+    y += 10;
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, pageW - margin, y);
+    y += 8;
+    if (screenshots['ss-polynomial']) {
+      checkPage(15);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(20, 20, 20);
+      doc.text('Exercise 1: Polynomial Evaluation', margin, y);
+      y += 6;
+      await drawImageBlock(screenshots['ss-polynomial'], 80);
+    }
+    if (screenshots['ss-multiple']) {
+      checkPage(15);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(20, 20, 20);
+      doc.text('Exercise 2: Multiple Test Values', margin, y);
+      y += 6;
+      await drawImageBlock(screenshots['ss-multiple'], 80);
+    }
+    if (screenshots['ss-custom']) {
+      checkPage(15);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(20, 20, 20);
+      doc.text('Exercise 3: Custom Expressions', margin, y);
+      y += 6;
+      await drawImageBlock(screenshots['ss-custom'], 80);
+    }
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let p = 1; p <= totalPages; p++) {
+      doc.setPage(p);
+      doc.setDrawColor(220, 220, 220);
+      doc.setLineWidth(0.3);
+      doc.line(margin, pageH - 12, pageW - margin, pageH - 12);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(150, 150, 150);
+      doc.text(`Lab 2.4.1.10: Operators and Expressions — ${studentName || 'Student'}`, margin, pageH - 7);
+      doc.text(`Page ${p} of ${totalPages}`, pageW - margin, pageH - 7, { align: 'right' });
+    }
+    const filename = studentName ? `Lab_2.4.1.10_${studentName.replace(/\s+/g, '_')}.pdf` : 'Lab_2.4.1.10_Submission.pdf';
+    doc.save(filename);
+    statusEl.className = 'pdf-status done';
+    statusEl.textContent = `✓ PDF saved as "${filename}" — ready to submit!`;
+  } catch (err) {
+    statusEl.className = 'pdf-status error';
+    statusEl.textContent = 'Something went wrong. Please try again.';
+    console.error(err);
+  }
+  btn.disabled = false;
+}
+buildPips();
+renderSteps();
+updatePips();
+</script>
+</body>
+</html>

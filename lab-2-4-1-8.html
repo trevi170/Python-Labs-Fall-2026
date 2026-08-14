@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 2.4.1.8: Unit Conversion</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --text: #1a1a1a;
+      --text-secondary: #5c5c5c;
+      --border: #e0e0e0;
+      --primary: #1f5fa0;
+      --primary-light: #e3f2fd;
+      --success: #2e7d32;
+      --success-light: #e8f5e9;
+      --radius: 8px;
+      --font-sans: system-ui, -apple-system, sans-serif;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: #f5f5f5;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border); padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 4px; background: var(--primary-light); color: var(--primary); margin-bottom: 12px; }
+    .lab-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .lab-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem; }
+    .overview-box { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; padding: 16px; margin-bottom: 2rem; }
+    .overview-box p { color: var(--primary); font-size: 14px; margin: 0 0 8px; line-height: 1.6; font-weight: 500; }
+    .objectives-box { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 2rem; }
+    .objectives-box p { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .objectives-box ul { font-size: 14px; color: var(--text-secondary); margin: 0 0 0 20px; line-height: 1.8; }
+    .objectives-box li { margin-bottom: 8px; }
+    .progress-bar { display: flex; gap: 6px; margin-bottom: 2rem; }
+    .pip { flex: 1; height: 6px; border-radius: 3px; background: #e0e0e0; transition: background 0.3s; }
+    .pip.done { background: var(--success); }
+    .pip.active { background: var(--primary); }
+    .steps { display: flex; flex-direction: column; gap: 12px; }
+    .step { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: box-shadow 0.2s; }
+    .step:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .step.active { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .step.done { border-color: var(--success); }
+    .step-header { display: flex; align-items: center; gap: 12px; padding: 16px; cursor: pointer; user-select: none; background: var(--bg-secondary); }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0; border: 2px solid var(--border); color: var(--text); background: var(--bg); }
+    .step.active .step-num { background: var(--primary); color: white; border-color: var(--primary); }
+    .step.done .step-num { background: var(--success); color: white; border-color: var(--success); font-size: 12px; }
+    .step-label { font-size: 15px; font-weight: 600; flex: 1; }
+    .step-tag { font-size: 12px; padding: 4px 10px; border-radius: 4px; background: var(--primary-light); color: var(--primary); font-weight: 500; }
+    .step.active .step-tag { background: var(--primary); color: white; }
+    .step-body { display: none; padding: 0 16px 16px; background: var(--bg); }
+    .step.open .step-body { display: block; }
+    .step-body p { font-size: 14px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 12px; }
+    .step-body strong { color: var(--text); font-weight: 600; }
+    .info-box { margin: 12px 0; padding: 12px 16px; background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; }
+    .info-box p { color: var(--primary); font-size: 13px; margin: 0; line-height: 1.6; }
+    .code-block { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 10px 0; color: #d63384; overflow-x: auto; max-height: 300px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; line-height: 1.5; }
+    .step-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .btn { padding: 10px 20px; border-radius: 4px; border: none; font-size: 14px; cursor: pointer; font-family: var(--font-sans); font-weight: 600; transition: all 0.2s; }
+    .btn.primary { background: var(--primary); color: white; }
+    .btn.primary:hover { background: #1a4a7f; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(31,95,160,0.3); }
+    .btn.secondary { background: var(--bg-secondary); color: var(--text); border: 1px solid var(--border); }
+    .btn.secondary:hover { background: #f0f0f0; }
+    .complete-banner { display: none; margin-top: 2rem; padding: 16px 20px; background: var(--success-light); border-radius: var(--radius); border: 1px solid var(--success); border-left: 4px solid var(--success); }
+    .complete-banner p { color: var(--success); font-size: 14px; margin: 0; line-height: 1.6; font-weight: 500; }
+    ul { margin: 10px 0 10px 20px; }
+    li { font-size: 14px; color: var(--text-secondary); margin-bottom: 8px; line-height: 1.6; }
+    .hint { font-size: 13px; color: var(--text-secondary); margin-top: 8px; font-style: italic; }
+    .screenshot-section { margin-top: 16px; }
+    .screenshot-section-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
+    .screenshot-slot { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; }
+    .screenshot-slot-header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--bg-secondary); border-bottom: 1px solid var(--border); }
+    .slot-num { width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: white; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .slot-label { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; }
+    .slot-status { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+    .slot-status.uploaded { color: var(--success); font-weight: 600; }
+    .upload-area { padding: 24px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; background: var(--bg); transition: all 0.15s; border-top: 1px solid var(--border); }
+    .upload-area:hover { background: var(--bg-secondary); }
+    .upload-area.has-image { padding: 0; cursor: default; }
+    .upload-area span { font-size: 14px; color: var(--text-secondary); }
+    .upload-area input[type=file] { display: none; }
+    .preview-img { width: 100%; display: block; max-height: 300px; object-fit: contain; background: var(--bg-secondary); }
+    .img-actions { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--border); background: var(--bg); }
+    .img-actions button { font-size: 13px; padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); cursor: pointer; font-family: var(--font-sans); color: var(--text); }
+    .img-actions button:hover { background: var(--bg-secondary); }
+    .img-actions button.remove { color: #d32f2f; border-color: #d32f2f; }
+    .img-actions button.remove:hover { background: #ffebee; }
+    .pdf-section { margin-top: 16px; padding: 16px; background: var(--bg-secondary); border-radius: var(--radius); border: 1px solid var(--border); }
+    .pdf-section-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .pdf-section p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 12px; }
+    .pdf-name-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .pdf-name-row input { flex: 1; padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); font-family: var(--font-sans); font-size: 14px; color: var(--text); }
+    .pdf-name-row input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .pdf-status { font-size: 12px; color: var(--text-secondary); margin-top: 8px; min-height: 18px; }
+    .pdf-status.generating { color: var(--primary); font-weight: 600; }
+    .pdf-status.done { color: var(--success); font-weight: 600; }
+    .pdf-status.error { color: #d32f2f; font-weight: 600; }
+    .btn.pdf-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <span class="badge">📚 Python Lab</span>
+  <div class="lab-title">Lab 2.4.1.8: Unit Conversion</div>
+  <div class="lab-desc">Apply variables and arithmetic to a real-world conversion problem. Convert between miles and kilometers using formulas and the round() function.</div>
+
+  <div class="overview-box">
+    <p>📋 Lab Overview</p>
+    <p>In this lab, you'll write formulas to convert between two units of distance: miles and kilometers. You'll practice variables, arithmetic operations, and learn how to use the round() function for formatting output.</p>
+  </div>
+
+  <div class="objectives-box">
+    <p>✅ Upon completion, you will be able to:</p>
+    <ul>
+      <li>Use variables to store conversion values</li>
+      <li>Perform arithmetic calculations with variables</li>
+      <li>Use the round() function to format decimal numbers</li>
+      <li>Combine multiple arguments in print statements</li>
+      <li>Apply mathematical formulas in code</li>
+    </ul>
+  </div>
+
+  <div class="progress-bar" id="pips"></div>
+  <div class="steps" id="steps-container"></div>
+
+  <div class="complete-banner" id="complete-banner">
+    <p><strong>Lab complete!</strong> You have successfully created a unit converter! 🎉</p>
+  </div>
+</div>
+
+<script>
+const { jsPDF } = window.jspdf;
+const savedAnswers = {};
+const screenshots = {};
+
+const steps = [
+  {
+    label: 'Understand the conversion',
+    tag: 'Context',
+    body: `
+      <p><strong>The conversion factor:</strong> 1 mile = 1.61 kilometers</p>
+      <p><strong>Formulas to implement:</strong></p>
+      <ul>
+        <li>Miles to kilometers: <code>miles * 1.61</code></li>
+        <li>Kilometers to miles: <code>kilometers / 1.61</code></li>
+      </ul>
+      <div class="info-box"><p><strong>The round() function:</strong> <code>round(value, decimals)</code> rounds a number to specified decimal places.</p></div>`
+  },
+  {
+    label: 'Choose your platform',
+    tag: 'Setup',
+    body: `
+      <p>You can complete this lab using:</p>
+      <div class="info-box"><p><strong>Option 1:</strong> Google Colab (browser-based, no installation)</p></div>
+      <p><a href="https://colab.research.google.com/" target="_blank" style="display:inline-block; padding:8px 14px; border-radius:6px; border:1px solid var(--primary); background:var(--primary-light); color:var(--primary); font-size:12px; font-weight:500; text-decoration:none; cursor:pointer; margin:8px 0;">Open Google Colab →</a></p>
+      <p style="font-size: 12px; color: #666; margin-top: 8px;"><strong>💡 Tip:</strong> When Colab opens, click "Save a copy in Drive" and rename it to something like "Lab_2.X.X.X_YourName" so you can find it later.</p>
+      <div class="info-box"><p><strong>Option 2:</strong> Python installed locally (VS Code, IDLE, or terminal)</p></div>
+      <p>Choose whichever you prefer and proceed to the next step.</p>`
+  },
+  {
+    label: 'Exercise 1: Write conversion formulas',
+    tag: 'Experiment',
+    body: `
+      <p><strong>Your task:</strong> Complete the conversion formulas by replacing the ### placeholders.</p>
+            <p><strong>Complete Solution:</strong></p>
+      <img src="data:image/png;base64,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" alt="Complete solution code" style="max-width: 100%; border: 1px solid #e0e0e0; border-radius: 4px; margin: 12px 0; display: block;">
+      <p style="font-size: 12px; color: #999; margin-top: 8px;"><em>💡 Image format prevents copy-pasting - type it out to learn!</em></p>
+      
+      <p style="margin-top: 16px; font-size: 14px; font-weight: 600;">What each line does:</p>
+      <ul style="font-size: 13px; margin-top: 8px;">
+        <li><strong>Line 1:</strong> Ask user to input miles and store as a float number</li>
+        <li><strong>Line 2:</strong> Calculate kilometers by multiplying miles by conversion factor 1.60934</li>
+        <li><strong>Line 3:</strong> Round the result to 2 decimal places using round() function</li>
+        <li><strong>Line 4:</strong> Print the original miles, text, and converted kilometers</li>
+      </ul>
+      
+      <p style="margin-top: 16px;"><strong>Test your code:</strong></p>
+      <p><strong>Starter code:</strong></p>
+      <div class="code-block">kilometers = 12.25
+miles = 7.38
+
+miles_to_kilometers = ###
+kilometers_to_miles = ###
+
+print(miles, "miles is", round(miles_to_kilometers, 2), "kilometers")
+print(kilometers, "kilometers is", round(kilometers_to_miles, 2), "miles")</div>
+      <p><strong>Complete the formulas:</strong></p>
+      <ul>
+        <li>Line 4: Replace ### with formula to convert miles to kilometers</li>
+        <li>Line 5: Replace ### with formula to convert kilometers to miles</li>
+      </ul>
+      <p><strong>Expected output:</strong></p>
+      <div class="code-block">7.38 miles is 11.88 kilometers
+12.25 kilometers is 7.61 miles</div>
+      <div class="hint">Use multiplication for miles to km, and division for km to miles. The round() function will format the results to 2 decimal places.</div>`
+  },
+  {
+    label: 'Upload screenshot: Conversion formulas',
+    tag: 'Submission',
+    body: `
+      <p>Upload your screenshot from Exercise 1:</p>
+      <div class="screenshot-section">
+        <div class="screenshot-section-title">Screenshot: Unit conversion formulas</div>
+        <div class="screenshot-slot" id="slot-ss-conversion">
+          <div class="screenshot-slot-header">
+            <div class="slot-num">1</div>
+            <div class="slot-label">Code with conversion formulas</div>
+            <div class="slot-status" id="status-ss-conversion">Not uploaded</div>
+          </div>
+          <div class="upload-area" id="area-ss-conversion" onclick="triggerUpload('ss-conversion')">
+            <span>📷 Click to upload screenshot</span>
+            <input type="file" accept="image/*" id="file-ss-conversion" onchange="handleUpload('ss-conversion', this)">
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'Exercise 2: Experiment with different values',
+    tag: 'Experiment',
+    body: `
+      <p>Try your converter with different input values:</p>
+      <ul>
+        <li>Change the <code>miles</code> and <code>kilometers</code> values</li>
+        <li>Test with your own distances (your height, a city distance, etc.)</li>
+        <li>Verify the conversions are accurate</li>
+        <li>Try decimal values</li>
+      </ul>
+      <p><strong>Example experiment:</strong></p>
+      <div class="code-block">kilometers = 100.0
+miles = 50.0
+
+miles_to_kilometers = miles * 1.61
+kilometers_to_miles = kilometers / 1.61
+
+print(miles, "miles is", round(miles_to_kilometers, 2), "kilometers")
+print(kilometers, "kilometers is", round(kilometers_to_miles, 2), "miles")</div>
+      <p><strong>Expected output:</strong></p>
+      <div class="code-block">50.0 miles is 80.5 kilometers
+100.0 kilometers is 62.11 miles</div>
+      <div class="hint">The formulas stay the same; only the input values change.</div>`
+  },
+  {
+    label: 'Upload screenshot: Experiments',
+    tag: 'Submission',
+    body: `
+      <p>Upload your screenshot from Exercise 2:</p>
+      <div class="screenshot-section">
+        <div class="screenshot-section-title">Screenshot: Testing with different values</div>
+        <div class="screenshot-slot" id="slot-ss-experiment">
+          <div class="screenshot-slot-header">
+            <div class="slot-num">2</div>
+            <div class="slot-label">Code testing with different values</div>
+            <div class="slot-status" id="status-ss-experiment">Not uploaded</div>
+          </div>
+          <div class="upload-area" id="area-ss-experiment" onclick="triggerUpload('ss-experiment')">
+            <span>📷 Click to upload screenshot</span>
+            <input type="file" accept="image/*" id="file-ss-experiment" onchange="handleUpload('ss-experiment', this)">
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'Exercise 3: Create your own converter',
+    tag: 'Experiment',
+    body: `
+      <p>Challenge: Create a different unit converter based on the hints:</p>
+      <ul>
+        <li><strong>Temperature:</strong> Celsius to Fahrenheit: (C × 9/5) + 32</li>
+        <li><strong>Currency:</strong> USD to EUR (find current exchange rate)</li>
+        <li><strong>Weight:</strong> Pounds to kilograms: lbs / 2.205</li>
+        <li><strong>Length:</strong> Inches to centimeters: inches × 2.54</li>
+      </ul>
+      <p><strong>Example: Temperature converter</strong></p>
+      <div class="code-block">celsius = 25
+fahrenheit = (celsius * 9/5) + 32
+
+print(celsius, "°C is", round(fahrenheit, 2), "°F")</div>
+      <div class="hint">Choose any conversion you like and implement it using the same pattern as the miles/kilometers converter.</div>`
+  },
+  {
+    label: 'Upload screenshot: Custom converter',
+    tag: 'Submission',
+    body: `
+      <p>Upload your screenshot from Exercise 3:</p>
+      <div class="screenshot-section">
+        <div class="screenshot-section-title">Screenshot: Custom unit converter</div>
+        <div class="screenshot-slot" id="slot-ss-custom">
+          <div class="screenshot-slot-header">
+            <div class="slot-num">3</div>
+            <div class="slot-label">Code for custom converter</div>
+            <div class="slot-status" id="status-ss-custom">Not uploaded</div>
+          </div>
+          <div class="upload-area" id="area-ss-custom" onclick="triggerUpload('ss-custom')">
+            <span>📷 Click to upload screenshot</span>
+            <input type="file" accept="image/*" id="file-ss-custom" onchange="handleUpload('ss-custom', this)">
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'Download submission PDF',
+    tag: 'Final',
+    body: `
+      <p>Generate and download your lab submission as a PDF file.</p>
+      <div class="pdf-section">
+        <div class="pdf-section-title">📄 Generate your PDF</div>
+        <p>Enter your name and click the button to create your submission PDF.</p>
+        <div class="pdf-name-row">
+          <input type="text" id="student-name" placeholder="Your full name">
+        </div>
+        <button class="btn primary" id="pdf-btn" onclick="generatePDF()">
+          📥 Download PDF
+        </button>
+        <div class="pdf-status" id="pdf-status"></div>
+      </div>`
+  }
+];
+
+let openStep = 0;
+let completedSteps = new Set();
+
+function triggerUpload(id) { if (!document.getElementById('area-' + id).classList.contains('has-image')) document.getElementById('file-' + id).click(); }
+function handleUpload(id, input) { const file = input.files[0]; if (!file) return; const r = new FileReader(); r.onload = e => { screenshots[id] = e.target.result; renderSlot(id); }; r.readAsDataURL(file); }
+function renderSlot(id) {
+  const area = document.getElementById('area-' + id);
+  const status = document.getElementById('status-' + id);
+  if (!area) return;
+  if (screenshots[id]) {
+    area.classList.add('has-image');
+    area.innerHTML = `<img class="preview-img" src="${screenshots[id]}" alt="screenshot" /><div class="img-actions"><button onclick="replaceImage('${id}')">Replace</button><button class="remove" onclick="removeImage('${id}')">Remove</button><input type="file" accept="image/*" id="file-${id}" onchange="handleUpload('${id}',this)" style="display:none"/></div>`;
+    status.textContent = 'Uploaded ✓';
+    status.classList.add('uploaded');
+  } else {
+    area.classList.remove('has-image');
+    area.innerHTML = `<span>📷 Click to upload screenshot</span><input type="file" accept="image/*" id="file-${id}" onchange="handleUpload('${id}',this)"/>`;
+    status.textContent = 'Not uploaded';
+    status.classList.remove('uploaded');
+  }
+}
+function replaceImage(id) { document.getElementById('file-' + id).click(); }
+function removeImage(id) { delete screenshots[id]; renderSlot(id); }
+function saveCurrentAnswers() { ['student-name'].forEach(id => { const el = document.getElementById(id); if (el) savedAnswers[id] = el.value; }); }
+function restoreAnswers() { ['student-name'].forEach(id => { const el = document.getElementById(id); if (el && savedAnswers[id] !== undefined) el.value = savedAnswers[id]; }); ['ss-conversion', 'ss-experiment', 'ss-custom'].forEach(id => renderSlot(id)); }
+function buildPips() { document.getElementById('pips').innerHTML = steps.map((_, i) => `<div class="pip" id="pip-${i}"></div>`).join(''); }
+function updatePips() { steps.forEach((_, i) => { const p = document.getElementById(`pip-${i}`); p.className = 'pip ' + (completedSteps.has(i) ? 'done' : i === openStep ? 'active' : ''); }); }
+function renderSteps() {
+  saveCurrentAnswers();
+  document.getElementById('steps-container').innerHTML = steps.map((s, i) => {
+    const isDone = completedSteps.has(i);
+    const isActive = i === openStep;
+    const isOpen = i === openStep;
+    return `<div class="step ${isActive ? 'active' : ''} ${isDone ? 'done' : ''} ${isOpen ? 'open' : ''}" id="step-${i}"><div class="step-header" onclick="toggleStep(${i})"><div class="step-num">${isDone ? '✓' : i + 1}</div><div class="step-label">${s.label}</div><div class="step-tag">${s.tag}</div></div><div class="step-body">${s.body}<div class="step-actions">${i < steps.length - 1 ? `<button class="btn primary" onclick="markDone(${i})">Mark done & continue</button>` : `<button class="btn primary" onclick="markDone(${i})">Complete lab</button>`}${i > 0 ? `<button class="btn secondary" onclick="goTo(${i - 1})">← Back</button>` : ''}</div></div></div>`;
+  }).join('');
+  restoreAnswers();
+}
+function toggleStep(i) { openStep = openStep === i ? -1 : i; renderSteps(); updatePips(); }
+function markDone(i) { completedSteps.add(i); if (i < steps.length - 1) openStep = i + 1; else { openStep = -1; document.getElementById('complete-banner').style.display = 'block'; } renderSteps(); updatePips(); }
+function goTo(i) { openStep = i; renderSteps(); updatePips(); }
+async function generatePDF() {
+  saveCurrentAnswers();
+  const btn = document.getElementById('pdf-btn');
+  const statusEl = document.getElementById('pdf-status');
+  const studentName = (savedAnswers['student-name'] || '').trim();
+  btn.disabled = true;
+  statusEl.className = 'pdf-status generating';
+  statusEl.textContent = 'Building your PDF…';
+  try {
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 20;
+    const contentW = pageW - margin * 2;
+    let y = margin;
+    function checkPage(need) { if (y + need > pageH - margin) { doc.addPage(); y = margin; } }
+    function fillRect(x, ry, w, h, r, g, b) { doc.setFillColor(r, g, b); doc.rect(x, ry, w, h, 'F'); }
+    async function drawImageBlock(imgData, maxH) {
+      const maxW = contentW;
+      let iW = maxW, iH = maxH;
+      try {
+        const img = new Image();
+        await new Promise(res => { img.onload = res; img.onerror = res; img.src = imgData; });
+        if (img.width && img.height) {
+          const ratio = img.width / img.height;
+          if (maxW / ratio <= maxH) { iW = maxW; iH = maxW / ratio; } else { iH = maxH; iW = maxH * ratio; }
+        }
+      } catch (e) { }
+      checkPage(iH + 8);
+      const fmt = imgData.includes('image/png') ? 'PNG' : 'JPEG';
+      doc.setDrawColor(31, 95, 160);
+      doc.setLineWidth(0.5);
+      doc.rect(margin, y, iW, iH);
+      doc.addImage(imgData, fmt, margin, y, iW, iH);
+      y += iH + 10;
+    }
+    fillRect(0, 0, pageW, 14, 31, 95, 160);
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text('PYTHON LAB 2.4.1.8', margin, 9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Unit Conversion', pageW - margin, 9, { align: 'right' });
+    y = 22;
+    doc.setTextColor(20, 20, 20);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Lab Submission', margin, y);
+    y += 8;
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(80, 80, 80);
+    doc.text(`Student: ${studentName || '(name not provided)'}`, margin, y);
+    y += 5;
+    doc.text(`Submitted: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, margin, y);
+    y += 5;
+    doc.text('Lab: Unit Conversion (2.4.1.8)', margin, y);
+    y += 10;
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, pageW - margin, y);
+    y += 8;
+    if (screenshots['ss-conversion']) {
+      checkPage(15);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(20, 20, 20);
+      doc.text('Exercise 1: Conversion Formulas', margin, y);
+      y += 6;
+      await drawImageBlock(screenshots['ss-conversion'], 80);
+    }
+    if (screenshots['ss-experiment']) {
+      checkPage(15);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(20, 20, 20);
+      doc.text('Exercise 2: Testing Different Values', margin, y);
+      y += 6;
+      await drawImageBlock(screenshots['ss-experiment'], 80);
+    }
+    if (screenshots['ss-custom']) {
+      checkPage(15);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(20, 20, 20);
+      doc.text('Exercise 3: Custom Converter', margin, y);
+      y += 6;
+      await drawImageBlock(screenshots['ss-custom'], 80);
+    }
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let p = 1; p <= totalPages; p++) {
+      doc.setPage(p);
+      doc.setDrawColor(220, 220, 220);
+      doc.setLineWidth(0.3);
+      doc.line(margin, pageH - 12, pageW - margin, pageH - 12);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(150, 150, 150);
+      doc.text(`Lab 2.4.1.8: Unit Conversion — ${studentName || 'Student'}`, margin, pageH - 7);
+      doc.text(`Page ${p} of ${totalPages}`, pageW - margin, pageH - 7, { align: 'right' });
+    }
+    const filename = studentName ? `Lab_2.4.1.8_${studentName.replace(/\s+/g, '_')}.pdf` : 'Lab_2.4.1.8_Submission.pdf';
+    doc.save(filename);
+    statusEl.className = 'pdf-status done';
+    statusEl.textContent = `✓ PDF saved as "${filename}" — ready to submit!`;
+  } catch (err) {
+    statusEl.className = 'pdf-status error';
+    statusEl.textContent = 'Something went wrong. Please try again.';
+    console.error(err);
+  }
+  btn.disabled = false;
+}
+buildPips();
+renderSteps();
+updatePips();
+</script>
+</body>
+</html>

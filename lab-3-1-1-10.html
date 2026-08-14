@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 3.1.1.10: Comparison Operators and Conditional Execution</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --text: #1a1a1a;
+      --text-secondary: #5c5c5c;
+      --border: #e0e0e0;
+      --primary: #1f5fa0;
+      --primary-light: #e3f2fd;
+      --success: #2e7d32;
+      --success-light: #e8f5e9;
+      --radius: 8px;
+      --font-sans: system-ui, -apple-system, sans-serif;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: #f5f5f5;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border); padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 4px; background: var(--primary-light); color: var(--primary); margin-bottom: 12px; }
+    .lab-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .lab-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem; }
+    .overview-box { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; padding: 16px; margin-bottom: 2rem; }
+    .overview-box p { color: var(--primary); font-size: 14px; margin: 0 0 8px; line-height: 1.6; font-weight: 500; }
+    .objectives-box { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 2rem; }
+    .objectives-box p { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
+    .objectives-box ul { font-size: 14px; color: var(--text-secondary); margin: 0 0 0 20px; line-height: 1.8; }
+    .progress-bar { display: flex; gap: 6px; margin-bottom: 2rem; }
+    .pip { flex: 1; height: 6px; border-radius: 3px; background: #e0e0e0; }
+    .pip.done { background: var(--success); }
+    .pip.active { background: var(--primary); }
+    .steps { display: flex; flex-direction: column; gap: 12px; }
+    .step { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .step.active { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .step.done { border-color: var(--success); }
+    .step-header { display: flex; align-items: center; gap: 12px; padding: 16px; cursor: pointer; background: var(--bg-secondary); }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; border: 2px solid var(--border); color: var(--text); background: var(--bg); }
+    .step.active .step-num { background: var(--primary); color: white; border-color: var(--primary); }
+    .step.done .step-num { background: var(--success); color: white; }
+    .step-label { font-size: 15px; font-weight: 600; flex: 1; }
+    .step-tag { font-size: 12px; padding: 4px 10px; border-radius: 4px; background: var(--primary-light); color: var(--primary); font-weight: 500; }
+    .step-body { display: none; padding: 0 16px 16px; background: var(--bg); }
+    .step.open .step-body { display: block; }
+    .step-body p { font-size: 14px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 12px; }
+    .info-box { margin: 12px 0; padding: 12px 16px; background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; }
+    .info-box p { color: var(--primary); font-size: 13px; margin: 0; line-height: 1.6; }
+    .code-block { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 10px 0; color: #d63384; white-space: pre-wrap; line-height: 1.5; }
+    .test-data { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 10px 0; }
+    .test-case { margin-bottom: 12px; }
+    .test-input { font-size: 13px; color: var(--text); font-weight: 500; }
+    .test-output { font-size: 13px; color: var(--primary); margin-top: 4px; font-family: 'Courier New', monospace; }
+    .btn { padding: 10px 20px; border-radius: 4px; border: none; font-size: 14px; cursor: pointer; font-weight: 600; background: var(--primary); color: white; margin-top: 16px; }
+    .step-actions { display: flex; gap: 10px; margin-top: 16px; }
+    .complete-banner { display: none; margin-top: 2rem; padding: 16px; background: var(--success-light); border-radius: var(--radius); border: 1px solid var(--success); }
+  </style>
+</head>
+<body>
+<div class="container">
+  <span class="badge">📚 Python Lab</span>
+  <div class="lab-title">Lab 3.1.1.10: Comparison Operators and Conditional Execution</div>
+  <div class="lab-desc">Use if/elif/else statements to execute different code based on conditions. Master the Spathiphyllum plant challenge!</div>
+
+  <div class="overview-box">
+    <p>📋 Lab Overview</p>
+    <p>Write a program that responds differently based on the plant name entered. Use if/elif/else to check string equality and print appropriate messages.</p>
+  </div>
+
+  <div class="objectives-box">
+    <p>✅ Upon completion, you will be able to:</p>
+    <ul>
+      <li>Use the input() function to get user data</li>
+      <li>Use if/elif/else conditional statements</li>
+      <li>Compare strings with == operator</li>
+      <li>Execute different code paths based on conditions</li>
+      <li>Use string concatenation in print statements</li>
+    </ul>
+  </div>
+
+  <div class="progress-bar" id="pips"></div>
+  <div class="steps" id="steps-container"></div>
+  <div class="complete-banner" id="complete-banner">
+    <p><strong>Lab complete!</strong> You've mastered conditional execution! 🎉</p>
+  </div>
+</div>
+
+<script>
+const steps = [
+  {
+    label: 'Understand the problem',
+    tag: 'Context',
+    body: `
+      <p><strong>Your task:</strong> Write a program that responds based on the flower name entered.</p>
+      <p><strong>The program should:</strong></p>
+      <ul>
+        <li>If input is "Spathiphyllum" → print "Yes - Spathiphyllum is the best plant ever!"</li>
+        <li>Else if input is "spathiphyllum" → print "No, I want a big Spathiphyllum!"</li>
+        <li>Else (any other input) → print "Spathiphyllum! Not [input]!"</li>
+      </ul>
+      <p><strong>Key concepts:</strong></p>
+      <ul>
+        <li><code>if</code> : execute code if condition is True</li>
+        <li><code>elif</code> : else if - check another condition</li>
+        <li><code>else</code> : execute code if all conditions are False</li>
+      </ul>`
+  },
+  {
+    label: 'Choose your platform',
+    tag: 'Setup',
+    body: `
+      <p><a href="https://colab.research.google.com/" target="_blank" style="display:inline-block; padding:8px 14px; border-radius:6px; border:1px solid var(--primary); background:var(--primary-light); color:var(--primary); font-size:12px; font-weight:500; text-decoration:none; cursor:pointer; margin:8px 0;">Open Google Colab →</a></p>
+      <p style="font-size: 12px; color: #666; margin-top: 8px;"><strong>💡 Tip:</strong> Click "Save a copy in Drive" and rename to "Lab_3.1.1.5_YourName"</p>`
+  },
+  {
+    label: 'Write your code',
+    tag: 'Code',
+    body: `
+      <p><strong>Starter code:</strong></p>
+      <div class="code-block">name = input("Enter flower name: ")
+# Write your if/elif/else statements here</div>
+      
+      <p><strong>Complete Solution:</strong></p>
+      <img src="data:image/png;base64,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" alt="Complete solution code" style="max-width: 100%; border: 1px solid #e0e0e0; border-radius: 4px; margin: 12px 0; display: block;">
+      <p style="font-size: 12px; color: #999; margin-top: 8px;"><em>💡 Image format prevents copy-pasting - type it out to learn!</em></p>
+      
+      <p style="margin-top: 16px; font-size: 14px; font-weight: 600;">What each line does:</p>
+      <ul style="font-size: 13px; margin-top: 8px;">
+        <li><strong>Line 1:</strong> Get flower name from user input</li>
+        <li><strong>Line 2:</strong> If name equals "Spathiphyllum" (exact match, uppercase)</li>
+        <li><strong>Line 3:</strong> Print the enthusiastic message</li>
+        <li><strong>Line 4:</strong> Else if name equals "spathiphyllum" (lowercase)</li>
+        <li><strong>Line 5:</strong> Print the disappointed message</li>
+        <li><strong>Line 6:</strong> Otherwise (any other flower name)</li>
+        <li><strong>Line 7:</strong> Print message showing the input with string concatenation</li>
+      </ul>
+      
+      <p style="margin-top: 16px;"><strong>Test your code:</strong></p>
+      <div class="test-data">
+        <div class="test-case">
+          <div class="test-input">Input: spathiphyllum</div>
+          <div class="test-output">Output: No, I want a big Spathiphyllum!</div>
+        </div>
+        <div class="test-case">
+          <div class="test-input">Input: pelargonium</div>
+          <div class="test-output">Output: Spathiphyllum! Not pelargonium!</div>
+        </div>
+        <div class="test-case">
+          <div class="test-input">Input: Spathiphyllum</div>
+          <div class="test-output">Output: Yes - Spathiphyllum is the best plant ever!</div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'Complete!',
+    tag: 'Done',
+    body: `<p>Great job! You've learned how to use if/elif/else statements to make decisions in your code!</p>`
+  }
+];
+
+let openStep = 0;
+let completedSteps = new Set();
+
+function buildPips() { document.getElementById('pips').innerHTML = steps.map((_, i) => `<div class="pip" id="pip-${i}"></div>`).join(''); }
+function updatePips() { steps.forEach((_, i) => { const p = document.getElementById(`pip-${i}`); p.className = 'pip ' + (completedSteps.has(i) ? 'done' : i === openStep ? 'active' : ''); }); }
+function renderSteps() {
+  document.getElementById('steps-container').innerHTML = steps.map((s, i) => {
+    const isDone = completedSteps.has(i);
+    const isActive = i === openStep;
+    const isOpen = i === openStep;
+    return `<div class="step ${isActive ? 'active' : ''} ${isDone ? 'done' : ''} ${isOpen ? 'open' : ''}" id="step-${i}"><div class="step-header" onclick="toggleStep(${i})"><div class="step-num">${isDone ? '✓' : i + 1}</div><div class="step-label">${s.label}</div><div class="step-tag">${s.tag}</div></div><div class="step-body">${s.body}<div class="step-actions"><button class="btn" onclick="markDone(${i})">Mark done</button></div></div></div>`;
+  }).join('');
+}
+function toggleStep(i) { openStep = openStep === i ? -1 : i; renderSteps(); updatePips(); }
+function markDone(i) { completedSteps.add(i); if (i < steps.length - 1) openStep = i + 1; else { document.getElementById('complete-banner').style.display = 'block'; } renderSteps(); updatePips(); }
+
+buildPips();
+renderSteps();
+updatePips();
+</script>
+</body>
+</html>

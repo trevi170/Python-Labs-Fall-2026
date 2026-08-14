@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 2.6.1.9: Simple Input and Output</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --text: #1a1a1a;
+      --text-secondary: #5c5c5c;
+      --border: #e0e0e0;
+      --primary: #1f5fa0;
+      --primary-light: #e3f2fd;
+      --success: #2e7d32;
+      --success-light: #e8f5e9;
+      --radius: 8px;
+      --font-sans: system-ui, -apple-system, sans-serif;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: #f5f5f5;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border); padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 4px; background: var(--primary-light); color: var(--primary); margin-bottom: 12px; }
+    .lab-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .lab-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem; }
+    .overview-box { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; padding: 16px; margin-bottom: 2rem; }
+    .overview-box p { color: var(--primary); font-size: 14px; margin: 0 0 8px; line-height: 1.6; font-weight: 500; }
+    .objectives-box { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 2rem; }
+    .objectives-box p { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .objectives-box ul { font-size: 14px; color: var(--text-secondary); margin: 0 0 0 20px; line-height: 1.8; }
+    .objectives-box li { margin-bottom: 8px; }
+    .progress-bar { display: flex; gap: 6px; margin-bottom: 2rem; }
+    .pip { flex: 1; height: 6px; border-radius: 3px; background: #e0e0e0; transition: background 0.3s; }
+    .pip.done { background: var(--success); }
+    .pip.active { background: var(--primary); }
+    .steps { display: flex; flex-direction: column; gap: 12px; }
+    .step { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: box-shadow 0.2s; }
+    .step:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .step.active { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .step.done { border-color: var(--success); }
+    .step-header { display: flex; align-items: center; gap: 12px; padding: 16px; cursor: pointer; user-select: none; background: var(--bg-secondary); }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0; border: 2px solid var(--border); color: var(--text); background: var(--bg); }
+    .step.active .step-num { background: var(--primary); color: white; border-color: var(--primary); }
+    .step.done .step-num { background: var(--success); color: white; border-color: var(--success); font-size: 12px; }
+    .step-label { font-size: 15px; font-weight: 600; flex: 1; }
+    .step-tag { font-size: 12px; padding: 4px 10px; border-radius: 4px; background: var(--primary-light); color: var(--primary); font-weight: 500; }
+    .step.active .step-tag { background: var(--primary); color: white; }
+    .step-body { display: none; padding: 0 16px 16px; background: var(--bg); }
+    .step.open .step-body { display: block; }
+    .step-body p { font-size: 14px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 12px; }
+    .step-body strong { color: var(--text); font-weight: 600; }
+    .info-box { margin: 12px 0; padding: 12px 16px; background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; }
+    .info-box p { color: var(--primary); font-size: 13px; margin: 0; line-height: 1.6; }
+    .code-block { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 10px 0; color: #d63384; overflow-x: auto; max-height: 300px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; line-height: 1.5; }
+    .step-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .btn { padding: 10px 20px; border-radius: 4px; border: none; font-size: 14px; cursor: pointer; font-family: var(--font-sans); font-weight: 600; transition: all 0.2s; }
+    .btn.primary { background: var(--primary); color: white; }
+    .btn.primary:hover { background: #1a4a7f; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(31,95,160,0.3); }
+    .btn.secondary { background: var(--bg-secondary); color: var(--text); border: 1px solid var(--border); }
+    .btn.secondary:hover { background: #f0f0f0; }
+    .complete-banner { display: none; margin-top: 2rem; padding: 16px 20px; background: var(--success-light); border-radius: var(--radius); border: 1px solid var(--success); border-left: 4px solid var(--success); }
+    .complete-banner p { color: var(--success); font-size: 14px; margin: 0; line-height: 1.6; font-weight: 500; }
+    ul { margin: 10px 0 10px 20px; }
+    li { font-size: 14px; color: var(--text-secondary); margin-bottom: 8px; line-height: 1.6; }
+    .hint { font-size: 13px; color: var(--text-secondary); margin-top: 8px; font-style: italic; }
+    .screenshot-section { margin-top: 16px; }
+    .screenshot-section-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
+    .screenshot-slot { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; }
+    .screenshot-slot-header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--bg-secondary); border-bottom: 1px solid var(--border); }
+    .slot-num { width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: white; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .slot-label { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; }
+    .slot-status { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+    .slot-status.uploaded { color: var(--success); font-weight: 600; }
+    .upload-area { padding: 24px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; background: var(--bg); transition: all 0.15s; border-top: 1px solid var(--border); }
+    .upload-area:hover { background: var(--bg-secondary); }
+    .upload-area.has-image { padding: 0; cursor: default; }
+    .upload-area span { font-size: 14px; color: var(--text-secondary); }
+    .upload-area input[type=file] { display: none; }
+    .preview-img { width: 100%; display: block; max-height: 300px; object-fit: contain; background: var(--bg-secondary); }
+    .img-actions { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--border); background: var(--bg); }
+    .img-actions button { font-size: 13px; padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); cursor: pointer; font-family: var(--font-sans); color: var(--text); }
+    .img-actions button:hover { background: var(--bg-secondary); }
+    .img-actions button.remove { color: #d32f2f; border-color: #d32f2f; }
+    .img-actions button.remove:hover { background: #ffebee; }
+    .pdf-section { margin-top: 16px; padding: 16px; background: var(--bg-secondary); border-radius: var(--radius); border: 1px solid var(--border); }
+    .pdf-section-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .pdf-section p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 12px; }
+    .pdf-name-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .pdf-name-row input { flex: 1; padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); font-family: var(--font-sans); font-size: 14px; color: var(--text); }
+    .pdf-name-row input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .pdf-status { font-size: 12px; color: var(--text-secondary); margin-top: 8px; min-height: 18px; }
+    .pdf-status.generating { color: var(--primary); font-weight: 600; }
+    .pdf-status.done { color: var(--success); font-weight: 600; }
+    .pdf-status.error { color: #d32f2f; font-weight: 600; }
+    .btn.pdf-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <span class="badge">📚 Python Lab</span>
+  <div class="lab-title">Lab 2.6.1.9: Simple Input and Output</div>
+  <div class="lab-desc">Master input and output operations in Python. Get data from users and display results of arithmetic calculations.</div>
+
+  <div class="overview-box">
+    <p>📋 Lab Overview</p>
+    <p>In this lab, you'll write a program that takes two numbers from a user, performs four arithmetic operations, and displays the results.</p>
+  </div>
+
+  <div class="objectives-box">
+    <p>✅ Upon completion, you will be able to:</p>
+    <ul>
+      <li>Use input() to get data from users</li>
+      <li>Convert user input to numbers with float()</li>
+      <li>Perform basic arithmetic operations</li>
+      <li>Display results to the console</li>
+      <li>Build an interactive program</li>
+    </ul>
+  </div>
+
+  <div class="progress-bar" id="pips"></div>
+  <div class="steps" id="steps-container"></div>
+
+  <div class="complete-banner" id="complete-banner">
+    <p><strong>Lab complete!</strong> You've created an interactive calculator! 🎉</p>
+  </div>
+</div>
+
+<script>
+const { jsPDF } = window.jspdf;
+const savedAnswers = {};
+const screenshots = {};
+
+const steps = [
+  {
+    label: 'Understand input and output',
+    tag: 'Context',
+    body: `
+      <p><strong>input() function:</strong> Gets text from the user</p>
+      <ul>
+        <li><code>input("Enter your name: ")</code> displays prompt and waits for user to type</li>
+        <li>Returns whatever the user types as a string</li>
+        <li>Must convert to number with <code>float()</code> or <code>int()</code></li>
+      </ul>
+      <p><strong>print() function:</strong> Displays output to the console</p>
+      <ul>
+        <li><code>print("Hello")</code> displays text</li>
+        <li><code>print(a + b)</code> displays calculation result</li>
+      </ul>
+      <div class="info-box"><p><strong>Pattern:</strong> input → calculate → output</p></div>`
+  },
+  {
+    label: 'Choose your platform',
+    tag: 'Setup',
+    body: `
+      <p>You can complete this lab using:</p>
+      <div class="info-box"><p><strong>Option 1:</strong> Google Colab (browser-based, no installation)</p></div>
+      <p><a href="https://colab.research.google.com/" target="_blank" style="display:inline-block; padding:8px 14px; border-radius:6px; border:1px solid var(--primary); background:var(--primary-light); color:var(--primary); font-size:12px; font-weight:500; text-decoration:none; cursor:pointer; margin:8px 0;">Open Google Colab →</a></p>
+      <p style="font-size: 12px; color: #666; margin-top: 8px;"><strong>💡 Tip:</strong> When Colab opens, click "Save a copy in Drive" and rename it to something like "Lab_2.X.X.X_YourName" so you can find it later.</p>
+      <div class="info-box"><p><strong>Option 2:</strong> Python installed locally (VS Code, IDLE, or terminal)</p></div>
+      <p>Choose whichever you prefer and proceed to the next step.</p>`
+  },
+  {
+    label: 'Exercise: Complete the program',
+    tag: 'Experiment',
+    body: `
+      <p><strong>Your task:</strong> Fill in the blank lines to complete the calculator.</p>
+            <p><strong>Complete Solution:</strong></p>
+      <img src="data:image/png;base64,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pi2el/C+NvughoaGMpksLS2t3niibSeCO9q82KVv2kF127QhhKxYsbK4uHhzZCS3kX0GFL/3yYDotohEmBFcF/v115y7y2RCutgW5mY7YmK+3b/fwtzMZvAg9u3lXWzFbw3MmD4jMfEI95a4EO3atZvh5yfuUwl5Wtpm8KDoqCg3d/e6n2UsXpGPj2/a8dSRIxy8vTwdnRzlfW1lD0oIWbPmsy3RUX0szOv9n4q2/a+/quQvo1SwKjzcwKDTmNGvT50yZdQox3qlb9pBCSH6+vpfREXv2BHz09mzRJkzwMZFtz29vFT761BPy+pil5Y+GjlixJHEJCG/z7aFkK6j3VgQ3RZLS+xiGxp28fL23rEjJiJinURL0joSdbQbEaLb4tLuGaGC8PDVDd+oJZGoow3NBrrYAMCirT+vAQCagRkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDA8uL3a3C/tAsAoB48jwAAlv8Dca19TJr3vAwAAAAASUVORK5CYII=" alt="Complete solution code" style="max-width: 100%; border: 1px solid #e0e0e0; border-radius: 4px; margin: 12px 0; display: block;">
+      <p style="font-size: 12px; color: #999; margin-top: 8px;"><em>💡 Image format prevents copy-pasting - type it out to learn!</em></p>
+      
+      <p style="margin-top: 16px; font-size: 14px; font-weight: 600;">What each line does:</p>
+      <ul style="font-size: 13px; margin-top: 8px;">
+        <li><strong>Line 1:</strong> Ask user for first number and store as float</li>
+        <li><strong>Line 2:</strong> Ask user for second number and store as float</li>
+        <li><strong>Line 3:</strong> Print addition result</li>
+        <li><strong>Line 4:</strong> Print subtraction result</li>
+        <li><strong>Line 5:</strong> Print multiplication result</li>
+        <li><strong>Line 6:</strong> Print division result</li>
+        <li><strong>Line 7:</strong> Print message with newline at beginning (
+)</li>
+      </ul>
+      
+      <p style="margin-top: 16px;"><strong>Test your code:</strong></p>
+      <p><strong>Starter code:</strong></p>
+      <div class="code-block"># input a float value for variable a here
+# input a float value for variable b here
+
+# output the result of addition here
+# output the result of subtraction here
+# output the result of multiplication here
+# output the result of division here
+
+print("\\nThat's all, folks!")</div>
+      <p><strong>What to replace:</strong></p>
+      <ul>
+        <li>Line 1: <code>a = float(input("Enter first value: "))</code></li>
+        <li>Line 2: <code>b = float(input("Enter second value: "))</code></li>
+        <li>Line 4: <code>print("Addition:", a + b)</code></li>
+        <li>Line 5: <code>print("Subtraction:", a - b)</code></li>
+        <li>Line 6: <code>print("Multiplication:", a * b)</code></li>
+        <li>Line 7: <code>print("Division:", a / b)</code></li>
+      </ul>
+      <p><strong>Expected behavior:</strong></p>
+      <ul>
+        <li>Program asks for two numbers</li>
+        <li>You type first number, press Enter</li>
+        <li>You type second number, press Enter</li>
+        <li>Program displays four arithmetic results</li>
+        <li>Program prints "That's all, folks!"</li>
+      </ul>
+      <p><strong>Test with values 10 and 2:</strong></p>
+      <div class="code-block">Enter first value: 10
+Enter second value: 2
+Addition: 12.0
+Subtraction: 8.0
+Multiplication: 20.0
+Division: 5.0
+
+That's all, folks!</div>
+      <div class="hint">Use float(input(...)) to get a number. Use print() with multiple arguments separated by commas.</div>`
+  },
+  {
+    label: 'Upload screenshot: Running program',
+    tag: 'Submission',
+    body: `
+      <p>Upload your screenshot showing the program running with input and output:</p>
+      <div class="screenshot-section">
+        <div class="screenshot-section-title">Screenshot: Program execution</div>
+        <div class="screenshot-slot" id="slot-ss-program">
+          <div class="screenshot-slot-header">
+            <div class="slot-num">1</div>
+            <div class="slot-label">Complete program with input and output</div>
+            <div class="slot-status" id="status-ss-program">Not uploaded</div>
+          </div>
+          <div class="upload-area" id="area-ss-program" onclick="triggerUpload('ss-program')">
+            <span>📷 Click to upload screenshot</span>
+            <input type="file" accept="image/*" id="file-ss-program" onchange="handleUpload('ss-program', this)">
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'Download submission PDF',
+    tag: 'Final',
+    body: `
+      <p>Generate and download your lab submission as a PDF file.</p>
+      <div class="pdf-section">
+        <div class="pdf-section-title">📄 Generate your PDF</div>
+        <p>Enter your name and click the button to create your submission PDF.</p>
+        <div class="pdf-name-row">
+          <input type="text" id="student-name" placeholder="Your full name">
+        </div>
+        <button class="btn primary" id="pdf-btn" onclick="generatePDF()">
+          📥 Download PDF
+        </button>
+        <div class="pdf-status" id="pdf-status"></div>
+      </div>`
+  }
+];
+
+let openStep = 0;
+let completedSteps = new Set();
+
+function triggerUpload(id) { if (!document.getElementById('area-' + id).classList.contains('has-image')) document.getElementById('file-' + id).click(); }
+function handleUpload(id, input) { const file = input.files[0]; if (!file) return; const r = new FileReader(); r.onload = e => { screenshots[id] = e.target.result; renderSlot(id); }; r.readAsDataURL(file); }
+function renderSlot(id) {
+  const area = document.getElementById('area-' + id);
+  const status = document.getElementById('status-' + id);
+  if (!area) return;
+  if (screenshots[id]) {
+    area.classList.add('has-image');
+    area.innerHTML = `<img class="preview-img" src="${screenshots[id]}" alt="screenshot" /><div class="img-actions"><button onclick="replaceImage('${id}')">Replace</button><button class="remove" onclick="removeImage('${id}')">Remove</button><input type="file" accept="image/*" id="file-${id}" onchange="handleUpload('${id}',this)" style="display:none"/></div>`;
+    status.textContent = 'Uploaded ✓';
+    status.classList.add('uploaded');
+  } else {
+    area.classList.remove('has-image');
+    area.innerHTML = `<span>📷 Click to upload screenshot</span><input type="file" accept="image/*" id="file-${id}" onchange="handleUpload('${id}',this)"/>`;
+    status.textContent = 'Not uploaded';
+    status.classList.remove('uploaded');
+  }
+}
+function replaceImage(id) { document.getElementById('file-' + id).click(); }
+function removeImage(id) { delete screenshots[id]; renderSlot(id); }
+function saveCurrentAnswers() { ['student-name'].forEach(id => { const el = document.getElementById(id); if (el) savedAnswers[id] = el.value; }); }
+function restoreAnswers() { ['student-name'].forEach(id => { const el = document.getElementById(id); if (el && savedAnswers[id] !== undefined) el.value = savedAnswers[id]; }); ['ss-program'].forEach(id => renderSlot(id)); }
+function buildPips() { document.getElementById('pips').innerHTML = steps.map((_, i) => `<div class="pip" id="pip-${i}"></div>`).join(''); }
+function updatePips() { steps.forEach((_, i) => { const p = document.getElementById(`pip-${i}`); p.className = 'pip ' + (completedSteps.has(i) ? 'done' : i === openStep ? 'active' : ''); }); }
+function renderSteps() {
+  saveCurrentAnswers();
+  document.getElementById('steps-container').innerHTML = steps.map((s, i) => {
+    const isDone = completedSteps.has(i);
+    const isActive = i === openStep;
+    const isOpen = i === openStep;
+    return `<div class="step ${isActive ? 'active' : ''} ${isDone ? 'done' : ''} ${isOpen ? 'open' : ''}" id="step-${i}"><div class="step-header" onclick="toggleStep(${i})"><div class="step-num">${isDone ? '✓' : i + 1}</div><div class="step-label">${s.label}</div><div class="step-tag">${s.tag}</div></div><div class="step-body">${s.body}<div class="step-actions">${i < steps.length - 1 ? `<button class="btn primary" onclick="markDone(${i})">Mark done & continue</button>` : `<button class="btn primary" onclick="markDone(${i})">Complete lab</button>`}${i > 0 ? `<button class="btn secondary" onclick="goTo(${i - 1})">← Back</button>` : ''}</div></div></div>`;
+  }).join('');
+  restoreAnswers();
+}
+function toggleStep(i) { openStep = openStep === i ? -1 : i; renderSteps(); updatePips(); }
+function markDone(i) { completedSteps.add(i); if (i < steps.length - 1) openStep = i + 1; else { openStep = -1; document.getElementById('complete-banner').style.display = 'block'; } renderSteps(); updatePips(); }
+function goTo(i) { openStep = i; renderSteps(); updatePips(); }
+async function generatePDF() {
+  saveCurrentAnswers();
+  const btn = document.getElementById('pdf-btn');
+  const statusEl = document.getElementById('pdf-status');
+  const studentName = (savedAnswers['student-name'] || '').trim();
+  btn.disabled = true;
+  statusEl.className = 'pdf-status generating';
+  statusEl.textContent = 'Building your PDF…';
+  try {
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 20;
+    const contentW = pageW - margin * 2;
+    let y = margin;
+    function checkPage(need) { if (y + need > pageH - margin) { doc.addPage(); y = margin; } }
+    function fillRect(x, ry, w, h, r, g, b) { doc.setFillColor(r, g, b); doc.rect(x, ry, w, h, 'F'); }
+    async function drawImageBlock(imgData, maxH) {
+      const maxW = contentW;
+      let iW = maxW, iH = maxH;
+      try {
+        const img = new Image();
+        await new Promise(res => { img.onload = res; img.onerror = res; img.src = imgData; });
+        if (img.width && img.height) {
+          const ratio = img.width / img.height;
+          if (maxW / ratio <= maxH) { iW = maxW; iH = maxW / ratio; } else { iH = maxH; iW = maxH * ratio; }
+        }
+      } catch (e) { }
+      checkPage(iH + 8);
+      const fmt = imgData.includes('image/png') ? 'PNG' : 'JPEG';
+      doc.setDrawColor(31, 95, 160);
+      doc.setLineWidth(0.5);
+      doc.rect(margin, y, iW, iH);
+      doc.addImage(imgData, fmt, margin, y, iW, iH);
+      y += iH + 10;
+    }
+    fillRect(0, 0, pageW, 14, 31, 95, 160);
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text('PYTHON LAB 2.6.1.9', margin, 9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Simple Input and Output', pageW - margin, 9, { align: 'right' });
+    y = 22;
+    doc.setTextColor(20, 20, 20);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Lab Submission', margin, y);
+    y += 8;
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(80, 80, 80);
+    doc.text(`Student: ${studentName || '(name not provided)'}`, margin, y);
+    y += 5;
+    doc.text(`Submitted: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, margin, y);
+    y += 5;
+    doc.text('Lab: Simple Input and Output (2.6.1.9)', margin, y);
+    y += 10;
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, pageW - margin, y);
+    y += 8;
+    if (screenshots['ss-program']) {
+      checkPage(15);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(20, 20, 20);
+      doc.text('Program Output', margin, y);
+      y += 6;
+      await drawImageBlock(screenshots['ss-program'], 100);
+    }
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let p = 1; p <= totalPages; p++) {
+      doc.setPage(p);
+      doc.setDrawColor(220, 220, 220);
+      doc.setLineWidth(0.3);
+      doc.line(margin, pageH - 12, pageW - margin, pageH - 12);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(150, 150, 150);
+      doc.text(`Lab 2.6.1.9: Simple Input and Output — ${studentName || 'Student'}`, margin, pageH - 7);
+      doc.text(`Page ${p} of ${totalPages}`, pageW - margin, pageH - 7, { align: 'right' });
+    }
+    const filename = studentName ? `Lab_2.6.1.9_${studentName.replace(/\s+/g, '_')}.pdf` : 'Lab_2.6.1.9_Submission.pdf';
+    doc.save(filename);
+    statusEl.className = 'pdf-status done';
+    statusEl.textContent = `✓ PDF saved as "${filename}" — ready to submit!`;
+  } catch (err) {
+    statusEl.className = 'pdf-status error';
+    statusEl.textContent = 'Something went wrong. Please try again.';
+    console.error(err);
+  }
+  btn.disabled = false;
+}
+buildPips();
+renderSteps();
+updatePips();
+</script>
+</body>
+</html>

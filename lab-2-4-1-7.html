@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 2.4.1.7: Variables</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --text: #1a1a1a;
+      --text-secondary: #5c5c5c;
+      --border: #e0e0e0;
+      --primary: #1f5fa0;
+      --primary-light: #e3f2fd;
+      --success: #2e7d32;
+      --success-light: #e8f5e9;
+      --radius: 8px;
+      --font-sans: system-ui, -apple-system, sans-serif;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: #f5f5f5;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border); padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 4px; background: var(--primary-light); color: var(--primary); margin-bottom: 12px; }
+    .lab-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .lab-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem; }
+    .overview-box { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; padding: 16px; margin-bottom: 2rem; }
+    .overview-box p { color: var(--primary); font-size: 14px; margin: 0 0 8px; line-height: 1.6; font-weight: 500; }
+    .objectives-box { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 2rem; }
+    .objectives-box p { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .objectives-box ul { font-size: 14px; color: var(--text-secondary); margin: 0 0 0 20px; line-height: 1.8; }
+    .objectives-box li { margin-bottom: 8px; }
+    .progress-bar { display: flex; gap: 6px; margin-bottom: 2rem; }
+    .pip { flex: 1; height: 6px; border-radius: 3px; background: #e0e0e0; transition: background 0.3s; }
+    .pip.done { background: var(--success); }
+    .pip.active { background: var(--primary); }
+    .steps { display: flex; flex-direction: column; gap: 12px; }
+    .step { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: box-shadow 0.2s; }
+    .step:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .step.active { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .step.done { border-color: var(--success); }
+    .step-header { display: flex; align-items: center; gap: 12px; padding: 16px; cursor: pointer; user-select: none; background: var(--bg-secondary); }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0; border: 2px solid var(--border); color: var(--text); background: var(--bg); }
+    .step.active .step-num { background: var(--primary); color: white; border-color: var(--primary); }
+    .step.done .step-num { background: var(--success); color: white; border-color: var(--success); font-size: 12px; }
+    .step-label { font-size: 15px; font-weight: 600; flex: 1; }
+    .step-tag { font-size: 12px; padding: 4px 10px; border-radius: 4px; background: var(--primary-light); color: var(--primary); font-weight: 500; }
+    .step.active .step-tag { background: var(--primary); color: white; }
+    .step-body { display: none; padding: 0 16px 16px; background: var(--bg); }
+    .step.open .step-body { display: block; }
+    .step-body p { font-size: 14px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 12px; }
+    .step-body strong { color: var(--text); font-weight: 600; }
+    .info-box { margin: 12px 0; padding: 12px 16px; background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; }
+    .info-box p { color: var(--primary); font-size: 13px; margin: 0; line-height: 1.6; }
+    .code-block { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 10px 0; color: #d63384; overflow-x: auto; max-height: 300px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; line-height: 1.5; }
+    .step-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .btn { padding: 10px 20px; border-radius: 4px; border: none; font-size: 14px; cursor: pointer; font-family: var(--font-sans); font-weight: 600; transition: all 0.2s; }
+    .btn.primary { background: var(--primary); color: white; }
+    .btn.primary:hover { background: #1a4a7f; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(31,95,160,0.3); }
+    .btn.secondary { background: var(--bg-secondary); color: var(--text); border: 1px solid var(--border); }
+    .btn.secondary:hover { background: #f0f0f0; }
+    .complete-banner { display: none; margin-top: 2rem; padding: 16px 20px; background: var(--success-light); border-radius: var(--radius); border: 1px solid var(--success); border-left: 4px solid var(--success); }
+    .complete-banner p { color: var(--success); font-size: 14px; margin: 0; line-height: 1.6; font-weight: 500; }
+    ul { margin: 10px 0 10px 20px; }
+    li { font-size: 14px; color: var(--text-secondary); margin-bottom: 8px; line-height: 1.6; }
+    .hint { font-size: 13px; color: var(--text-secondary); margin-top: 8px; font-style: italic; }
+    .screenshot-section { margin-top: 16px; }
+    .screenshot-section-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
+    .screenshot-slot { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; }
+    .screenshot-slot-header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--bg-secondary); border-bottom: 1px solid var(--border); }
+    .slot-num { width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: white; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .slot-label { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; }
+    .slot-status { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+    .slot-status.uploaded { color: var(--success); font-weight: 600; }
+    .upload-area { padding: 24px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; background: var(--bg); transition: all 0.15s; border-top: 1px solid var(--border); }
+    .upload-area:hover { background: var(--bg-secondary); }
+    .upload-area.has-image { padding: 0; cursor: default; }
+    .upload-area span { font-size: 14px; color: var(--text-secondary); }
+    .upload-area input[type=file] { display: none; }
+    .preview-img { width: 100%; display: block; max-height: 300px; object-fit: contain; background: var(--bg-secondary); }
+    .img-actions { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--border); background: var(--bg); }
+    .img-actions button { font-size: 13px; padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); cursor: pointer; font-family: var(--font-sans); color: var(--text); }
+    .img-actions button:hover { background: var(--bg-secondary); }
+    .img-actions button.remove { color: #d32f2f; border-color: #d32f2f; }
+    .img-actions button.remove:hover { background: #ffebee; }
+    .pdf-section { margin-top: 16px; padding: 16px; background: var(--bg-secondary); border-radius: var(--radius); border: 1px solid var(--border); }
+    .pdf-section-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .pdf-section p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 12px; }
+    .pdf-name-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .pdf-name-row input { flex: 1; padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); font-family: var(--font-sans); font-size: 14px; color: var(--text); }
+    .pdf-name-row input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .pdf-status { font-size: 12px; color: var(--text-secondary); margin-top: 8px; min-height: 18px; }
+    .pdf-status.generating { color: var(--primary); font-weight: 600; }
+    .pdf-status.done { color: var(--success); font-weight: 600; }
+    .pdf-status.error { color: #d32f2f; font-weight: 600; }
+    .btn.pdf-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <span class="badge">📚 Python Lab</span>
+  <div class="lab-title">Lab 2.4.1.7: Variables</div>
+  <div class="lab-desc">Master the concept of variables in Python. Learn to create variables, assign values, and perform arithmetic operations with them.</div>
+
+  <div class="overview-box">
+    <p>📋 Lab Overview</p>
+    <p>In this lab, you'll explore variables and how to store data in Python. You'll create variables, assign values to them, and use them in calculations and output.</p>
+  </div>
+
+  <div class="objectives-box">
+    <p>✅ Upon completion, you will be able to:</p>
+    <ul>
+      <li>Create and name variables in Python</li>
+      <li>Assign values to variables</li>
+      <li>Use variables in print statements</li>
+      <li>Perform arithmetic operations on variables</li>
+      <li>Work with different data types (integers, floats, strings)</li>
+    </ul>
+  </div>
+
+  <div class="progress-bar" id="pips"></div>
+  <div class="steps" id="steps-container"></div>
+
+  <div class="complete-banner" id="complete-banner">
+    <p><strong>Lab complete!</strong> You have successfully mastered working with variables in Python. 🎉</p>
+  </div>
+</div>
+
+<script>
+const { jsPDF } = window.jspdf;
+const savedAnswers = {};
+const screenshots = {};
+
+const steps = [
+  {
+    label: 'Understand variables',
+    tag: 'Context',
+    body: `
+      <p><strong>What is a variable?</strong> A named container that stores a value.</p>
+      <p><strong>Variable basics:</strong></p>
+      <ul>
+        <li>Variables have names (like <code>john</code>, <code>total_apples</code>)</li>
+        <li>Variables store values (numbers, text, etc.)</li>
+        <li>Use <code>=</code> to assign a value to a variable</li>
+        <li>You can use the variable later by referencing its name</li>
+      </ul>
+      <div class="info-box"><p><strong>Syntax:</strong> <code>variable_name = value</code></p></div>`
+  },
+  {
+    label: 'Choose your platform',
+    tag: 'Setup',
+    body: `
+      <p>You can complete this lab using:</p>
+      <div class="info-box"><p><strong>Option 1:</strong> Google Colab (browser-based, no installation)</p></div>
+      <p><a href="https://colab.research.google.com/" target="_blank" style="display:inline-block; padding:8px 14px; border-radius:6px; border:1px solid var(--primary); background:var(--primary-light); color:var(--primary); font-size:12px; font-weight:500; text-decoration:none; cursor:pointer; margin:8px 0;">Open Google Colab →</a></p>
+      <p style="font-size: 12px; color: #666; margin-top: 8px;"><strong>💡 Tip:</strong> When Colab opens, click "Save a copy in Drive" and rename it to something like "Lab_2.X.X.X_YourName" so you can find it later.</p>
+      <div class="info-box"><p><strong>Option 2:</strong> Python installed locally (VS Code, IDLE, or terminal)</p></div>
+      <p>Choose whichever you prefer and proceed to the next step.</p>`
+  },
+  {
+    label: 'Exercise 1: Create and print variables',
+    tag: 'Experiment',
+    body: `
+      <p><strong>The Story:</strong> Once upon a time in Appleland, John had 3 apples, Mary had 5 apples, and Adam had 6 apples.</p>
+      <p><strong>Your task:</strong></p>
+            <p><strong>Complete Solution:</strong></p>
+      <img src="data:image/png;base64,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" alt="Complete solution code" style="max-width: 100%; border: 1px solid #e0e0e0; border-radius: 4px; margin: 12px 0; display: block;">
+      <p style="font-size: 12px; color: #999; margin-top: 8px;"><em>💡 Image format prevents copy-pasting - type it out to learn!</em></p>
+      
+      <p style="margin-top: 16px; font-size: 14px; font-weight: 600;">What each line does:</p>
+      <ul style="font-size: 13px; margin-top: 8px;">
+        <li><strong>Line 1:</strong> Create variable 'apples' and assign value 5</li>
+        <li><strong>Line 2:</strong> Create variable 'oranges' and assign value 3</li>
+        <li><strong>Line 3:</strong> Create variable 'total' and calculate sum of apples + oranges</li>
+        <li><strong>Line 4:</strong> Print text with the total value (8)</li>
+        <li><strong>Line 5:</strong> Print text with the difference (2)</li>
+      </ul>
+      
+      <p style="margin-top: 16px;"><strong>Test your code:</strong></p>
+      <ul>
+        <li>Create three variables: <code>john</code>, <code>mary</code>, and <code>adam</code></li>
+        <li>Assign values: 3, 5, and 6 respectively</li>
+        <li>Print all three variables on one line, separated by commas</li>
+      </ul>
+      <p><strong>Starter code structure:</strong></p>
+      <div class="code-block">john = 3
+mary = 5
+adam = 6
+print(john, mary, adam, sep=',')</div>
+      <p><strong>Expected output:</strong></p>
+      <div class="code-block">3,5,6</div>
+      <div class="hint">The <code>sep=','</code> parameter in print() controls the separator between values.</div>`
+  },
+  {
+    label: 'Upload screenshot: Create variables',
+    tag: 'Submission',
+    body: `
+      <p>Upload your screenshot from Exercise 1:</p>
+      <div class="screenshot-section">
+        <div class="screenshot-section-title">Screenshot: Variables and print with separator</div>
+        <div class="screenshot-slot" id="slot-ss-create">
+          <div class="screenshot-slot-header">
+            <div class="slot-num">1</div>
+            <div class="slot-label">Code creating and printing variables</div>
+            <div class="slot-status" id="status-ss-create">Not uploaded</div>
+          </div>
+          <div class="upload-area" id="area-ss-create" onclick="triggerUpload('ss-create')">
+            <span>📷 Click to upload screenshot</span>
+            <input type="file" accept="image/*" id="file-ss-create" onchange="handleUpload('ss-create', this)">
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'Exercise 2: Arithmetic with variables',
+    tag: 'Experiment',
+    body: `
+      <p>Perform calculations using variables:</p>
+      <ul>
+        <li>Create a new variable <code>total_apples</code></li>
+        <li>Set it equal to the sum of john + mary + adam</li>
+        <li>Print the result</li>
+      </ul>
+      <p><strong>Code to add:</strong></p>
+      <div class="code-block">total_apples = john + mary + adam
+print(total_apples)</div>
+      <p><strong>Expected output:</strong></p>
+      <div class="code-block">14</div>
+      <div class="hint">Variables can be used in mathematical expressions. Python calculates the result automatically.</div>`
+  },
+  {
+    label: 'Upload screenshot: Arithmetic',
+    tag: 'Submission',
+    body: `
+      <p>Upload your screenshot from Exercise 2:</p>
+      <div class="screenshot-section">
+        <div class="screenshot-section-title">Screenshot: Arithmetic with variables</div>
+        <div class="screenshot-slot" id="slot-ss-arithmetic">
+          <div class="screenshot-slot-header">
+            <div class="slot-num">2</div>
+            <div class="slot-label">Code performing arithmetic on variables</div>
+            <div class="slot-status" id="status-ss-arithmetic">Not uploaded</div>
+          </div>
+          <div class="upload-area" id="area-ss-arithmetic" onclick="triggerUpload('ss-arithmetic')">
+            <span>📷 Click to upload screenshot</span>
+            <input type="file" accept="image/*" id="file-ss-arithmetic" onchange="handleUpload('ss-arithmetic', this)">
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'Exercise 3: Experiment with operations',
+    tag: 'Experiment',
+    body: `
+      <p>Try different operations and data types:</p>
+      <ul>
+        <li>Create new variables with different values</li>
+        <li>Try different arithmetic operations: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code></li>
+        <li>Try float values (decimals) like <code>12.5</code></li>
+        <li>Print results in different formats</li>
+        <li>Combine variables with text strings in print</li>
+      </ul>
+      <p><strong>Example experiments:</strong></p>
+      <div class="code-block">peter = 12.5
+suzy = 2
+print(peter / suzy)
+print("Total number of apples:", total_apples)</div>
+      <p><strong>Expected output:</strong></p>
+      <div class="code-block">6.25
+Total number of apples: 14</div>
+      <div class="hint">Mix integers, floats, strings, and operations to discover how Python handles different data types.</div>`
+  },
+  {
+    label: 'Upload screenshot: Experiments',
+    tag: 'Submission',
+    body: `
+      <p>Upload your screenshot from Exercise 3:</p>
+      <div class="screenshot-section">
+        <div class="screenshot-section-title">Screenshot: Experimenting with variables</div>
+        <div class="screenshot-slot" id="slot-ss-experiment">
+          <div class="screenshot-slot-header">
+            <div class="slot-num">3</div>
+            <div class="slot-label">Code experimenting with different operations</div>
+            <div class="slot-status" id="status-ss-experiment">Not uploaded</div>
+          </div>
+          <div class="upload-area" id="area-ss-experiment" onclick="triggerUpload('ss-experiment')">
+            <span>📷 Click to upload screenshot</span>
+            <input type="file" accept="image/*" id="file-ss-experiment" onchange="handleUpload('ss-experiment', this)">
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'Download submission PDF',
+    tag: 'Final',
+    body: `
+      <p>Generate and download your lab submission as a PDF file.</p>
+      <div class="pdf-section">
+        <div class="pdf-section-title">📄 Generate your PDF</div>
+        <p>Enter your name and click the button to create your submission PDF.</p>
+        <div class="pdf-name-row">
+          <input type="text" id="student-name" placeholder="Your full name">
+        </div>
+        <button class="btn primary" id="pdf-btn" onclick="generatePDF()">
+          📥 Download PDF
+        </button>
+        <div class="pdf-status" id="pdf-status"></div>
+      </div>`
+  }
+];
+
+let openStep = 0;
+let completedSteps = new Set();
+
+function triggerUpload(id) { if (!document.getElementById('area-' + id).classList.contains('has-image')) document.getElementById('file-' + id).click(); }
+function handleUpload(id, input) { const file = input.files[0]; if (!file) return; const r = new FileReader(); r.onload = e => { screenshots[id] = e.target.result; renderSlot(id); }; r.readAsDataURL(file); }
+function renderSlot(id) {
+  const area = document.getElementById('area-' + id);
+  const status = document.getElementById('status-' + id);
+  if (!area) return;
+  if (screenshots[id]) {
+    area.classList.add('has-image');
+    area.innerHTML = `<img class="preview-img" src="${screenshots[id]}" alt="screenshot" /><div class="img-actions"><button onclick="replaceImage('${id}')">Replace</button><button class="remove" onclick="removeImage('${id}')">Remove</button><input type="file" accept="image/*" id="file-${id}" onchange="handleUpload('${id}',this)" style="display:none"/></div>`;
+    status.textContent = 'Uploaded ✓';
+    status.classList.add('uploaded');
+  } else {
+    area.classList.remove('has-image');
+    area.innerHTML = `<span>📷 Click to upload screenshot</span><input type="file" accept="image/*" id="file-${id}" onchange="handleUpload('${id}',this)"/>`;
+    status.textContent = 'Not uploaded';
+    status.classList.remove('uploaded');
+  }
+}
+function replaceImage(id) { document.getElementById('file-' + id).click(); }
+function removeImage(id) { delete screenshots[id]; renderSlot(id); }
+function saveCurrentAnswers() { ['student-name'].forEach(id => { const el = document.getElementById(id); if (el) savedAnswers[id] = el.value; }); }
+function restoreAnswers() { ['student-name'].forEach(id => { const el = document.getElementById(id); if (el && savedAnswers[id] !== undefined) el.value = savedAnswers[id]; }); ['ss-create', 'ss-arithmetic', 'ss-experiment'].forEach(id => renderSlot(id)); }
+function buildPips() { document.getElementById('pips').innerHTML = steps.map((_, i) => `<div class="pip" id="pip-${i}"></div>`).join(''); }
+function updatePips() { steps.forEach((_, i) => { const p = document.getElementById(`pip-${i}`); p.className = 'pip ' + (completedSteps.has(i) ? 'done' : i === openStep ? 'active' : ''); }); }
+function renderSteps() {
+  saveCurrentAnswers();
+  document.getElementById('steps-container').innerHTML = steps.map((s, i) => {
+    const isDone = completedSteps.has(i);
+    const isActive = i === openStep;
+    const isOpen = i === openStep;
+    return `<div class="step ${isActive ? 'active' : ''} ${isDone ? 'done' : ''} ${isOpen ? 'open' : ''}" id="step-${i}"><div class="step-header" onclick="toggleStep(${i})"><div class="step-num">${isDone ? '✓' : i + 1}</div><div class="step-label">${s.label}</div><div class="step-tag">${s.tag}</div></div><div class="step-body">${s.body}<div class="step-actions">${i < steps.length - 1 ? `<button class="btn primary" onclick="markDone(${i})">Mark done & continue</button>` : `<button class="btn primary" onclick="markDone(${i})">Complete lab</button>`}${i > 0 ? `<button class="btn secondary" onclick="goTo(${i - 1})">← Back</button>` : ''}</div></div></div>`;
+  }).join('');
+  restoreAnswers();
+}
+function toggleStep(i) { openStep = openStep === i ? -1 : i; renderSteps(); updatePips(); }
+function markDone(i) { completedSteps.add(i); if (i < steps.length - 1) openStep = i + 1; else { openStep = -1; document.getElementById('complete-banner').style.display = 'block'; } renderSteps(); updatePips(); }
+function goTo(i) { openStep = i; renderSteps(); updatePips(); }
+async function generatePDF() {
+  saveCurrentAnswers();
+  const btn = document.getElementById('pdf-btn');
+  const statusEl = document.getElementById('pdf-status');
+  const studentName = (savedAnswers['student-name'] || '').trim();
+  btn.disabled = true;
+  statusEl.className = 'pdf-status generating';
+  statusEl.textContent = 'Building your PDF…';
+  try {
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 20;
+    const contentW = pageW - margin * 2;
+    let y = margin;
+    function checkPage(need) { if (y + need > pageH - margin) { doc.addPage(); y = margin; } }
+    function fillRect(x, ry, w, h, r, g, b) { doc.setFillColor(r, g, b); doc.rect(x, ry, w, h, 'F'); }
+    async function drawImageBlock(imgData, maxH) {
+      const maxW = contentW;
+      let iW = maxW, iH = maxH;
+      try {
+        const img = new Image();
+        await new Promise(res => { img.onload = res; img.onerror = res; img.src = imgData; });
+        if (img.width && img.height) {
+          const ratio = img.width / img.height;
+          if (maxW / ratio <= maxH) { iW = maxW; iH = maxW / ratio; } else { iH = maxH; iW = maxH * ratio; }
+        }
+      } catch (e) { }
+      checkPage(iH + 8);
+      const fmt = imgData.includes('image/png') ? 'PNG' : 'JPEG';
+      doc.setDrawColor(31, 95, 160);
+      doc.setLineWidth(0.5);
+      doc.rect(margin, y, iW, iH);
+      doc.addImage(imgData, fmt, margin, y, iW, iH);
+      y += iH + 10;
+    }
+    fillRect(0, 0, pageW, 14, 31, 95, 160);
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text('PYTHON LAB 2.4.1.7', margin, 9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Variables', pageW - margin, 9, { align: 'right' });
+    y = 22;
+    doc.setTextColor(20, 20, 20);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Lab Submission', margin, y);
+    y += 8;
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(80, 80, 80);
+    doc.text(`Student: ${studentName || '(name not provided)'}`, margin, y);
+    y += 5;
+    doc.text(`Submitted: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, margin, y);
+    y += 5;
+    doc.text('Lab: Variables (2.4.1.7)', margin, y);
+    y += 10;
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, pageW - margin, y);
+    y += 8;
+    if (screenshots['ss-create']) {
+      checkPage(15);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(20, 20, 20);
+      doc.text('Exercise 1: Create and Print Variables', margin, y);
+      y += 6;
+      await drawImageBlock(screenshots['ss-create'], 80);
+    }
+    if (screenshots['ss-arithmetic']) {
+      checkPage(15);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(20, 20, 20);
+      doc.text('Exercise 2: Arithmetic with Variables', margin, y);
+      y += 6;
+      await drawImageBlock(screenshots['ss-arithmetic'], 80);
+    }
+    if (screenshots['ss-experiment']) {
+      checkPage(15);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(20, 20, 20);
+      doc.text('Exercise 3: Experimenting', margin, y);
+      y += 6;
+      await drawImageBlock(screenshots['ss-experiment'], 80);
+    }
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let p = 1; p <= totalPages; p++) {
+      doc.setPage(p);
+      doc.setDrawColor(220, 220, 220);
+      doc.setLineWidth(0.3);
+      doc.line(margin, pageH - 12, pageW - margin, pageH - 12);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(150, 150, 150);
+      doc.text(`Lab 2.4.1.7: Variables — ${studentName || 'Student'}`, margin, pageH - 7);
+      doc.text(`Page ${p} of ${totalPages}`, pageW - margin, pageH - 7, { align: 'right' });
+    }
+    const filename = studentName ? `Lab_2.4.1.7_${studentName.replace(/\s+/g, '_')}.pdf` : 'Lab_2.4.1.7_Submission.pdf';
+    doc.save(filename);
+    statusEl.className = 'pdf-status done';
+    statusEl.textContent = `✓ PDF saved as "${filename}" — ready to submit!`;
+  } catch (err) {
+    statusEl.className = 'pdf-status error';
+    statusEl.textContent = 'Something went wrong. Please try again.';
+    console.error(err);
+  }
+  btn.disabled = false;
+}
+buildPips();
+renderSteps();
+updatePips();
+</script>
+</body>
+</html>

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 2.1.1.19: Formatting the Output</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --text: #1a1a1a;
+      --text-secondary: #5c5c5c;
+      --border: #e0e0e0;
+      --primary: #1f5fa0;
+      --primary-light: #e3f2fd;
+      --success: #2e7d32;
+      --success-light: #e8f5e9;
+      --radius: 8px;
+      --font-sans: system-ui, -apple-system, sans-serif;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: #f5f5f5;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border); padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 4px; background: var(--primary-light); color: var(--primary); margin-bottom: 12px; }
+    .lab-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .lab-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem; }
+    .overview-box { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; padding: 16px; margin-bottom: 2rem; }
+    .overview-box p { color: var(--primary); font-size: 14px; margin: 0 0 8px; line-height: 1.6; font-weight: 500; }
+    .objectives-box { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 2rem; }
+    .objectives-box p { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .objectives-box ul { font-size: 14px; color: var(--text-secondary); margin: 0 0 0 20px; line-height: 1.8; }
+    .objectives-box li { margin-bottom: 8px; }
+    .progress-bar { display: flex; gap: 6px; margin-bottom: 2rem; }
+    .pip { flex: 1; height: 6px; border-radius: 3px; background: #e0e0e0; transition: background 0.3s; }
+    .pip.done { background: var(--success); }
+    .pip.active { background: var(--primary); }
+    .steps { display: flex; flex-direction: column; gap: 12px; }
+    .step { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: box-shadow 0.2s; }
+    .step:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .step.active { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .step.done { border-color: var(--success); }
+    .step-header { display: flex; align-items: center; gap: 12px; padding: 16px; cursor: pointer; user-select: none; background: var(--bg-secondary); }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0; border: 2px solid var(--border); color: var(--text); background: var(--bg); }
+    .step.active .step-num { background: var(--primary); color: white; border-color: var(--primary); }
+    .step.done .step-num { background: var(--success); color: white; border-color: var(--success); font-size: 12px; }
+    .step-label { font-size: 15px; font-weight: 600; flex: 1; }
+    .step-tag { font-size: 12px; padding: 4px 10px; border-radius: 4px; background: var(--primary-light); color: var(--primary); font-weight: 500; }
+    .step.active .step-tag { background: var(--primary); color: white; }
+    .step-body { display: none; padding: 0 16px 16px; background: var(--bg); }
+    .step.open .step-body { display: block; }
+    .step-body p { font-size: 14px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 12px; }
+    .step-body strong { color: var(--text); font-weight: 600; }
+    .info-box { margin: 12px 0; padding: 12px 16px; background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; }
+    .info-box p { color: var(--primary); font-size: 13px; margin: 0; line-height: 1.6; }
+    .code-block { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 10px 0; color: #d63384; overflow-x: auto; max-height: 300px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; line-height: 1.5; }
+    .step-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .btn { padding: 10px 20px; border-radius: 4px; border: none; font-size: 14px; cursor: pointer; font-family: var(--font-sans); font-weight: 600; transition: all 0.2s; }
+    .btn.primary { background: var(--primary); color: white; }
+    .btn.primary:hover { background: #1a4a7f; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(31,95,160,0.3); }
+    .btn.secondary { background: var(--bg-secondary); color: var(--text); border: 1px solid var(--border); }
+    .btn.secondary:hover { background: #f0f0f0; }
+    .complete-banner { display: none; margin-top: 2rem; padding: 16px 20px; background: var(--success-light); border-radius: var(--radius); border: 1px solid var(--success); border-left: 4px solid var(--success); }
+    .complete-banner p { color: var(--success); font-size: 14px; margin: 0; line-height: 1.6; font-weight: 500; }
+    ul { margin: 10px 0 10px 20px; }
+    li { font-size: 14px; color: var(--text-secondary); margin-bottom: 8px; line-height: 1.6; }
+    .hint { font-size: 13px; color: var(--text-secondary); margin-top: 8px; font-style: italic; }
+    .screenshot-section { margin-top: 16px; }
+    .screenshot-section-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
+    .screenshot-slot { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; }
+    .screenshot-slot-header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--bg-secondary); border-bottom: 1px solid var(--border); }
+    .slot-num { width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: white; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .slot-label { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; }
+    .slot-status { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+    .slot-status.uploaded { color: var(--success); font-weight: 600; }
+    .upload-area { padding: 24px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; background: var(--bg); transition: all 0.15s; border-top: 1px solid var(--border); }
+    .upload-area:hover { background: var(--bg-secondary); }
+    .upload-area.has-image { padding: 0; cursor: default; }
+    .upload-area span { font-size: 14px; color: var(--text-secondary); }
+    .upload-area input[type=file] { display: none; }
+    .preview-img { width: 100%; display: block; max-height: 300px; object-fit: contain; background: var(--bg-secondary); }
+    .img-actions { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--border); background: var(--bg); }
+    .img-actions button { font-size: 13px; padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); cursor: pointer; font-family: var(--font-sans); color: var(--text); }
+    .img-actions button:hover { background: var(--bg-secondary); }
+    .img-actions button.remove { color: #d32f2f; border-color: #d32f2f; }
+    .img-actions button.remove:hover { background: #ffebee; }
+    .pdf-section { margin-top: 16px; padding: 16px; background: var(--bg-secondary); border-radius: var(--radius); border: 1px solid var(--border); }
+    .pdf-section-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .pdf-section p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 12px; }
+    .pdf-name-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .pdf-name-row input { flex: 1; padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); font-family: var(--font-sans); font-size: 14px; color: var(--text); }
+    .pdf-name-row input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .pdf-status { font-size: 12px; color: var(--text-secondary); margin-top: 8px; min-height: 18px; }
+    .pdf-status.generating { color: var(--primary); font-weight: 600; }
+    .pdf-status.done { color: var(--success); font-weight: 600; }
+    .pdf-status.error { color: #d32f2f; font-weight: 600; }
+    .btn.pdf-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <span class="badge">📚 Python Lab</span>
+  <div class="lab-title">Lab 2.1.1.19: Formatting the Output</div>
+  <div class="lab-desc">Experiment with Python code to learn about escape sequences, string multiplication, and the print() function. Discover how these features can be used to format output creatively.</div>
+
+  <div class="overview-box">
+    <p>📋 Lab Overview</p>
+    <p>In this lab, you'll experiment with existing Python code and make modifications to understand how escape sequences (like \n), string multiplication, and the print() function work together. You'll also discover what happens when you break the rules and fix syntax errors.</p>
+  </div>
+
+  <div class="objectives-box">
+    <p>✅ Upon completion, you will be able to:</p>
+    <ul>
+      <li>Use escape sequences like \n to create multi-line output</li>
+      <li>Multiply strings to repeat them</li>
+      <li>Minimize the number of print() function calls</li>
+      <li>Understand how quotes and syntax affect Python code</li>
+      <li>Discover and fix basic syntax errors</li>
+    </ul>
+  </div>
+
+  <div class="progress-bar" id="pips"></div>
+  <div class="steps" id="steps-container"></div>
+
+  <div class="complete-banner" id="complete-banner">
+    <p><strong>Lab complete!</strong> You have successfully explored Python's output formatting capabilities. 🎉</p>
+  </div>
+</div>
+
+<script>
+const { jsPDF } = window.jspdf;
+const savedAnswers = {};
+const screenshots = {};
+
+const steps = [
+  {
+    label: 'Understand the task',
+    tag: 'Context',
+    body: `
+      <p><strong>What you'll do:</strong> Experiment with Python code to understand formatting techniques.</p>
+      <p><strong>Key concepts to explore:</strong></p>
+      <ul>
+        <li>Escape sequences: <code>\\n</code> (newline), <code>\\t</code> (tab)</li>
+        <li>String multiplication: <code>"*" * 5</code> produces <code>"*****"</code></li>
+        <li>Combining print() with formatting</li>
+        <li>What happens when syntax breaks</li>
+      </ul>
+      <div class="info-box"><p><strong>Your goal:</strong> Modify existing code to create specific output patterns and understand how Python handles strings and formatting.</p></div>`
+  },
+  {
+    label: 'Choose your platform',
+    tag: 'Setup',
+    body: `
+      <p>You can complete this lab using:</p>
+      <div class="info-box"><p><strong>Option 1:</strong> Google Colab (browser-based, no installation)</p></div>
+      <p><a href="https://colab.research.google.com/" target="_blank" style="display:inline-block; padding:8px 14px; border-radius:6px; border:1px solid var(--primary); background:var(--primary-light); color:var(--primary); font-size:12px; font-weight:500; text-decoration:none; cursor:pointer; margin:8px 0;">Open Google Colab →</a></p>
+      <p style="font-size: 12px; color: #666; margin-top: 8px;"><strong>💡 Tip:</strong> When Colab opens, click "Save a copy in Drive" and rename it to something like "Lab_2.X.X.X_YourName" so you can find it later.</p>
+      <div class="info-box"><p><strong>Option 2:</strong> Python installed locally (VS Code, IDLE, or terminal)</p></div>
+      <p>Choose whichever you prefer and proceed to the next step.</p>`
+  },
+  {
+    label: 'Exercise 1: Minimize print() calls',
+    tag: 'Experiment',
+    body: `
+      <p>Modify the code to use fewer print() statements by using the <code>\\n</code> escape sequence:</p>
+      <ul>
+        <li>Start with the starter code below (8 print statements)</li>
+        <li>Combine them into ONE print() statement using <code>\\n</code></li>
+        <li>The output should look identical, but with only one function call</li>
+      </ul>
+      <p><strong>Starter code:</strong></p>
+      <div class="code-block">print("    *")
+print("   * *")
+print("  *   *")
+print(" *     *")
+print("***   ***")
+print("  *   *")
+print("  *   *")
+print("  *****")</div>
+      <p><strong>Rewrite as:</strong> (one line with \\n between each)</p>
+      <div class="code-block">print("    *\\n   * *\\n  *   *\\n *     *\\n***   ***\\n  *   *\\n  *   *\\n  *****")</div>
+      <p><strong>Expected output:</strong></p>
+      <div class="code-block">    *
+   * *
+  *   *
+ *     *
+***   ***
+  *   *
+  *   *
+  *****</div>
+      <div class="hint">Copy each line of text into your combined print statement, and add <code>\\n</code> between them to create newlines.</div>`
+  },
+  {
+    label: 'Upload screenshot: Minimize print()',
+    tag: 'Submission',
+    body: `
+      <p>Upload your screenshot from Exercise 1:</p>
+      <div class="screenshot-section">
+        <div class="screenshot-section-title">Screenshot: Minimizing print() calls</div>
+        <div class="screenshot-slot" id="slot-ss-minimize">
+          <div class="screenshot-slot-header">
+            <div class="slot-num">1</div>
+            <div class="slot-label">Code using \\n escape sequence</div>
+            <div class="slot-status" id="status-ss-minimize">Not uploaded</div>
+          </div>
+          <div class="upload-area" id="area-ss-minimize" onclick="triggerUpload('ss-minimize')">
+            <span>📷 Click to upload screenshot</span>
+            <input type="file" accept="image/*" id="file-ss-minimize" onchange="handleUpload('ss-minimize', this)">
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'Exercise 2: Modify the pattern',
+    tag: 'Experiment',
+    body: `
+      <p>Now that you've minimized print() calls, try modifying the pattern:</p>
+      <ul>
+        <li>Make it taller by adding more lines to the top</li>
+        <li>Or use string multiplication to double the width: <code>line * 2</code></li>
+        <li>Combine your techniques to create something unique</li>
+      </ul>
+      <p><strong>Example: Making it taller</strong></p>
+      <div class="code-block">print("        *")
+print("       * *")
+print("      *   *")
+print("     *     *")
+print("    *       *")
+print("   *         *")
+print("  *           *")
+print(" *             *")
+print("******     ******")
+print("     *     *")
+print("     *     *")</div>
+      <p><strong>Expected output (taller):</strong></p>
+      <div class="code-block">        *
+       * *
+      *   *
+     *     *
+    *       *
+   *         *
+  *           *
+ *             *
+******     ******
+     *     *
+     *     *</div>
+      <p><strong>Example: Using string multiplication to double width</strong></p>
+      <div class="code-block">print("        *        " * 2)
+print("       * *       " * 2)
+print("      *   *      " * 2)</div>
+      <p><strong>Expected output (doubled):</strong></p>
+      <div class="code-block">        *                 *
+       * *               * *
+      *   *             *   *      </div>
+      <div class="hint">String multiplication repeats the entire string. <code>"line" * 2</code> makes two copies side-by-side.</div>`
+  },
+  {
+    label: 'Upload screenshot: String multiplication',
+    tag: 'Submission',
+    body: `
+      <p>Upload your screenshot from Exercise 2:</p>
+      <div class="screenshot-section">
+        <div class="screenshot-section-title">Screenshot: String multiplication</div>
+        <div class="screenshot-slot" id="slot-ss-multiply">
+          <div class="screenshot-slot-header">
+            <div class="slot-num">2</div>
+            <div class="slot-label">Code using string multiplication</div>
+            <div class="slot-status" id="status-ss-multiply">Not uploaded</div>
+          </div>
+          <div class="upload-area" id="area-ss-multiply" onclick="triggerUpload('ss-multiply')">
+            <span>📷 Click to upload screenshot</span>
+            <input type="file" accept="image/*" id="file-ss-multiply" onchange="handleUpload('ss-multiply', this)">
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'Exercise 3: Combine everything',
+    tag: 'Experiment',
+    body: `
+      <p>Combine all techniques you've learned to create your own version:</p>
+      <ul>
+        <li>Combine lines with <code>\\n</code> to minimize print() calls</li>
+        <li>Modify the original pattern (make it taller, wider, or different)</li>
+        <li>Use string multiplication to repeat lines</li>
+        <li>Experiment and create something unique!</li>
+      </ul>
+      <p><strong>Challenge ideas:</strong></p>
+      <ul>
+        <li>Make the pattern twice as tall</li>
+        <li>Double the width using <code>"line" * 2</code></li>
+        <li>Combine the minimized version with modified versions</li>
+        <li>Add comments describing each section (like "original", "taller", "doubled")</li>
+      </ul>
+      <div class="hint">There's no single "correct" answer here. Experiment, have fun, and see what you can create!</div>`
+  },
+  {
+    label: 'Upload screenshot: Creative formatting',
+    tag: 'Submission',
+    body: `
+      <p>Upload your screenshot from Exercise 3:</p>
+      <div class="screenshot-section">
+        <div class="screenshot-section-title">Screenshot: Creative formatting</div>
+        <div class="screenshot-slot" id="slot-ss-creative">
+          <div class="screenshot-slot-header">
+            <div class="slot-num">3</div>
+            <div class="slot-label">Code with creative formatting techniques</div>
+            <div class="slot-status" id="status-ss-creative">Not uploaded</div>
+          </div>
+          <div class="upload-area" id="area-ss-creative" onclick="triggerUpload('ss-creative')">
+            <span>📷 Click to upload screenshot</span>
+            <input type="file" accept="image/*" id="file-ss-creative" onchange="handleUpload('ss-creative', this)">
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'Download submission PDF',
+    tag: 'Final',
+    body: `
+      <p>Generate and download your lab submission as a PDF file.</p>
+      <div class="pdf-section">
+        <div class="pdf-section-title">📄 Generate your PDF</div>
+        <p>Enter your name and click the button to create your submission PDF.</p>
+        <div class="pdf-name-row">
+          <input type="text" id="student-name" placeholder="Your full name">
+        </div>
+        <button class="btn primary" id="pdf-btn" onclick="generatePDF()">
+          📥 Download PDF
+        </button>
+        <div class="pdf-status" id="pdf-status"></div>
+      </div>`
+  }
+];
+
+let openStep = 0;
+let completedSteps = new Set();
+
+function triggerUpload(id) { if (!document.getElementById('area-' + id).classList.contains('has-image')) document.getElementById('file-' + id).click(); }
+function handleUpload(id, input) { const file = input.files[0]; if (!file) return; const r = new FileReader(); r.onload = e => { screenshots[id] = e.target.result; renderSlot(id); }; r.readAsDataURL(file); }
+function renderSlot(id) {
+  const area = document.getElementById('area-' + id);
+  const status = document.getElementById('status-' + id);
+  if (!area) return;
+  if (screenshots[id]) {
+    area.classList.add('has-image');
+    area.innerHTML = `<img class="preview-img" src="${screenshots[id]}" alt="screenshot" /><div class="img-actions"><button onclick="replaceImage('${id}')">Replace</button><button class="remove" onclick="removeImage('${id}')">Remove</button><input type="file" accept="image/*" id="file-${id}" onchange="handleUpload('${id}',this)" style="display:none"/></div>`;
+    status.textContent = 'Uploaded ✓';
+    status.classList.add('uploaded');
+  } else {
+    area.classList.remove('has-image');
+    area.innerHTML = `<span>📷 Click to upload screenshot</span><input type="file" accept="image/*" id="file-${id}" onchange="handleUpload('${id}',this)"/>`;
+    status.textContent = 'Not uploaded';
+    status.classList.remove('uploaded');
+  }
+}
+function replaceImage(id) { document.getElementById('file-' + id).click(); }
+function removeImage(id) { delete screenshots[id]; renderSlot(id); }
+function saveCurrentAnswers() { ['student-name'].forEach(id => { const el = document.getElementById(id); if (el) savedAnswers[id] = el.value; }); }
+function restoreAnswers() { ['student-name'].forEach(id => { const el = document.getElementById(id); if (el && savedAnswers[id] !== undefined) el.value = savedAnswers[id]; }); ['ss-minimize', 'ss-multiply', 'ss-creative'].forEach(id => renderSlot(id)); }
+function buildPips() { document.getElementById('pips').innerHTML = steps.map((_, i) => `<div class="pip" id="pip-${i}"></div>`).join(''); }
+function updatePips() { steps.forEach((_, i) => { const p = document.getElementById(`pip-${i}`); p.className = 'pip ' + (completedSteps.has(i) ? 'done' : i === openStep ? 'active' : ''); }); }
+function renderSteps() {
+  saveCurrentAnswers();
+  document.getElementById('steps-container').innerHTML = steps.map((s, i) => {
+    const isDone = completedSteps.has(i);
+    const isActive = i === openStep;
+    const isOpen = i === openStep;
+    return `<div class="step ${isActive ? 'active' : ''} ${isDone ? 'done' : ''} ${isOpen ? 'open' : ''}" id="step-${i}"><div class="step-header" onclick="toggleStep(${i})"><div class="step-num">${isDone ? '✓' : i + 1}</div><div class="step-label">${s.label}</div><div class="step-tag">${s.tag}</div></div><div class="step-body">${s.body}<div class="step-actions">${i < steps.length - 1 ? `<button class="btn primary" onclick="markDone(${i})">Mark done & continue</button>` : `<button class="btn primary" onclick="markDone(${i})">Complete lab</button>`}${i > 0 ? `<button class="btn secondary" onclick="goTo(${i - 1})">← Back</button>` : ''}</div></div></div>`;
+  }).join('');
+  restoreAnswers();
+}
+function toggleStep(i) { openStep = openStep === i ? -1 : i; renderSteps(); updatePips(); }
+function markDone(i) { completedSteps.add(i); if (i < steps.length - 1) openStep = i + 1; else { openStep = -1; document.getElementById('complete-banner').style.display = 'block'; } renderSteps(); updatePips(); }
+function goTo(i) { openStep = i; renderSteps(); updatePips(); }
+async function generatePDF() {
+  saveCurrentAnswers();
+  const btn = document.getElementById('pdf-btn');
+  const statusEl = document.getElementById('pdf-status');
+  const studentName = (savedAnswers['student-name'] || '').trim();
+  btn.disabled = true;
+  statusEl.className = 'pdf-status generating';
+  statusEl.textContent = 'Building your PDF…';
+  try {
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 20;
+    const contentW = pageW - margin * 2;
+    let y = margin;
+    function checkPage(need) { if (y + need > pageH - margin) { doc.addPage(); y = margin; } }
+    function fillRect(x, ry, w, h, r, g, b) { doc.setFillColor(r, g, b); doc.rect(x, ry, w, h, 'F'); }
+    async function drawImageBlock(imgData, maxH) {
+      const maxW = contentW;
+      let iW = maxW, iH = maxH;
+      try {
+        const img = new Image();
+        await new Promise(res => { img.onload = res; img.onerror = res; img.src = imgData; });
+        if (img.width && img.height) {
+          const ratio = img.width / img.height;
+          if (maxW / ratio <= maxH) { iW = maxW; iH = maxW / ratio; } else { iH = maxH; iW = maxH * ratio; }
+        }
+      } catch (e) { }
+      checkPage(iH + 8);
+      const fmt = imgData.includes('image/png') ? 'PNG' : 'JPEG';
+      doc.setDrawColor(31, 95, 160);
+      doc.setLineWidth(0.5);
+      doc.rect(margin, y, iW, iH);
+      doc.addImage(imgData, fmt, margin, y, iW, iH);
+      y += iH + 10;
+    }
+    fillRect(0, 0, pageW, 14, 31, 95, 160);
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text('PYTHON LAB 2.1.1.19', margin, 9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Formatting the Output', pageW - margin, 9, { align: 'right' });
+    y = 22;
+    doc.setTextColor(20, 20, 20);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Lab Submission', margin, y);
+    y += 8;
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(80, 80, 80);
+    doc.text(`Student: ${studentName || '(name not provided)'}`, margin, y);
+    y += 5;
+    doc.text(`Submitted: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, margin, y);
+    y += 5;
+    doc.text('Lab: Formatting the Output (2.1.1.19)', margin, y);
+    y += 10;
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, pageW - margin, y);
+    y += 8;
+    if (screenshots['ss-minimize']) {
+      checkPage(15);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(20, 20, 20);
+      doc.text('Exercise 1: Minimize print() calls', margin, y);
+      y += 6;
+      await drawImageBlock(screenshots['ss-minimize'], 80);
+    }
+    if (screenshots['ss-multiply']) {
+      checkPage(15);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(20, 20, 20);
+      doc.text('Exercise 2: String multiplication', margin, y);
+      y += 6;
+      await drawImageBlock(screenshots['ss-multiply'], 80);
+    }
+    if (screenshots['ss-creative']) {
+      checkPage(15);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(20, 20, 20);
+      doc.text('Exercise 3: Creative formatting', margin, y);
+      y += 6;
+      await drawImageBlock(screenshots['ss-creative'], 80);
+    }
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let p = 1; p <= totalPages; p++) {
+      doc.setPage(p);
+      doc.setDrawColor(220, 220, 220);
+      doc.setLineWidth(0.3);
+      doc.line(margin, pageH - 12, pageW - margin, pageH - 12);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(150, 150, 150);
+      doc.text(`Lab 2.1.1.19: Formatting the Output — ${studentName || 'Student'}`, margin, pageH - 7);
+      doc.text(`Page ${p} of ${totalPages}`, pageW - margin, pageH - 7, { align: 'right' });
+    }
+    const filename = studentName ? `Lab_2.1.1.19_${studentName.replace(/\s+/g, '_')}.pdf` : 'Lab_2.1.1.19_Submission.pdf';
+    doc.save(filename);
+    statusEl.className = 'pdf-status done';
+    statusEl.textContent = `✓ PDF saved as "${filename}" — ready to submit!`;
+  } catch (err) {
+    statusEl.className = 'pdf-status error';
+    statusEl.textContent = 'Something went wrong. Please try again.';
+    console.error(err);
+  }
+  btn.disabled = false;
+}
+buildPips();
+renderSteps();
+updatePips();
+</script>
+</body>
+</html>
