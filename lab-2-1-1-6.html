@@ -34,43 +34,37 @@
     .overview-box { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; padding: 16px; margin-bottom: 2rem; }
     .overview-box p { color: var(--primary); font-size: 14px; margin: 0 0 8px; line-height: 1.6; font-weight: 500; }
     .objectives-box { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 2rem; }
-    .objectives-box p { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .objectives-box p { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
     .objectives-box ul { font-size: 14px; color: var(--text-secondary); margin: 0 0 0 20px; line-height: 1.8; }
-    .objectives-box li { margin-bottom: 8px; }
     .progress-bar { display: flex; gap: 6px; margin-bottom: 2rem; }
-    .pip { flex: 1; height: 6px; border-radius: 3px; background: #e0e0e0; transition: background 0.3s; }
+    .pip { flex: 1; height: 6px; border-radius: 3px; background: #e0e0e0; }
     .pip.done { background: var(--success); }
     .pip.active { background: var(--primary); }
     .steps { display: flex; flex-direction: column; gap: 12px; }
-    .step { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: box-shadow 0.2s; }
-    .step:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .step { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
     .step.active { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
     .step.done { border-color: var(--success); }
-    .step-header { display: flex; align-items: center; gap: 12px; padding: 16px; cursor: pointer; user-select: none; background: var(--bg-secondary); }
-    .step-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0; border: 2px solid var(--border); color: var(--text); background: var(--bg); }
+    .step-header { display: flex; align-items: center; gap: 12px; padding: 16px; cursor: pointer; background: var(--bg-secondary); }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; border: 2px solid var(--border); color: var(--text); background: var(--bg); }
     .step.active .step-num { background: var(--primary); color: white; border-color: var(--primary); }
-    .step.done .step-num { background: var(--success); color: white; border-color: var(--success); font-size: 12px; }
+    .step.done .step-num { background: var(--success); color: white; }
     .step-label { font-size: 15px; font-weight: 600; flex: 1; }
     .step-tag { font-size: 12px; padding: 4px 10px; border-radius: 4px; background: var(--primary-light); color: var(--primary); font-weight: 500; }
-    .step.active .step-tag { background: var(--primary); color: white; }
     .step-body { display: none; padding: 0 16px 16px; background: var(--bg); }
     .step.open .step-body { display: block; }
     .step-body p { font-size: 14px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 12px; }
-    .step-body strong { color: var(--text); font-weight: 600; }
     .info-box { margin: 12px 0; padding: 12px 16px; background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; }
     .info-box p { color: var(--primary); font-size: 13px; margin: 0; line-height: 1.6; }
-    .code-block { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 10px 0; color: #d63384; overflow-x: auto; max-height: 300px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; line-height: 1.5; }
+    .code-block { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 10px 0; color: #d63384; white-space: pre-wrap; line-height: 1.5; }
+    .test-data { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 10px 0; }
+    .test-case { margin-bottom: 12px; }
+    .test-input { font-size: 13px; color: var(--text); font-weight: 500; }
+    .test-output { font-size: 13px; color: var(--primary); margin-top: 4px; font-family: 'Courier New', monospace; }
+    .btn { padding: 10px 20px; border-radius: 4px; border: none; font-size: 14px; cursor: pointer; font-family: var(--font-sans); font-weight: 600; background: var(--primary); color: white; margin-top: 16px; transition: all 0.2s; }
+    .btn:hover { background: #1a4a7f; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(31,95,160,0.3); }
     .step-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
-    .btn { padding: 10px 20px; border-radius: 4px; border: none; font-size: 14px; cursor: pointer; font-family: var(--font-sans); font-weight: 600; transition: all 0.2s; }
-    .btn.primary { background: var(--primary); color: white; }
-    .btn.primary:hover { background: #1a4a7f; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(31,95,160,0.3); }
-    .btn.secondary { background: var(--bg-secondary); color: var(--text); border: 1px solid var(--border); }
-    .btn.secondary:hover { background: #f0f0f0; }
     .complete-banner { display: none; margin-top: 2rem; padding: 16px 20px; background: var(--success-light); border-radius: var(--radius); border: 1px solid var(--success); border-left: 4px solid var(--success); }
     .complete-banner p { color: var(--success); font-size: 14px; margin: 0; line-height: 1.6; font-weight: 500; }
-    ul { margin: 10px 0 10px 20px; }
-    li { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; line-height: 1.6; }
-    .hint { font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
     .screenshot-section { margin-top: 16px; }
     .screenshot-section-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 10px; }
     .screenshot-slot { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; }
@@ -101,34 +95,37 @@
     .pdf-status.done { color: var(--success); font-weight: 600; }
     .pdf-status.error { color: #d32f2f; font-weight: 600; }
     .btn.pdf-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    ul { margin: 10px 0 10px 20px; }
+    li { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; line-height: 1.6; }
+    .hint { font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
   </style>
 </head>
 <body>
 <div class="container">
-  <span class="badge">🐍 Python Lab</span>
+  <span class="badge">📚 Python Lab</span>
   <div class="lab-title">Lab 2.1.1.6: The print() Function</div>
-  <div class="lab-desc">Master Python's print() function and its formatting capabilities. Experiment with different ways to display output to the screen.</div>
+  <div class="lab-desc">Practice using the print() function and experiment with simple Python output.</div>
 
   <div class="overview-box">
-    <p style="margin-bottom:8px; font-weight:500;">📋 Lab Overview</p>
-    <p>In this lab, you'll become familiar with the print() function—one of the easiest but most powerful directives in Python. You'll experiment with formatting options, different quote types, multiple print statements, and understand how Python handles output.</p>
+    <p>📋 Lab Overview</p>
+    <p>In this lab, you'll practice the print() function and experiment with strings, quotes, parentheses, and simple errors.</p>
   </div>
 
   <div class="objectives-box">
     <p>✅ Upon completion, you will be able to:</p>
     <ul>
-      <li>Use the print() function to output text to the screen</li>
-      <li>Understand different quote types (single vs. double quotes)</li>
-      <li>Experiment with print() formatting and parameters</li>
-      <li>Troubleshoot syntax errors related to quotes and parentheses</li>
+      <li>Project and write parameterized functions</li>
+      <li>Use the return statement</li>
+      <li>Build a set of utility functions</li>
+      <li>Reuse your own previously written functions</li>
+      <li>Validate function arguments</li>
     </ul>
   </div>
 
   <div class="progress-bar" id="pips"></div>
   <div class="steps" id="steps-container"></div>
-
   <div class="complete-banner" id="complete-banner">
-    <p><strong>Lab complete!</strong> You have successfully mastered the print() function and its formatting capabilities. 🎉</p>
+    <p><strong>Lab complete!</strong> You've practiced basic output with the print() function! 🎉</p>
   </div>
 </div>
 
@@ -142,152 +139,95 @@ const steps = [
     label: 'Understand the print() function',
     tag: 'Context',
     body: `
-      <p><strong>What is print()?</strong> The print() function is one of the easiest directives in Python. It simply prints out a line to the screen.</p>
-      <p><strong>In this lab, you'll:</strong></p>
+      <p><strong>Scenario:</strong> The <code>print()</code> function is one of the easiest commands in Python. It displays text or values on the screen.</p>
+      <p>In this first lab, you will print <code>Hello, Python!</code>, then experiment with names, quotes, parentheses, and multiple <code>print()</code> statements.</p>
       <ul>
-        <li>Print basic text using print()</li>
-        <li>Experiment with single quotes vs. double quotes</li>
-        <li>Remove quotes and observe errors</li>
-        <li>Test multiple print() statements on the same line</li>
-        <li>Discover how Python handles different quote types</li>
-      </ul>
-      <div class="info-box"><p><strong>Your task:</strong> Follow the exercises below, run your code, take screenshots of your experiments, and document what you learn about the print() function.</p>
-            <p><strong>Complete Solution:</strong></p>
-      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANwAAACACAIAAADvdJBaAAAP30lEQVR4nO2deVgT1xrGT4QLArJpKEGokgW1sijUBUQQq0JxoaKsLmDZ1RYVkF5pbV2oFQXFgl2M0kXFqiDVWkCoLG71Ql0QoVUQsCZclghSQITHyP1jenNzszEkAQ7k+z0+j8k5Z77z5fDmzGRm3jmUuro6BAA4MWqoEwAAUdSJ/2gm44c2DwBACDX8ux7BTAlgCIgSwA4QJYAdIEoAO0CUAHaAKAHsAFEC2AGiBLADRAlgB4gSwA4QJYAdIEoAO0CUAHaAKAHsAFEC2AGiBLADRAlgB4gSwA4QJYAdQyPKPXs+/ec/P1A8zsYNGzIyMhSPI4wFi8mgmzPo5n/99ReZcqwgk6Qigx8fvzsl5XN5syPL0IgyLu7DvXsTFAxyv7y8rOyup+dyZWT0P6qqH9349Vfy5Vgx0EmGh0ekHTvW2to6cF0g/Hff169fm+NgL7Hq+InjHh7vqKmpCxe6uMy7efPm999/Fx4WSpRwOBwG3fzRo0fE25ycbCvLqQOasxy8aWebn58vXJKamrLK329wel8XGLB71y6RQvGRRAgZGRnZ2tllZWUNaD64i1Iavb29+Xl5zvPmDXUiyoHBZHK5HOESLofLZDKHKh8ZODs75+bkDGgXiorSw2PZrp07XRcttLG22rQpsqOjQ1AVHBwUuzXGz9dnyuRJDLp5Tk42QigjI4M46BE+rPH29tq3L8HLa+XUN6asXbOmra0NIfTw4QMG3XztmjUNDQ3EJnv2fCrYpLa29tmzZ1ZWVook//x5584dO+Y4ONjZTo+JjhZOnjytra2bIt+3s53uYD87Pn53T0+PHEFYTBaXyxUu4XK5TBZLRnCJwyuNJ0+erF7lb2U51dvbq7GxUY4MBVhZWd27V8bn8xUJIhslzJS5ubmphw9fLijkcjhJiYnCVRcvXgwKDrlzt6ymts7dfTFCyMvLq6a2LiQ0VCRITnbO3r0JV65ea2puOpWejhCaNGlyTW3d8RMnaDRaTW1dTW1dXNyHgvaNDQ0aGhpjxoxRJPNt27Y9ePDH2YyMywUFnZ0dn8bHyxHk4+3bW1pa8/J/ST/1Q1Fh4ddffyVHECaTSYhyjoNDaEgIQojL5TCZLNnBxYdXGls2bzIxGX/j15ubN2++lJsrUkuhUCgUsqlSqdSenh5i4hgglCBKX1/fSZMmGxkZhYaFi3xfPT1XuLq6amlp9RnEc4Uni8WiUqkL3lrw8OFDuZMpKiq2t7cPCAj8+ghbuHzRwgXEdLtxwwaipL29/acLFz7ZscPU1NTQcOx770dmZ//c3+74fH5ubm7kpkgqlUqn09etezf7Z1kzljRYLBaXw/3zzz8NDPQrKu7z+fz6+no6nS47OMnhbW5uvn37dmRkpJ6enqPj3Pnz54s00NTU1Bw9WqRQ2kj29srx+fqHet9N+uI149eIFzQajcfjvXr1atSov7VuZmZGMsi4cVTihaam5ovuF322N6bRenp62tvbdXV1ycTP/+UycYiWk5O9NSYGIUTMTO5vvy3crLOzU0dHh2TOCKGWlhY+/6WxMU2QVVNTE/nNBTCYTA6HU1JS4uIyv7Ky4tq1a2pqahoaGrKDkxze5uZmhJDRa3//mYyNaSIjrKurS3IYEUJPn/I0NDT09fVJtpcDJYiyqfHvkWpsbBw7dqxAkQihfuwVpDCKMqpX0neTTqcbGBhUVFTY20v+bd4n48ePRwiVlP5GpVJFqjQ1RyOExI8OxcvHjh2rpqbe2NgwYcIEhFBjQ8Nr//3b9wszM7OurudXiou8fXwNDA3OnctkMJnjxo2THVzi8IonSWzV3NQ0YeJEhFBjY4O+gYHwJvsTk8inWlFRYW1jo6amRn6T/qKE3ffZs2eqqqp4PB6bfcTt/ycexTGm0Xi8p7///rtIOYVCWeTqeqW4WO7Ienp6S5cu/ejDuCdPnnR0dFy+/Evctm1ElaGhIY1Gy8vLE/k+iJerqam5ubmlpqQ8ffr08eO677771n2xu/AmSxa7ryBxJnXUqFHm5ubFxcUzZsxwdJybn5fHZDL7DC4R8SSpVOqMGTNTU1Pa29t/vXGjqKhIZBOJp4SkUVRY6P5232koghJEuWyZR0R42FvzXUxotNjYPi4VOM11ZNDNj7LZZ06fZtDNp9lYy27PYDACAgJWr/IX+fWNEFq7Zu358z/y+S/lzvyzvQmmpmb+fr5zHOx/OPVD4LpAQdWePZ8dTk1hMugify3x8l27d+vp6S9c8Javj4+Tk3N4eIRw+66uF4IjE9mwWKw33nhDS0tr6tSpWlraxMGG7ODSEE/yYHIyt77efvasgwcPLvPwIBNEIk1NTXfu3PFcsULuCGSgEA9NlftRgB4eywICAr28vJSZFGne27jRxcXFy9t7SHrvk9bWlhlvvnky/ZTcxxi4ER+/W09PLzJy0wDFJx4FqIRjyiEk9fDhoU5BFiUlpbZ2diNGkQihjz7aPgi9DG9RYo6bm5ubm9tQZzH8UFSUFy78pJQ8AEDAcL32DYxgQJQAdoAoAewAUQLYAaIEsANECWAHiBLADnAzksXb2+vkyZMD3YtSRobD4Sx/5x0LFtPfz1cpWfWJcl2OQ3NFR/gecrkh3IyfD7zjczBRysikpqZYW1tlnssUcdUNHOHhEa6LFq5Zs9bQ0FDxaLjvvhV3MyKE/P18idvObadPWxcYUFVVJXenw4LKykpHx7mKK1L8ljaJw4uU7XLEXZTS6K+bMSJifU1tXf4vlzU1NUNDQ16+lP+GN/xp/6tdQ1NjkDtVostRtdyMVCo1Oibmz8ePa2tqampqLFgsgcGgvr7egsW8evWqjE65XI5Ikki6m1Hih5KBxJFpa2tbHxE+fZqNg/3sw6mpr169kh3E29uLQTd//LguJDiYQTcXHFMKHxAfSk7esGG9fEnKQIkuR5VzMwrux2YwGNNtp587l0m8zcg4O2v2bCcnJxmdiieJZLoZJbaXhsSRYbOPNPN4lwsKL/x0saenp6amRnaQs2czamrrJkycePTYsZraulM/nO5zQGQkOVQuR1VxMxLweLwDSUmvv/46ncFACPn6+J49cwYh1Nvbey4z07uvm4XFk5TtZlT8Q6mrqf9DXV1dXd3IyGhLVBSLxZIjiGxkJCnucpQxvEp0OSpBlOJuRkHVILgZScb/6qsvGXTzhQve6up6cYTNVldXRwgtXrKkqamptLTk5s2bLS0tbm59GIzEk5TtZuzvhxInLDx81qzZQe+uW7LYfV9CgnxPOpCNjCSHyuWoKm7GiIj1sR+Inv/T1tZeunTZ2TNn+PxXS5cuE8zo0joVR1luRmloa2tviYraEhXV2tq6yt+fZkILCAjsezMxRmuO7u7uJl7znvJIbjVULkfVdTMSePv4ZGdn5+bmCBt9pHUqjnyGQ/IkJSVevHixvb29o6PjxYsX6ur/kC8Oi8XKu5Tb1tZWUVGRd+kSya2GyuWo0m5GhJCdnZ2pqSmNRrOzsyPTqTjyGQ7FkTgyfn7+eZdy5zrOWbnC03mes4+Pj3zBQ8PCenp67GfP2r8v4W135RtkletyBDcj8vfzdXJy3rBxo7KyUkGU5XIENyNCCF29evX27dvJh0bUtcrBR7kux+EtSgVxc3N91tr6yY6dxsbGQ50L8D8U3X0DgBIhdt/D9do3MIIBUQLYAaIEsANECWAHiBLADhAlgB0gSgA7wM2oBAZnxULVYRifPL9fXh4REV585cqgefak0dzc7LpoYUFhkVK8fKrM8Dh53i834/3790OCg62tLOc5O7HZR5SbSXhYKOGhIf41NPxbUDU4KxaqDriLUhoS3YzffvNNUFDQv0pKPk9J/fKLLy6cP08m1NaY6LS0NDIto6KjCeNOTW0djWYiXDUIKxaqDiPKzZiYlDTH0VFbW2fatGkzZ868dfuWgp+OPIOwYqHqMALdjHz+y1u//VZaWupg76D4pxPmKJs9ZfKk+S4u4jPrIKxYqDqMNDfjoeRkCxbL29vLf9Uq2bdYp6WlERNwZmZm/O5dxOvr169Ja//1Efbdsnt37pZti4tLStyfmZkpXDsIKxaqDiPNzbhp8+aq6uqfLv6cn5cne0HZoKAgYgJeuXLlR9s/Jl47Os6V3a+Wlparq6unp6fIWrCDsGKh6qAEUQ6tm1G8Sk1N3dLScvlyT/kWlCWDuEt/EFYsVB1Gjpuxvr4+Jjr6jz/+6O7urqysPH/+R2trhZaoF4bH48XGbq2uru7q6iosKMjKylq8eIlwg0FYsVB1UMJpZ8LN2Nzc7OLiQsbNSKxpjBA6c/q0rq5u2b1yGe0FxsJnz56FhIYK/9ZZu2ZteHhYdEw0carSxMTEyckpNnZrdVWVgYGhq6uruNFbImTczVQq1dbWdsP6CA6HY2Zmti3uw3eWLxfUEl6+AweTyXQH9Am4GZXAQK9YqDqAm1FpDM6KharDcL2iA4xgYG1GADtgpgSwA0QJYAeIEsAOECWAHSBKADtAlAB2gCgB7AA34wACLkf5ADfjAAIux/4yAt2MgpvJLVhM4ZZdXV3RUVFWlpZv2tkdSCK14gGbfaSY3FP+b1y/7uPtbWU5dZ6zk8htxeBylA/cRSkNiW5G4mbyo8eOiTTel5BQXn7vUl7eN99+c/z498SCTtLYGhNdWFBAdJGenn7oULLsTNLS0rZERZWUliYdOJCakiJyOAEuRzkYUW5GifT29v74Y1ZISKipqamNzbQVK1ZmZso6DN25a/et27dOpZ9K3L/vFZ//3nvvy45/9NgxBwcHbW2dGTNmzpw1q7S0RLgWXI5yMALdjCI0Nze3tbVNnjKFeDt58uQ+l1YWeB36Zefo6en5vbLSxmaacCG4HOVgpLkZxXn+vBMhNGbMmLDQ0MTE/WN0x3R2dspo/8nH2+1s7fxX+cdsjUUUSmpqCsmOdu7YMXHiRL//LhxLAC5HOVDC71ZxN6PAOzYIbsY+Fw/U1tZBCHV0dBxhsxFCZ06f1tHRkdGecEdUP6qmUCirV68mmX9i4v6ysrsn00+JnAoAl6McjEA3owhGRkb6+voPHzwg3j58+MDCwqLPrUJDw+aRXuE+KSmxqLDw+ImT4uIDl6McjBw3ozQoFMry5Z5Hj7K5XO798vKsrKyVK5XpKNq/f19RYeGJk+kST0aCy1EORtTajMXFxQy6eUhwMJ/PFw4e+8EHVlbWbq6LAgMDVq1e7S3vCofidHd3f/nFFxUVFXa204lTBOsCAwS1yl2xUHUAN+MAAi7H/gJuxgEHXI7yMVyv6AAjGHAzAtgBMyWAHSBKADtAlAB2gCgB7ABRAtgBogSwA0QJYAeIEsAOECWAHSBKADtAlAB2gCgB7ABRAtgBogSwA0QJYAeIEsAOECWAHSBKADtAlAB2gCgB7ABRAtgBogSwA0QJYMffvm/icRkAgAMwUwLY8R/33C1KJ3S8AQAAAABJRU5ErkJggg==" alt="Complete solution code" style="max-width: 100%; border: 1px solid #e0e0e0; border-radius: 4px; margin: 12px 0; display: block;">
-      <p style="font-size: 12px; color: #999; margin-top: 8px;"><em>💡 Image format prevents copy-pasting - type it out to learn!</em></p>
-      
-      <p style="margin-top: 16px; font-size: 14px; font-weight: 600;">What each line does:</p>
-      <ul style="font-size: 13px; margin-top: 8px;">
-        <li><strong>Line 1:</strong> Print a text string "Hello, World!"</li>
-        <li><strong>Line 2:</strong> Print another text string "Python is fun!"</li>
-        <li><strong>Line 3:</strong> Evaluate the math expression 3+5 and print result (8)</li>
-        <li><strong>Line 4:</strong> Evaluate the math expression 10*2 and print result (20)</li>
-      </ul>
-      
-      <p style="margin-top: 16px;"><strong>Test your code:</strong></p></div>`
+        <li>use <code>print()</code> to display text</li>
+        <li>practice using quotation marks around strings</li>
+        <li>see what happens when quotes or parentheses are missing</li>
+        <li>learn that errors are part of experimenting with code</li>
+      </ul>`
+  },
+  {
+    label: 'Break down the idea',
+    tag: 'Guide',
+    body: `
+      <p>A text value in Python is called a <strong>string</strong>. Strings need quotation marks, like <code>"Hello, Python!"</code> or <code>'Greg'</code>.</p>
+      <div class="info-box"><p><strong>Correct:</strong> <code>print("Hello, Python!")</code> sends the string to the screen.</p></div>
+      <div class="info-box"><p><strong>Experiment:</strong> Removing quotes or parentheses will cause Python to complain. That is useful because the error message helps you learn what Python expected.</p></div>
+      <p>The commented lines in the sample solution show examples to try one at a time.</p>`
   },
   {
     label: 'Choose your platform',
     tag: 'Setup',
     body: `
-      <p>You can complete this lab using:</p>
-      <div class="info-box"><p><strong>Option 1:</strong> Google Colab (browser-based, no installation)</p></div>
-      <p><a href="https://colab.research.google.com/" target="_blank" style="display:inline-block; padding:8px 14px; border-radius:6px; border:1px solid var(--primary); background:rgba(0,255,136,0.1); color:var(--primary); font-size:12px; font-weight:500; text-decoration:none; cursor:pointer; margin:8px 0; text-transform:uppercase; letter-spacing:1px;">Open Google Colab →</a></p>
-      <p style="font-size: 12px; color: #666; margin-top: 8px;"><strong>💡 Tip:</strong> When Colab opens, click "Save a copy in Drive" and rename it to something like "Lab_2.X.X.X_YourName" so you can find it later.</p>
-      <div class="info-box"><p><strong>Option 2:</strong> Python installed locally (VS Code, IDLE, or terminal)</p></div>
-      <p>Choose whichever you prefer and proceed to the next step.</p>`
+      <p><a href="https://github.com/codespaces/" target="_blank" style="display:inline-block; padding:8px 14px; border-radius:6px; border:1px solid var(--primary); background:var(--primary-light); color:var(--primary); font-size:12px; font-weight:500; text-decoration:none; cursor:pointer; margin:8px 0;">Open GitHub Codespaces →</a></p>
+      <p style="font-size: 12px; color: #666; margin-top: 8px;"><strong>💡 Tip:</strong> Create or open a Codespace, then save your Python file as "Lab_2.1.1.6_YourName.py"</p>`
   },
   {
-    label: 'Exercise 1: Basic print()',
-    tag: 'Experiment',
+    label: 'Write your code',
+    tag: 'Code',
     body: `
-      <p>Write Python code that:</p>
-      <ul>
-        <li>Prints: <code>Hello, Python!</code> using double quotes</li>
-        <li>Take a screenshot showing your code and the output</li>
+      <p><strong>Starter code:</strong></p>
+      <div class="code-block"># Write your first print statement here.</div>
+
+      <p><strong>Complete solution:</strong></p>
+    <img src="images/2116.png" alt="Solution code visualization" style="width: 100%; height: auto; border: 1px solid #e0e0e0; border-radius: 4px; margin: 12px 0; display: block;">
+      <p style="font-size: 12px; color: #999; margin-top: 8px;"><em>💡 Run the first line, then uncomment one experiment at a time to see what happens.</em></p>
+
+      <p style="margin-top: 16px; font-size: 14px; font-weight: 600;">What each part does:</p>
+      <ul style="font-size: 13px; margin-top: 8px;">
+        <li><strong># Sample Solution:</strong> A comment for humans. Python ignores it when running the program.</li>
+        <li><strong>print("Hello, Python!"):</strong> Prints the text <code>Hello, Python!</code> to the screen.</li>
+        <li><strong># print("Greg"):</strong> A correct example, but it is commented out. Remove <code>#</code> to test it.</li>
+        <li><strong># print(Greg):</strong> Shows what happens when a word is used without quotes. Python treats it like a variable name.</li>
+        <li><strong># print"Greg":</strong> Shows what happens when parentheses are missing.</li>
+        <li><strong># print('Greg'):</strong> Shows that single quotes can also create a string.</li>
+        <li><strong># print("Greg") print("Python"):</strong> Shows that two print statements cannot be placed together like this on one line.</li>
+        <li><strong># ...:</strong> Means you can keep experimenting with more examples.</li>
       </ul>
-      <div class="code-block">print("Hello, Python!")</div>
-      <div class="hint">Your output should display: Hello, Python!</div>`
+
+      <p style="margin-top: 16px;"><strong>Expected output for the first working line:</strong></p>
+      <div class="test-data">
+        <div class="test-output">Hello, Python!</div>
+      </div>`
   },
   {
-    label: 'Upload screenshot: Basic print',
+    label: 'Upload Screenshots & Generate PDF',
     tag: 'Submission',
     body: `
-      <p>Upload your screenshot from Exercise 1:</p>
+      <p>Upload your screenshots and download your submission:</p>
       <div class="screenshot-section">
-        <div class="screenshot-section-title">Screenshot: Basic print() output</div>
-        <div class="screenshot-slot" id="slot-ss-basic">
+        <div class="screenshot-section-title">Screenshot 1: Your working print statement</div>
+        <div class="screenshot-slot" id="slot-ss-1">
           <div class="screenshot-slot-header">
             <div class="slot-num">1</div>
             <div class="slot-label">Code and output: Hello, Python!</div>
-            <div class="slot-status" id="status-ss-basic">Not uploaded</div>
+            <div class="slot-status" id="status-ss-1">Not uploaded</div>
           </div>
-          <div class="upload-area" id="area-ss-basic" onclick="triggerUpload('ss-basic')">
+          <div class="upload-area" id="area-ss-1" onclick="triggerUpload('ss-1')">
             <span>📷 Click to upload screenshot</span>
-            <input type="file" accept="image/*" id="file-ss-basic" onchange="handleUpload('ss-basic', this)">
+            <input type="file" accept="image/*" id="file-ss-1" onchange="handleUpload('ss-1', this)">
           </div>
         </div>
-      </div>`
-  },
-  {
-    label: 'Exercise 2: Experiment with quotes',
-    tag: 'Experiment',
-    body: `
-      <p>Write Python code that:</p>
-      <ul>
-        <li>Print your first name using single quotes</li>
-        <li>Print your first name using double quotes</li>
-        <li>Remove the quotes and observe what error you get</li>
-        <li>Take screenshots of all three attempts</li>
-      </ul>
-      <div class="code-block">print('Your Name')
-print("Your Name")
-print(Your Name)  # This will error</div>
-      <div class="hint">The third line will throw a SyntaxError. That's expected!</div>`
-  },
-  {
-    label: 'Upload screenshot: Quote experiments',
-    tag: 'Submission',
-    body: `
-      <p>Upload your screenshot showing all three quote experiments:</p>
+      </div>
       <div class="screenshot-section">
-        <div class="screenshot-section-title">Screenshot: Quote experiments</div>
-        <div class="screenshot-slot" id="slot-ss-quotes">
+        <div class="screenshot-section-title">Screenshot 2: One experiment or error message</div>
+        <div class="screenshot-slot" id="slot-ss-2">
           <div class="screenshot-slot-header">
             <div class="slot-num">2</div>
-            <div class="slot-label">Single quotes, double quotes, and error</div>
-            <div class="slot-status" id="status-ss-quotes">Not uploaded</div>
+            <div class="slot-label">Experiment with quotes, names, or parentheses</div>
+            <div class="slot-status" id="status-ss-2">Not uploaded</div>
           </div>
-          <div class="upload-area" id="area-ss-quotes" onclick="triggerUpload('ss-quotes')">
+          <div class="upload-area" id="area-ss-2" onclick="triggerUpload('ss-2')">
             <span>📷 Click to upload screenshot</span>
-            <input type="file" accept="image/*" id="file-ss-quotes" onchange="handleUpload('ss-quotes', this)">
+            <input type="file" accept="image/*" id="file-ss-2" onchange="handleUpload('ss-2', this)">
           </div>
         </div>
-      </div>`
-  },
-  {
-    label: 'Exercise 3: Multiple print statements',
-    tag: 'Experiment',
-    body: `
-      <p>Write Python code that:</p>
-      <ul>
-        <li>Uses multiple print() statements on different lines</li>
-        <li>Use print() functions with different quote types</li>
-        <li>Experiment with parentheses and parameters</li>
-        <li>Take a screenshot of your output</li>
-      </ul>
-      <div class="code-block">print("Line 1")
-print('Line 2')
-print("Line 3")</div>`
-  },
-  {
-    label: 'Upload screenshot: Multiple statements',
-    tag: 'Submission',
-    body: `
-      <p>Upload your screenshot from Exercise 3:</p>
-      <div class="screenshot-section">
-        <div class="screenshot-section-title">Screenshot: Multiple print() statements</div>
-        <div class="screenshot-slot" id="slot-ss-multiple">
-          <div class="screenshot-slot-header">
-            <div class="slot-num">3</div>
-            <div class="slot-label">Code and output: Multiple lines</div>
-            <div class="slot-status" id="status-ss-multiple">Not uploaded</div>
-          </div>
-          <div class="upload-area" id="area-ss-multiple" onclick="triggerUpload('ss-multiple')">
-            <span>📷 Click to upload screenshot</span>
-            <input type="file" accept="image/*" id="file-ss-multiple" onchange="handleUpload('ss-multiple', this)">
-          </div>
-        </div>
-      </div>`
-  },
-  {
-    label: 'Download submission PDF',
-    tag: 'Final',
-    body: `
-      <p>Generate and download your lab submission as a PDF file.</p>
+      </div>
       <div class="pdf-section">
-        <div class="pdf-section-title">📄 Generate your PDF</div>
-        <p>Enter your name and click the button to create your submission PDF.</p>
+        <div class="pdf-section-title">📄 Generate PDF Submission</div>
+        <p>Enter your name and download your submission PDF:</p>
         <div class="pdf-name-row">
           <input type="text" id="student-name" placeholder="Your full name">
         </div>
@@ -295,134 +235,77 @@ print("Line 3")</div>`
           📥 Download PDF
         </button>
         <div class="pdf-status" id="pdf-status"></div>
-      </div>`
+      </div>
+    `
   }
 ];
 
-let openStep = 0;
-let completedSteps = new Set();
-
-function triggerUpload(id) {
-  if (!document.getElementById('area-' + id).classList.contains('has-image'))
-    document.getElementById('file-' + id).click();
-}
-
-function handleUpload(id, input) {
-  const file = input.files[0];
-  if (!file) return;
-  const r = new FileReader();
-  r.onload = e => { screenshots[id] = e.target.result; renderSlot(id); };
-  r.readAsDataURL(file);
-}
-
+function triggerUpload(id) { if (!document.getElementById('area-' + id).classList.contains('has-image')) document.getElementById('file-' + id).click(); }
+function handleUpload(id, input) { const file = input.files[0]; if (!file) return; const r = new FileReader(); r.onload = e => { screenshots[id] = e.target.result; renderSlot(id); }; r.readAsDataURL(file); }
 function renderSlot(id) {
   const area = document.getElementById('area-' + id);
   const status = document.getElementById('status-' + id);
   if (!area) return;
   if (screenshots[id]) {
     area.classList.add('has-image');
-    area.innerHTML = `<img class="preview-img" src="${screenshots[id]}" alt="screenshot" />
-      <div class="img-actions">
-        <button onclick="replaceImage('${id}')">Replace</button>
-        <button class="remove" onclick="removeImage('${id}')">Remove</button>
-        <input type="file" accept="image/*" id="file-${id}" onchange="handleUpload('${id}',this)" style="display:none"/>
-      </div>`;
+    area.innerHTML = `<img class="preview-img" src="${screenshots[id]}" alt="screenshot" /><div class="img-actions"><button onclick="replaceImage('${id}')">Replace</button><button class="remove" onclick="removeImage('${id}')">Remove</button><input type="file" accept="image/*" id="file-${id}" onchange="handleUpload('${id}',this)" style="display:none"/></div>`;
     status.textContent = 'Uploaded ✓';
     status.classList.add('uploaded');
   } else {
     area.classList.remove('has-image');
-    area.innerHTML = `<span>📷 Click to upload screenshot</span>
-      <input type="file" accept="image/*" id="file-${id}" onchange="handleUpload('${id}',this)"/>`;
+    area.innerHTML = `<span>📷 Click to upload screenshot</span><input type="file" accept="image/*" id="file-${id}" onchange="handleUpload('${id}',this)"/>`;
     status.textContent = 'Not uploaded';
     status.classList.remove('uploaded');
   }
 }
+function replaceImage(id) { document.getElementById('file-' + id).click(); }
+function removeImage(id) { delete screenshots[id]; renderSlot(id); }
+function saveCurrentAnswers() { ['student-name'].forEach(id => { const el = document.getElementById(id); if (el) savedAnswers[id] = el.value; }); }
+function restoreAnswers() { ['student-name'].forEach(id => { const el = document.getElementById(id); if (el && savedAnswers[id] !== undefined) el.value = savedAnswers[id]; }); ['ss-1', 'ss-2'].forEach(id => renderSlot(id)); }
 
-function replaceImage(id) {
-  document.getElementById('file-' + id).click();
-}
-
-function removeImage(id) {
-  delete screenshots[id];
-  renderSlot(id);
-}
-
-function saveCurrentAnswers() {
-  ['student-name'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) savedAnswers[id] = el.value;
-  });
-}
-
-function restoreAnswers() {
-  ['student-name'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el && savedAnswers[id] !== undefined) el.value = savedAnswers[id];
-  });
-  ['ss-basic', 'ss-quotes', 'ss-multiple'].forEach(id => renderSlot(id));
-}
-
-function buildPips() {
-  document.getElementById('pips').innerHTML = steps.map((_, i) =>
-    `<div class="pip" id="pip-${i}"></div>`
-  ).join('');
-}
-
-function updatePips() {
-  steps.forEach((_, i) => {
-    const p = document.getElementById(`pip-${i}`);
-    p.className = 'pip ' + (completedSteps.has(i) ? 'done' : i === openStep ? 'active' : '');
-  });
-}
-
-function renderSteps() {
-  saveCurrentAnswers();
-  document.getElementById('steps-container').innerHTML = steps.map((s, i) => {
-    const isDone = completedSteps.has(i);
-    const isActive = i === openStep;
-    const isOpen = i === openStep;
-    return `<div class="step ${isActive ? 'active' : ''} ${isDone ? 'done' : ''} ${isOpen ? 'open' : ''}" id="step-${i}">
-      <div class="step-header" onclick="toggleStep(${i})">
-        <div class="step-num">${isDone ? '✓' : i + 1}</div>
-        <div class="step-label">${s.label}</div>
-        <div class="step-tag">${s.tag}</div>
+function initializeLab() {
+  const container = document.getElementById('steps-container');
+  const pipsContainer = document.getElementById('pips');
+  container.innerHTML = '';
+  pipsContainer.innerHTML = '';
+  steps.forEach((step, index) => {
+    const stepEl = document.createElement('div');
+    stepEl.className = 'step';
+    if (index === 0) stepEl.classList.add('active', 'open');
+    stepEl.innerHTML = `
+      <div class="step-header" onclick="toggleStep(${index})">
+        <div class="step-num">${index + 1}</div>
+        <div class="step-label">${step.label}</div>
+        <div class="step-tag">${step.tag}</div>
       </div>
-      <div class="step-body">
-        ${s.body}
-        <div class="step-actions">
-          ${i < steps.length - 1
-            ? `<button class="btn primary" onclick="markDone(${i})">Mark done & continue</button>`
-            : `<button class="btn primary" onclick="markDone(${i})">Complete lab</button>`}
-          ${i > 0 ? `<button class="btn" onclick="goTo(${i - 1})">← Back</button>` : ''}
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+      <div class="step-body">${step.body}</div>
+    `;
+    container.appendChild(stepEl);
+    const pip = document.createElement('div');
+    pip.className = 'pip';
+    if (index === 0) pip.classList.add('active');
+    pipsContainer.appendChild(pip);
+  });
   restoreAnswers();
 }
 
-function toggleStep(i) {
-  openStep = openStep === i ? -1 : i;
-  renderSteps();
-  updatePips();
-}
-
-function markDone(i) {
-  completedSteps.add(i);
-  if (i < steps.length - 1) {
-    openStep = i + 1;
-  } else {
-    openStep = -1;
-    document.getElementById('complete-banner').style.display = 'block';
-  }
-  renderSteps();
-  updatePips();
-}
-
-function goTo(i) {
-  openStep = i;
-  renderSteps();
-  updatePips();
+function toggleStep(index) {
+  saveCurrentAnswers();
+  const steps = document.querySelectorAll('.step');
+  const pips = document.querySelectorAll('.pip');
+  steps.forEach((step, i) => {
+    step.classList.remove('active', 'open');
+    pips[i].classList.remove('active');
+    if (i === index) {
+      step.classList.add('active', 'open');
+      pips[i].classList.add('active');
+    } else if (i < index) {
+      step.classList.add('done');
+      pips[i].classList.add('done');
+    }
+  });
+  document.getElementById('complete-banner').style.display = index === steps.length - 1 ? 'block' : 'none';
+  restoreAnswers();
 }
 
 async function generatePDF() {
@@ -430,11 +313,9 @@ async function generatePDF() {
   const btn = document.getElementById('pdf-btn');
   const statusEl = document.getElementById('pdf-status');
   const studentName = (savedAnswers['student-name'] || '').trim();
-
   btn.disabled = true;
   statusEl.className = 'pdf-status generating';
-  statusEl.textContent = 'Building your PDF…';
-
+  statusEl.textContent = 'Building your PDF...';
   try {
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     const pageW = doc.internal.pageSize.getWidth();
@@ -442,10 +323,8 @@ async function generatePDF() {
     const margin = 20;
     const contentW = pageW - margin * 2;
     let y = margin;
-
     function checkPage(need) { if (y + need > pageH - margin) { doc.addPage(); y = margin; } }
     function fillRect(x, ry, w, h, r, g, b) { doc.setFillColor(r, g, b); doc.rect(x, ry, w, h, 'F'); }
-
     async function drawImageBlock(imgData, maxH) {
       const maxW = contentW;
       let iW = maxW, iH = maxH;
@@ -459,28 +338,25 @@ async function generatePDF() {
       } catch (e) { }
       checkPage(iH + 8);
       const fmt = imgData.includes('image/png') ? 'PNG' : 'JPEG';
-      doc.setDrawColor(0, 255, 136);
+      doc.setDrawColor(31, 95, 160);
       doc.setLineWidth(0.5);
       doc.rect(margin, y, iW, iH);
       doc.addImage(imgData, fmt, margin, y, iW, iH);
       y += iH + 10;
     }
-
-    fillRect(0, 0, pageW, 14, 10, 14, 39);
-    doc.setTextColor(0, 255, 136);
+    fillRect(0, 0, pageW, 14, 31, 95, 160);
+    doc.setTextColor(255, 255, 255);
     doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
     doc.text('PYTHON LAB 2.1.1.6', margin, 9);
     doc.setFont('helvetica', 'normal');
-    doc.text('The print() Function', pageW - margin, 9, { align: 'right' });
+    doc.text('print() Function', pageW - margin, 9, { align: 'right' });
     y = 22;
-
     doc.setTextColor(20, 20, 20);
     doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
     doc.text('Lab Submission', margin, y);
     y += 8;
-
     doc.setFontSize(11);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(80, 80, 80);
@@ -488,44 +364,30 @@ async function generatePDF() {
     y += 5;
     doc.text(`Submitted: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, margin, y);
     y += 5;
-    doc.text('Lab: The print() Function (2.1.1.6)', margin, y);
+    doc.text("Lab: The print() Function (2.1.1.6)", margin, y);
     y += 10;
-
     doc.setDrawColor(220, 220, 220);
     doc.setLineWidth(0.3);
     doc.line(margin, y, pageW - margin, y);
     y += 8;
-
-    if (screenshots['ss-basic']) {
+    if (screenshots['ss-1']) {
       checkPage(15);
       doc.setFontSize(11);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(20, 20, 20);
-      doc.text('Exercise 1: Basic print()', margin, y);
+      doc.text('Code Implementation', margin, y);
       y += 6;
-      await drawImageBlock(screenshots['ss-basic'], 80);
+      await drawImageBlock(screenshots['ss-1'], 80);
     }
-
-    if (screenshots['ss-quotes']) {
+    if (screenshots['ss-2']) {
       checkPage(15);
       doc.setFontSize(11);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(20, 20, 20);
-      doc.text('Exercise 2: Quote Experiments', margin, y);
+      doc.text('Test Results', margin, y);
       y += 6;
-      await drawImageBlock(screenshots['ss-quotes'], 80);
+      await drawImageBlock(screenshots['ss-2'], 80);
     }
-
-    if (screenshots['ss-multiple']) {
-      checkPage(15);
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(20, 20, 20);
-      doc.text('Exercise 3: Multiple Statements', margin, y);
-      y += 6;
-      await drawImageBlock(screenshots['ss-multiple'], 80);
-    }
-
     const totalPages = doc.internal.getNumberOfPages();
     for (let p = 1; p <= totalPages; p++) {
       doc.setPage(p);
@@ -535,14 +397,13 @@ async function generatePDF() {
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
       doc.setTextColor(150, 150, 150);
-      doc.text(`Lab 2.1.1.6: The print() Function — ${studentName || 'Student'}`, margin, pageH - 7);
+      doc.text(`Lab 2.1.1.6: The print() Function - ${studentName || 'Student'}`, margin, pageH - 7);
       doc.text(`Page ${p} of ${totalPages}`, pageW - margin, pageH - 7, { align: 'right' });
     }
-
     const filename = studentName ? `Lab_2.1.1.6_${studentName.replace(/\s+/g, '_')}.pdf` : 'Lab_2.1.1.6_Submission.pdf';
     doc.save(filename);
     statusEl.className = 'pdf-status done';
-    statusEl.textContent = `✓ PDF saved as "${filename}" — ready to submit!`;
+    statusEl.textContent = `✓ PDF saved as "${filename}" - ready to submit!`;
   } catch (err) {
     statusEl.className = 'pdf-status error';
     statusEl.textContent = 'Something went wrong. Please try again.';
@@ -551,9 +412,7 @@ async function generatePDF() {
   btn.disabled = false;
 }
 
-buildPips();
-renderSteps();
-updatePips();
+document.addEventListener('DOMContentLoaded', initializeLab);
 </script>
 </body>
 </html>
