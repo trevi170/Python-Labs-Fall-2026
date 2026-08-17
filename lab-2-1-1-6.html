@@ -1,418 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lab 2.1.1.6: The print() Function</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 2.1.1.6: The print() Function — Submission</title>
+
+  <!-- PDF library (needs internet; or save jspdf.umd.min.js next to this file) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #ffffff;
-      --bg-secondary: #f8f9fa;
-      --text: #1a1a1a;
-      --text-secondary: #5c5c5c;
-      --border: #e0e0e0;
-      --primary: #1f5fa0;
-      --primary-light: #e3f2fd;
-      --success: #2e7d32;
-      --success-light: #e8f5e9;
-      --radius: 8px;
-      --font-sans: system-ui, -apple-system, sans-serif;
-    }
-    body {
-      font-family: var(--font-sans);
-      background: #f5f5f5;
-      color: var(--text);
-      min-height: 100vh;
-      padding: 40px 20px;
-    }
-    .container { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border); padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 4px; background: var(--primary-light); color: var(--primary); margin-bottom: 12px; }
-    .lab-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
-    .lab-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem; }
-    .overview-box { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; padding: 16px; margin-bottom: 2rem; }
-    .overview-box p { color: var(--primary); font-size: 14px; margin: 0 0 8px; line-height: 1.6; font-weight: 500; }
-    .objectives-box { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 2rem; }
-    .objectives-box p { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
-    .objectives-box ul { font-size: 14px; color: var(--text-secondary); margin: 0 0 0 20px; line-height: 1.8; }
-    .progress-bar { display: flex; gap: 6px; margin-bottom: 2rem; }
-    .pip { flex: 1; height: 6px; border-radius: 3px; background: #e0e0e0; }
-    .pip.done { background: var(--success); }
-    .pip.active { background: var(--primary); }
-    .steps { display: flex; flex-direction: column; gap: 12px; }
-    .step { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-    .step.active { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
-    .step.done { border-color: var(--success); }
-    .step-header { display: flex; align-items: center; gap: 12px; padding: 16px; cursor: pointer; background: var(--bg-secondary); }
-    .step-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; border: 2px solid var(--border); color: var(--text); background: var(--bg); }
-    .step.active .step-num { background: var(--primary); color: white; border-color: var(--primary); }
-    .step.done .step-num { background: var(--success); color: white; }
-    .step-label { font-size: 15px; font-weight: 600; flex: 1; }
-    .step-tag { font-size: 12px; padding: 4px 10px; border-radius: 4px; background: var(--primary-light); color: var(--primary); font-weight: 500; }
-    .step-body { display: none; padding: 0 16px 16px; background: var(--bg); }
-    .step.open .step-body { display: block; }
-    .step-body p { font-size: 14px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 12px; }
-    .info-box { margin: 12px 0; padding: 12px 16px; background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; }
-    .info-box p { color: var(--primary); font-size: 13px; margin: 0; line-height: 1.6; }
-    .code-block { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 10px 0; color: #d63384; white-space: pre-wrap; line-height: 1.5; }
-    .test-data { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 10px 0; }
-    .test-case { margin-bottom: 12px; }
-    .test-input { font-size: 13px; color: var(--text); font-weight: 500; }
-    .test-output { font-size: 13px; color: var(--primary); margin-top: 4px; font-family: 'Courier New', monospace; }
-    .btn { padding: 10px 20px; border-radius: 4px; border: none; font-size: 14px; cursor: pointer; font-family: var(--font-sans); font-weight: 600; background: var(--primary); color: white; margin-top: 16px; transition: all 0.2s; }
-    .btn:hover { background: #1a4a7f; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(31,95,160,0.3); }
-    .step-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
-    .complete-banner { display: none; margin-top: 2rem; padding: 16px 20px; background: var(--success-light); border-radius: var(--radius); border: 1px solid var(--success); border-left: 4px solid var(--success); }
-    .complete-banner p { color: var(--success); font-size: 14px; margin: 0; line-height: 1.6; font-weight: 500; }
-    .screenshot-section { margin-top: 16px; }
-    .screenshot-section-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 10px; }
-    .screenshot-slot { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; }
-    .screenshot-slot-header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--bg-secondary); border-bottom: 1px solid var(--border); }
-    .slot-num { width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: white; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .slot-label { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; }
-    .slot-status { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
-    .slot-status.uploaded { color: var(--success); font-weight: 600; }
-    .upload-area { padding: 24px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; background: var(--bg); transition: all 0.15s; border-top: 1px solid var(--border); }
-    .upload-area:hover { background: var(--bg-secondary); }
-    .upload-area.has-image { padding: 0; cursor: default; }
-    .upload-area span { font-size: 14px; color: var(--text-secondary); }
-    .upload-area input[type=file] { display: none; }
-    .preview-img { width: 100%; display: block; max-height: 300px; object-fit: contain; background: var(--bg-secondary); }
-    .img-actions { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--border); background: var(--bg); }
-    .img-actions button { font-size: 13px; padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); cursor: pointer; font-family: var(--font-sans); color: var(--text); }
-    .img-actions button:hover { background: var(--bg-secondary); }
-    .img-actions button.remove { color: #d32f2f; border-color: #d32f2f; }
-    .img-actions button.remove:hover { background: #ffebee; }
-    .pdf-section { margin-top: 16px; padding: 16px; background: var(--bg-secondary); border-radius: var(--radius); border: 1px solid var(--border); }
-    .pdf-section-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
-    .pdf-section p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 12px; }
-    .pdf-name-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
-    .pdf-name-row input { flex: 1; padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); font-family: var(--font-sans); font-size: 14px; color: var(--text); }
-    .pdf-name-row input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
-    .pdf-status { font-size: 12px; color: var(--text-secondary); margin-top: 8px; min-height: 18px; }
-    .pdf-status.generating { color: var(--primary); font-weight: 600; }
-    .pdf-status.done { color: var(--success); font-weight: 600; }
-    .pdf-status.error { color: #d32f2f; font-weight: 600; }
-    .btn.pdf-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    ul { margin: 10px 0 10px 20px; }
-    li { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; line-height: 1.6; }
-    .hint { font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+           max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.7; color: #333; }
+    h1 { color: #1a5c8a; border-bottom: 3px solid #f0ad4e; padding-bottom: 10px; }
+    .badge { display: inline-block; background: #f0ad4e; color: #fff; padding: 2px 10px;
+             border-radius: 4px; font-size: 0.85em; margin-bottom: 8px; }
+    .meta { color: #777; font-size: 0.9em; margin-bottom: 24px; }
+    pre { background: #f5f5f5; border-left: 4px solid #1a5c8a; padding: 12px 16px;
+          overflow-x: auto; font-size: 0.95em; }
+    code { background: #eef; padding: 2px 5px; border-radius: 3px; }
+    pre code { background: none; padding: 0; }
+    .task { margin-bottom: 28px; background: #fafbfc; border: 1px solid #e3e8ee;
+            border-radius: 8px; padding: 16px; }
+    .error { color: #c0392b; font-weight: bold; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f0f4f8; }
+    .upload-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+    .attach-btn { background: #1a5c8a; color: #fff; border: none; padding: 8px 16px;
+                  border-radius: 6px; cursor: pointer; font-size: 0.9em; }
+    .attach-btn:hover { background: #14476b; }
+    input[type=file] { display: none; }
+    .shot-preview { max-width: 260px; max-height: 160px; border: 2px solid #cfd8e3;
+                    border-radius: 6px; display: none; }
+    .shot-name { font-size: 0.85em; color: #555; }
+    .finish { background: #d4edda; border: 1px solid #c3e6cb; padding: 12px 16px;
+              border-radius: 6px; margin-top: 20px; }
+    .submit-wrap { text-align: center; margin-top: 28px; }
+    #generatePdf { background: #2e7d32; color: #fff; font-size: 1.05em; padding: 14px 28px;
+                   border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    #generatePdf:hover { background: #256428; }
+    .student-name { margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    input[type=text] { padding: 8px; border: 1px solid #cfd8e3; border-radius: 6px; font-size: 0.95em; width: 240px; }
   </style>
 </head>
 <body>
-<div class="container">
-  <span class="badge">📚 Python Lab</span>
-  <div class="lab-title">Lab 2.1.1.6: The print() Function</div>
-  <div class="lab-desc">Practice using the print() function and experiment with simple Python output.</div>
 
-  <div class="overview-box">
-    <p>📋 Lab Overview</p>
-    <p>In this lab, you'll practice the print() function and experiment with strings, quotes, parentheses, and simple errors.</p>
-  </div>
+  <div class="badge">LAB</div>
+  <h1>Lab 2.1.1.6: The print() Function 🐍</h1>
+  <p class="meta">📚 Python Lab &nbsp;|&nbsp; ⏱️ Estimated time: 5–10 min &nbsp;|&nbsp; Difficulty: Very easy</p>
 
-  <div class="objectives-box">
-    <p>✅ Upon completion, you will be able to:</p>
-    <ul>
-      <li>Project and write parameterized functions</li>
-      <li>Use the return statement</li>
-      <li>Build a set of utility functions</li>
-      <li>Reuse your own previously written functions</li>
-      <li>Validate function arguments</li>
-    </ul>
-  </div>
-
-  <div class="progress-bar" id="pips"></div>
-  <div class="steps" id="steps-container"></div>
-  <div class="complete-banner" id="complete-banner">
-    <p><strong>Lab complete!</strong> You've practiced basic output with the print() function! 🎉</p>
-  </div>
-</div>
-
-<script>
-const { jsPDF } = window.jspdf;
-const savedAnswers = {};
-const screenshots = {};
-
-const steps = [
-  {
-    label: 'Understand the print() function',
-    tag: 'Context',
-    body: `
-      <p><strong>Scenario:</strong> The <code>print()</code> function is one of the easiest commands in Python. It displays text or values on the screen.</p>
-      <p>In this first lab, you will print <code>Hello, Python!</code>, then experiment with names, quotes, parentheses, and multiple <code>print()</code> statements.</p>
-      <ul>
-        <li>use <code>print()</code> to display text</li>
-        <li>practice using quotation marks around strings</li>
-        <li>see what happens when quotes or parentheses are missing</li>
-        <li>learn that errors are part of experimenting with code</li>
-      </ul>`
-  },
-  {
-    label: 'Break down the idea',
-    tag: 'Guide',
-    body: `
-      <p>A text value in Python is called a <strong>string</strong>. Strings need quotation marks, like <code>"Hello, Python!"</code> or <code>'Greg'</code>.</p>
-      <div class="info-box"><p><strong>Correct:</strong> <code>print("Hello, Python!")</code> sends the string to the screen.</p></div>
-      <div class="info-box"><p><strong>Experiment:</strong> Removing quotes or parentheses will cause Python to complain. That is useful because the error message helps you learn what Python expected.</p></div>
-      <p>The commented lines in the sample solution show examples to try one at a time.</p>`
-  },
-  {
-    label: 'Choose your platform',
-    tag: 'Setup',
-    body: `
-      <p><a href="https://github.com/codespaces/" target="_blank" style="display:inline-block; padding:8px 14px; border-radius:6px; border:1px solid var(--primary); background:var(--primary-light); color:var(--primary); font-size:12px; font-weight:500; text-decoration:none; cursor:pointer; margin:8px 0;">Open GitHub Codespaces →</a></p>
-      <p style="font-size: 12px; color: #666; margin-top: 8px;"><strong>💡 Tip:</strong> Create or open a Codespace, then save your Python file as "Lab_2.1.1.6_YourName.py"</p>`
-  },
-  {
-    label: 'Write your code',
-    tag: 'Code',
-    body: `
-      <p><strong>Starter code:</strong></p>
-      <div class="code-block"># Write your first print statement here.</div>
-
-      <p><strong>Complete solution:</strong></p>
-    <img src="images/2116.png" alt="Solution code visualization" style="width: 100%; height: auto; border: 1px solid #e0e0e0; border-radius: 4px; margin: 12px 0; display: block;">
-      <p style="font-size: 12px; color: #999; margin-top: 8px;"><em>💡 Run the first line, then uncomment one experiment at a time to see what happens.</em></p>
-
-      <p style="margin-top: 16px; font-size: 14px; font-weight: 600;">What each part does:</p>
-      <ul style="font-size: 13px; margin-top: 8px;">
-        <li><strong># Sample Solution:</strong> A comment for humans. Python ignores it when running the program.</li>
-        <li><strong>print("Hello, Python!"):</strong> Prints the text <code>Hello, Python!</code> to the screen.</li>
-        <li><strong># print("Greg"):</strong> A correct example, but it is commented out. Remove <code>#</code> to test it.</li>
-        <li><strong># print(Greg):</strong> Shows what happens when a word is used without quotes. Python treats it like a variable name.</li>
-        <li><strong># print"Greg":</strong> Shows what happens when parentheses are missing.</li>
-        <li><strong># print('Greg'):</strong> Shows that single quotes can also create a string.</li>
-        <li><strong># print("Greg") print("Python"):</strong> Shows that two print statements cannot be placed together like this on one line.</li>
-        <li><strong># ...:</strong> Means you can keep experimenting with more examples.</li>
+  <h2>📋 Lab Overview</h2>
+  <p>In this lab, you'll practice the <code>print()</code> function and experiment with strings, quotes, parentheses, and simple errors [1].</p>
+    <!-- WHERE TO CODE -->
+  <h2>💻 Where to Code</h2>
+  <p>You can write and run your Python code in any editor you like, but if you don't have one set up yet, use <strong>GitHub Codespaces</strong> — a free, browser-based development environment that requires no installation:</p>
+  <ul>
+    <li><a href="https://github.com/codespaces" target="_blank">Open GitHub Codespaces</a></li>
+    <li>Sign in with your (free) GitHub account</li>
+    <li>Create a new codespace — choose the <strong>PYTHON</strong> template when prompted</li>
+    <li>In the editor, create a file called <code>Lab_2.1.1.6_first_last_name.py</code> and paste your code there</li>
       </ul>
+  <p class="meta">✅ Everything runs in your browser — perfect for this lab's simple output exercises [1]. Take a screenshot of the terminal output after each task to attach below.</p>
 
-      <p style="margin-top: 16px;"><strong>Expected output for the first working line:</strong></p>
-      <div class="test-data">
-        <div class="test-output">Hello, Python!</div>
-      </div>`
-  },
-  {
-    label: 'Upload Screenshots & Generate PDF',
-    tag: 'Submission',
-    body: `
-      <p>Upload your screenshots and download your submission:</p>
-      <div class="screenshot-section">
-        <div class="screenshot-section-title">Screenshot 1: Your working print statement</div>
-        <div class="screenshot-slot" id="slot-ss-1">
-          <div class="screenshot-slot-header">
-            <div class="slot-num">1</div>
-            <div class="slot-label">Code and output: Hello, Python!</div>
-            <div class="slot-status" id="status-ss-1">Not uploaded</div>
-          </div>
-          <div class="upload-area" id="area-ss-1" onclick="triggerUpload('ss-1')">
-            <span>📷 Click to upload screenshot</span>
-            <input type="file" accept="image/*" id="file-ss-1" onchange="handleUpload('ss-1', this)">
-          </div>
-        </div>
-      </div>
-      <div class="screenshot-section">
-        <div class="screenshot-section-title">Screenshot 2: One experiment or error message</div>
-        <div class="screenshot-slot" id="slot-ss-2">
-          <div class="screenshot-slot-header">
-            <div class="slot-num">2</div>
-            <div class="slot-label">Experiment with quotes, names, or parentheses</div>
-            <div class="slot-status" id="status-ss-2">Not uploaded</div>
-          </div>
-          <div class="upload-area" id="area-ss-2" onclick="triggerUpload('ss-2')">
-            <span>📷 Click to upload screenshot</span>
-            <input type="file" accept="image/*" id="file-ss-2" onchange="handleUpload('ss-2', this)">
-          </div>
-        </div>
-      </div>
-      <div class="pdf-section">
-        <div class="pdf-section-title">📄 Generate PDF Submission</div>
-        <p>Enter your name and download your submission PDF:</p>
-        <div class="pdf-name-row">
-          <input type="text" id="student-name" placeholder="Your full name">
-        </div>
-        <button class="btn pdf-btn" id="pdf-btn" onclick="generatePDF()">
-          📥 Download PDF
-        </button>
-        <div class="pdf-status" id="pdf-status"></div>
-      </div>
-    `
-  }
-];
+  <h2>✅ Upon Completion</h2>
+  <ul>
+    <li>Project and write parameterized functions [1]</li>
+    <li>Use the <code>return</code> statement [1]</li>
+    <li>Build a set of utility functions [1]</li>
+    <li>Reuse your own previously written functions [1]</li>
+    <li>Validate function arguments [1]</li>
+  </ul>
 
-function triggerUpload(id) { if (!document.getElementById('area-' + id).classList.contains('has-image')) document.getElementById('file-' + id).click(); }
-function handleUpload(id, input) { const file = input.files[0]; if (!file) return; const r = new FileReader(); r.onload = e => { screenshots[id] = e.target.result; renderSlot(id); }; r.readAsDataURL(file); }
-function renderSlot(id) {
-  const area = document.getElementById('area-' + id);
-  const status = document.getElementById('status-' + id);
-  if (!area) return;
-  if (screenshots[id]) {
-    area.classList.add('has-image');
-    area.innerHTML = `<img class="preview-img" src="${screenshots[id]}" alt="screenshot" /><div class="img-actions"><button onclick="replaceImage('${id}')">Replace</button><button class="remove" onclick="removeImage('${id}')">Remove</button><input type="file" accept="image/*" id="file-${id}" onchange="handleUpload('${id}',this)" style="display:none"/></div>`;
-    status.textContent = 'Uploaded ✓';
-    status.classList.add('uploaded');
-  } else {
-    area.classList.remove('has-image');
-    area.innerHTML = `<span>📷 Click to upload screenshot</span><input type="file" accept="image/*" id="file-${id}" onchange="handleUpload('${id}',this)"/>`;
-    status.textContent = 'Not uploaded';
-    status.classList.remove('uploaded');
-  }
-}
-function replaceImage(id) { document.getElementById('file-' + id).click(); }
-function removeImage(id) { delete screenshots[id]; renderSlot(id); }
-function saveCurrentAnswers() { ['student-name'].forEach(id => { const el = document.getElementById(id); if (el) savedAnswers[id] = el.value; }); }
-function restoreAnswers() { ['student-name'].forEach(id => { const el = document.getElementById(id); if (el && savedAnswers[id] !== undefined) el.value = savedAnswers[id]; }); ['ss-1', 'ss-2'].forEach(id => renderSlot(id)); }
+  <h2>🎯 Tasks</h2>
+  <p><em>Complete each task, then click 📷 Attach screenshot to add a picture of your console output. When all tasks are done, generate the PDF at the bottom and upload it to Blackboard.</em></p>
 
-function initializeLab() {
-  const container = document.getElementById('steps-container');
-  const pipsContainer = document.getElementById('pips');
-  container.innerHTML = '';
-  pipsContainer.innerHTML = '';
-  steps.forEach((step, index) => {
-    const stepEl = document.createElement('div');
-    stepEl.className = 'step';
-    if (index === 0) stepEl.classList.add('active', 'open');
-    stepEl.innerHTML = `
-      <div class="step-header" onclick="toggleStep(${index})">
-        <div class="step-num">${index + 1}</div>
-        <div class="step-label">${step.label}</div>
-        <div class="step-tag">${step.tag}</div>
-      </div>
-      <div class="step-body">${step.body}</div>
-    `;
-    container.appendChild(stepEl);
-    const pip = document.createElement('div');
-    pip.className = 'pip';
-    if (index === 0) pip.classList.add('active');
-    pipsContainer.appendChild(pip);
-  });
-  restoreAnswers();
-}
+  <!-- TASK 1 -->
+  <div class="task" id="task-1">
+    <h3>Task 1 — Print "Hello, Python!"</h3>
+    <p>Use <code>print()</code> to print the line <code>Hello, Python!</code> using <strong>double quotes</strong>:</p>
+    <pre><code>print("Hello, Python!")</code></pre>
+    <div class="upload-row">
+      <button class="attach-btn" onclick="document.getElementById('file-task-1').click()">📷 Attach screenshot</button>
+      <input type="file" id="file-task-1" accept="image/*" data-task="task-1"/>
+      <img class="shot-preview" id="preview-task-1" alt="Task 1 screenshot preview"/>
+      <span class="shot-name" id="name-task-1"></span>
+    </div>
+  </div>
 
-function toggleStep(index) {
-  saveCurrentAnswers();
-  const steps = document.querySelectorAll('.step');
-  const pips = document.querySelectorAll('.pip');
-  steps.forEach((step, i) => {
-    step.classList.remove('active', 'open');
-    pips[i].classList.remove('active');
-    if (i === index) {
-      step.classList.add('active', 'open');
-      pips[i].classList.add('active');
-    } else if (i < index) {
-      step.classList.add('done');
-      pips[i].classList.add('done');
+  <!-- TASK 2 -->
+  <div class="task" id="task-2">
+    <h3>Task 2 — Print your first name</h3>
+    <p>Add a second line that prints your own first name in double quotes:</p>
+    <pre><code>print("Hello, Python!")
+print("Alice")   # replace with your name</code></pre>
+    <div class="upload-row">
+      <button class="attach-btn" onclick="document.getElementById('file-task-2').click()">📷 Attach screenshot</button>
+      <input type="file" id="file-task-2" accept="image/*" data-task="task-2"/>
+      <img class="shot-preview" id="preview-task-2" alt="Task 2 screenshot preview"/>
+      <span class="shot-name" id="name-task-2"></span>
+    </div>
+  </div>
+
+  <!-- TASK 3 -->
+  <div class="task" id="task-3">
+    <h3>Task 3 — Break it on purpose 🧨</h3>
+    <p>Remove the double quotes from your name, run the code, and screenshot the error:</p>
+    <pre><code>print(Alice)</code></pre>
+    <p>Expected result: <span class="error">NameError: name 'Alice' is not defined</span></p>
+    <div class="upload-row">
+      <button class="attach-btn" onclick="document.getElementById('file-task-3').click()">📷 Attach screenshot</button>
+      <input type="file" id="file-task-3" accept="image/*" data-task="task-3"/>
+      <img class="shot-preview" id="preview-task-3" alt="Task 3 screenshot preview"/>
+      <span class="shot-name" id="name-task-3"></span>
+    </div>
+  </div>
+
+  <!-- QUICK REFERENCE -->
+  <h2>💡 Quick Reference: What print() Does</h2>
+  <table>
+    <tr><th>Code</th><th>Result</th></tr>
+    <tr><td><code>print("Hello")</code></td><td>Displays text ✅</td></tr>
+    <tr><td><code>print(42)</code></td><td>Displays a number ✅</td></tr>
+    <tr><td><code>print("I am", 25)</code></td><td>Displays items separated by spaces ✅</td></tr>
+    <tr><td><code>print(Alice)</code></td><td class="error">NameError (undefined variable) ❌</td></tr>
+  </table>
+
+  <div class="finish">
+    🏁 <strong>Lab complete!</strong> You've practiced basic output with the <code>print()</code> function! 🎉 [1]
+  </div>
+
+  <!-- SUBMISSION -->
+  <div class="submit-wrap">
+    <div class="student-name">
+      <label for="studentName">Your name:</label>
+      <input type="text" id="studentName" placeholder="e.g. Alice Smith"/>
+    </div>
+    <button id="generatePdf">⬇️ Generate PDF for Blackboard Submission</button>
+  </div>
+
+  <script>
+    const shots = {}; // taskId -> { dataUrl, filename }
+
+    /* ---------- Screenshot attach handling ---------- */
+    document.querySelectorAll('input[type=file]').forEach(inp => {
+      inp.addEventListener('change', e => {
+        const f = e.target.files[0];
+        if (!f) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+          shots[inp.dataset.task] = { dataUrl: ev.target.result, filename: f.name };
+          const prev = document.getElementById('preview-' + inp.dataset.task);
+          prev.src = ev.target.result;
+          prev.style.display = 'inline-block';
+          document.getElementById('name-' + inp.dataset.task).textContent = f.name;
+        };
+        reader.readAsDataURL(f);
+      });
+    });
+
+    /* ---------- Modern palette (slate / blue) ---------- */
+    const C = {
+      navy:   [15, 23, 42],     // header band
+      accent: [59, 130, 246],   // vivid blue accents
+      ink:    [30, 41, 59],     // main text
+      muted:  [100, 116, 139],  // secondary text
+      faint:  [148, 163, 184],  // footer / subtle text
+      card:   [241, 245, 249],  // chip background
+      line:   [226, 232, 240],  // dividers & image borders
+      red:    [220, 38, 38],    // missing-screenshot marker
+      green:  [22, 163, 74],    // completed badge
+      amber:  [245, 158, 11]    // pending badge
+    };
+
+    function loadImage(src) {
+      return new Promise((res, rej) => {
+        const i = new Image();
+        i.onload = () => res(i);
+        i.onerror = rej;
+        i.src = src;
+      });
     }
-  });
-  document.getElementById('complete-banner').style.display = index === steps.length - 1 ? 'block' : 'none';
-  restoreAnswers();
-}
 
-async function generatePDF() {
-  saveCurrentAnswers();
-  const btn = document.getElementById('pdf-btn');
-  const statusEl = document.getElementById('pdf-status');
-  const studentName = (savedAnswers['student-name'] || '').trim();
-  btn.disabled = true;
-  statusEl.className = 'pdf-status generating';
-  statusEl.textContent = 'Building your PDF...';
-  try {
-    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    const pageW = doc.internal.pageSize.getWidth();
-    const pageH = doc.internal.pageSize.getHeight();
-    const margin = 20;
-    const contentW = pageW - margin * 2;
-    let y = margin;
-    function checkPage(need) { if (y + need > pageH - margin) { doc.addPage(); y = margin; } }
-    function fillRect(x, ry, w, h, r, g, b) { doc.setFillColor(r, g, b); doc.rect(x, ry, w, h, 'F'); }
-    async function drawImageBlock(imgData, maxH) {
-      const maxW = contentW;
-      let iW = maxW, iH = maxH;
-      try {
-        const img = new Image();
-        await new Promise(res => { img.onload = res; img.onerror = res; img.src = imgData; });
-        if (img.width && img.height) {
-          const ratio = img.width / img.height;
-          if (maxW / ratio <= maxH) { iW = maxW; iH = maxW / ratio; } else { iH = maxH; iW = maxH * ratio; }
-        }
-      } catch (e) { }
-      checkPage(iH + 8);
-      const fmt = imgData.includes('image/png') ? 'PNG' : 'JPEG';
-      doc.setDrawColor(31, 95, 160);
-      doc.setLineWidth(0.5);
-      doc.rect(margin, y, iW, iH);
-      doc.addImage(imgData, fmt, margin, y, iW, iH);
-      y += iH + 10;
-    }
-    fillRect(0, 0, pageW, 14, 31, 95, 160);
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'bold');
-    doc.text('PYTHON LAB 2.1.1.6', margin, 9);
-    doc.setFont('helvetica', 'normal');
-    doc.text('print() Function', pageW - margin, 9, { align: 'right' });
-    y = 22;
-    doc.setTextColor(20, 20, 20);
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Lab Submission', margin, y);
-    y += 8;
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(80, 80, 80);
-    doc.text(`Student: ${studentName || '(name not provided)'}`, margin, y);
-    y += 5;
-    doc.text(`Submitted: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, margin, y);
-    y += 5;
-    doc.text("Lab: The print() Function (2.1.1.6)", margin, y);
-    y += 10;
-    doc.setDrawColor(220, 220, 220);
-    doc.setLineWidth(0.3);
-    doc.line(margin, y, pageW - margin, y);
-    y += 8;
-    if (screenshots['ss-1']) {
-      checkPage(15);
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(20, 20, 20);
-      doc.text('Code Implementation', margin, y);
-      y += 6;
-      await drawImageBlock(screenshots['ss-1'], 80);
-    }
-    if (screenshots['ss-2']) {
-      checkPage(15);
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(20, 20, 20);
-      doc.text('Test Results', margin, y);
-      y += 6;
-      await drawImageBlock(screenshots['ss-2'], 80);
-    }
-    const totalPages = doc.internal.getNumberOfPages();
-    for (let p = 1; p <= totalPages; p++) {
-      doc.setPage(p);
-      doc.setDrawColor(220, 220, 220);
-      doc.setLineWidth(0.3);
-      doc.line(margin, pageH - 12, pageW - margin, pageH - 12);
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(8);
-      doc.setTextColor(150, 150, 150);
-      doc.text(`Lab 2.1.1.6: The print() Function - ${studentName || 'Student'}`, margin, pageH - 7);
-      doc.text(`Page ${p} of ${totalPages}`, pageW - margin, pageH - 7, { align: 'right' });
-    }
-    const filename = studentName ? `Lab_2.1.1.6_${studentName.replace(/\s+/g, '_')}.pdf` : 'Lab_2.1.1.6_Submission.pdf';
-    doc.save(filename);
-    statusEl.className = 'pdf-status done';
-    statusEl.textContent = `✓ PDF saved as "${filename}" - ready to submit!`;
-  } catch (err) {
-    statusEl.className = 'pdf-status error';
-    statusEl.textContent = 'Something went wrong. Please try again.';
-    console.error(err);
-  }
-  btn.disabled = false;
-}
+    /* Draw a screenshot with a subtle border; tall images slice across pages. */
+    async function addScreenshot(doc, dataUrl, x, widthMM, yState) {
+      const img = await loadImage(dataUrl);
+      const H = doc.internal.pageSize.getHeight();
+      const scale = widthMM / img.width;   // mm per pixel
+      const fullH = img.height * scale;
 
-document.addEventListener('DOMContentLoaded', initializeLab);
-</script>
-</body>
-</html>
+      let drawn = 0, pageY = yState.y;
+      while (drawn < fullH) {
+        if (pageY > H - 24) { doc.addPage(); pageY = 15; }   // keep clear of footer
+        const sliceMM = Math.min(H - 24 - pageY, fullH - drawn);
+        if (sliceMM <= 10) { doc.addPage(); pageY = 15; continue; }
+
+        const startPx = Math.round(drawn / scale);
+        const c = document.createElement('canvas');
+        c.width = img.width;
+        c.height = Math.min(Math.max(1, Math.round(sliceMM / scale)), img.height - startPx);
+        c.getContext('2d').drawImage(img, 0, startPx, img.width, c.height, 0, 0, c.width, c.height);
+
+        doc.addImage(c.toDataURL('image/png'), 'PNG', x, pageY, widthMM, sliceMM);
+        doc.setDrawColor(...C.line); doc.setLineWidth(0.3);
+        doc.rect(x, pageY, widthMM, sliceMM, 'S');
+
+        drawn += sliceMM;
+        pageY += sliceMM + 6;
+      }
+      yState.y = pageY;
+    }
+
+    /* Status badge: green check if screenshot attached, amber "!" if not */
+    function statusBadge(doc, rightX, cy, done) {
+      const r = 4.2;              // radius in mm
+      const cx = rightX - r;      // right-aligned to the page margin
+      if (done) {
+        doc.setFillColor(...C.green);
+        doc.circle(cx, cy, r, 'F');
+        doc.setDrawColor(255, 255, 255);
+        doc.setLineWidth(0.9);
+        doc.line(cx - 1.9, cy + 0.4, cx - 0.6, cy + 1.7);   // short arm of check
+        doc.line(cx - 0.6, cy + 1.7, cx + 2.0, cy - 1.4);   // long arm of check
+      } else {
+        doc.setDrawColor(...C.amber);
+        doc.setLineWidth(0.6);
+        doc.circle(cx, cy, r, 'S');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(...C.amber);
+        doc.text('!', cx, cy + 1.3, { align: 'center' });
