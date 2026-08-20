@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 2.4.1.8: Unit Conversion - Submission</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root { --primary: #1a5c8a; --primary-light: #eef6fd; --text: #333333; --text-secondary: #666666; --border: #e3e8ee; --bg: #ffffff; --bg-secondary: #fafbfc; --success: #2e7d32; --success-light: #d4edda; --radius: 8px; --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.7; color: #333; }
+    h1 { color: #1a5c8a; border-bottom: 3px solid #f0ad4e; padding-bottom: 10px; }
+    h2 { color: #1f2937; margin-top: 28px; }
+    h3 { margin-bottom: 6px; }
+    a { color: #1a5c8a; }
+    .badge { display: inline-block; background: #f0ad4e; color: #fff; padding: 2px 10px; border-radius: 4px; font-size: 0.85em; margin-bottom: 8px; }
+    .meta { color: #777; font-size: 0.9em; margin-bottom: 24px; }
+    pre, .code-block { background: #f5f5f5; border-left: 4px solid #1a5c8a; padding: 12px 16px; overflow-x: auto; font-family: "Courier New", monospace; font-size: 0.95em; white-space: pre-wrap; }
+    code { background: #eef; padding: 2px 5px; border-radius: 3px; }
+    pre code { background: none; padding: 0; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f0f4f8; }
+    img { max-width: 100%; height: auto; }
+    .objectives { background: #fffaf0; border: 1px solid #f4d49b; border-radius: 8px; padding: 14px 18px; margin: 18px 0 24px; }
+    .lesson-box { background: #f8fbff; border: 1px solid #cfe1f3; border-left: 5px solid #1a5c8a; border-radius: 8px; padding: 16px 18px; margin: 18px 0 24px; }
+    .task { margin-bottom: 28px; background: #fafbfc; border: 1px solid #e3e8ee; border-radius: 8px; padding: 16px; }
+    .task-tag { display: inline-block; background: #e8f2fb; color: #1a5c8a; border-radius: 4px; padding: 2px 8px; font-size: 0.8em; font-weight: 600; margin-bottom: 10px; }
+    .task-body p { margin-top: 0; }
+    .info-box, .test-data { margin: 12px 0; padding: 12px 16px; background: #eef6fd; border-left: 4px solid #1a5c8a; border-radius: 0 4px 4px 0; }
+    .hint { font-size: 0.92em; color: #666; font-style: italic; }
+    .error { color: #c0392b; font-weight: bold; }
+    .upload-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+    .attach-btn { display: inline-block; background: #1a5c8a; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9em; }
+    .attach-btn:hover { background: #14476b; }
+    input[type=file] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+    .shot-preview { max-width: 260px; max-height: 160px; border: 2px solid #cfd8e3; border-radius: 6px; display: none; }
+    .shot-name { font-size: 0.85em; color: #555; }
+    .finish { background: #d4edda; border: 1px solid #c3e6cb; padding: 12px 16px; border-radius: 6px; margin-top: 20px; }
+    .submit-wrap { text-align: center; margin-top: 28px; }
+    #generatePdf { background: #2e7d32; color: #fff; font-size: 1.05em; padding: 14px 28px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    #generatePdf:hover { background: #256428; }
+    .student-name { margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+    input[type=text] { padding: 8px; border: 1px solid #cfd8e3; border-radius: 6px; font-size: 0.95em; width: 240px; }
+    .pdf-message { min-height: 1.4em; margin-top: 10px; color: #2e7d32; font-size: 0.95em; }
+  </style>
+</head>
+<body>
+  <div class="badge">LAB</div>
+  <h1>Lab 2.4.1.8: Unit Conversion</h1>
+  <p class="meta">Python Lab | Submission handout | Complete the tasks, attach screenshots, and generate your PDF.</p>
+
+  <h2>Lab Overview</h2>
+  <p>In this lab, you'll write formulas to convert between two units of distance: miles and kilometers. You'll practice variables, arithmetic operations, and learn how to use the round() function for formatting output.</p>
+
+  <div class="objectives">
+    <h2>Learning Objectives</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+      <li>Use variables to store conversion values</li>
+      <li>Perform arithmetic calculations with variables</li>
+      <li>Use the round() function to format decimal numbers</li>
+      <li>Combine multiple arguments in print statements</li>
+      <li>Apply mathematical formulas in code</li>
+    </ul>
+  </div>
+
+  <h2>Lesson Explanation</h2>
+  <div class="lesson-box">
+    <p>Apply variables and arithmetic to a real-world conversion problem. Convert between miles and kilometers using formulas and the round() function.</p>
+    <p>As you work, pay attention to the relationship between the code you type and the output Python displays. If you get an error, read the message as a clue: it usually points to the line or idea that needs attention.</p>
+  </div>
+
+  <h2>Where to Code</h2>
+  <p>You will complete this lab using <strong>GitHub Codespaces</strong>, a free browser-based development environment that lets you write and run Python without installing anything.</p>
+  <ul>
+    <li><a href="https://github.com/codespaces" target="_blank" rel="noreferrer">Open GitHub Codespaces</a>.</li>
+    <li>Sign in with your free GitHub account.</li>
+    <li>Create a new codespace and choose the <strong>Python</strong> template when prompted.</li>
+    <li>Create a file named <code>lab-2-4-1-8_first_last_name.py</code>.</li>
+    <li>Type your code, run it, and check the output.</li>
+    <li>After each coding or output task, take a screenshot and attach it below that task.</li>
+  </ul>
+
+  <h2>Tasks</h2>
+  <p><em>Complete each task in GitHub Codespaces. Attach screenshots only on tasks where you write, run, test, or show code output, then generate the PDF for Blackboard.</em></p>
+
+  <div class="task" id="task-1">
+    <h3>Task 1 - Understand the conversion</h3>
+    <div class="task-tag">Context</div>
+    <div class="task-body">
+
+      <p><strong>The conversion factor:</strong> 1 mile = 1.61 kilometers</p>
+      <p><strong>Formulas to implement:</strong></p>
+      <ul>
+        <li>Miles to kilometers: <code>miles * 1.61</code></li>
+        <li>Kilometers to miles: <code>kilometers / 1.61</code></li>
+      </ul>
+      <div class="info-box"><p><strong>The round() function:</strong> <code>round(value, decimals)</code> rounds a number to specified decimal places.</p></div>
+    </div>
+
+  </div>
+
+  <div class="task" id="task-2">
+    <h3>Task 2 - Choose your platform</h3>
+    <div class="task-tag">Setup</div>
+    <div class="task-body">
+<p>Use <strong>GitHub Codespaces</strong> for this lab.</p>
+      <div class="info-box"><p><strong>Open the coding environment:</strong> <a href="https://github.com/codespaces" target="_blank" rel="noreferrer">Open GitHub Codespaces</a></p></div>
+      <ul>
+        <li>Sign in with your free GitHub account.</li>
+        <li>Create a new codespace and choose the <strong>Python</strong> template when prompted.</li>
+        <li>Create your Python file for this lab.</li>
+        <li>Run your code in the terminal and take a screenshot when you are finished with this task.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="task" id="task-3">
+    <h3>Task 3 - Exercise 1: Write conversion formulas</h3>
+    <div class="task-tag">Experiment</div>
+    <div class="task-body">
+
+      <p><strong>Your task:</strong> Complete the conversion formulas by replacing the ### placeholders.</p>
+            <p><strong>Complete Solution:</strong></p>
+      <img src="data:image/png;base64,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" alt="Complete solution code" style="max-width: 100%; border: 1px solid #e0e0e0; border-radius: 4px; margin: 12px 0; display: block;">
+      <p style="font-size: 12px; color: #999; margin-top: 8px;"><em>💡 Image format prevents copy-pasting - type it out to learn!</em></p>
+      
+      <p style="margin-top: 16px; font-size: 14px; font-weight: 600;">What each line does:</p>
+      <ul style="font-size: 13px; margin-top: 8px;">
+        <li><strong>Line 1:</strong> Ask user to input miles and store as a float number</li>
+        <li><strong>Line 2:</strong> Calculate kilometers by multiplying miles by conversion factor 1.60934</li>
+        <li><strong>Line 3:</strong> Round the result to 2 decimal places using round() function</li>
+        <li><strong>Line 4:</strong> Print the original miles, text, and converted kilometers</li>
+      </ul>
+      
+      <p style="margin-top: 16px;"><strong>Test your code:</strong></p>
+      <p><strong>Starter code:</strong></p>
+      <div class="code-block">kilometers = 12.25
+miles = 7.38
+
+miles_to_kilometers = ###
+kilometers_to_miles = ###
+
+print(miles, "miles is", round(miles_to_kilometers, 2), "kilometers")
+print(kilometers, "kilometers is", round(kilometers_to_miles, 2), "miles")</div>
+      <p><strong>Complete the formulas:</strong></p>
+      <ul>
+        <li>Line 4: Replace ### with formula to convert miles to kilometers</li>
+        <li>Line 5: Replace ### with formula to convert kilometers to miles</li>
+      </ul>
+      <p><strong>Expected output:</strong></p>
+      <div class="code-block">7.38 miles is 11.88 kilometers
+12.25 kilometers is 7.61 miles</div>
+      <div class="hint">Use multiplication for miles to km, and division for km to miles. The round() function will format the results to 2 decimal places.</div>
+    </div>
+
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-3">Attach screenshot</label>
+      <input type="file" id="file-task-3" accept="image/*" data-shot="task-3" data-label="Task 3: Exercise 1: Write conversion formulas" />
+      <img class="shot-preview" id="preview-task-3" alt="Task 3: Exercise 1: Write conversion formulas screenshot preview" />
+      <span class="shot-name" id="name-task-3"></span>
+    </div>
+  </div>
+
+  <div class="task" id="task-4">
+    <h3>Task 4 - Exercise 2: Experiment with different values</h3>
+    <div class="task-tag">Experiment</div>
+    <div class="task-body">
+
+      <p>Try your converter with different input values:</p>
+      <ul>
+        <li>Change the <code>miles</code> and <code>kilometers</code> values</li>
+        <li>Test with your own distances (your height, a city distance, etc.)</li>
+        <li>Verify the conversions are accurate</li>
+        <li>Try decimal values</li>
+      </ul>
+      <p><strong>Example experiment:</strong></p>
+      <div class="code-block">kilometers = 100.0
+miles = 50.0
+
+miles_to_kilometers = miles * 1.61
+kilometers_to_miles = kilometers / 1.61
+
+print(miles, "miles is", round(miles_to_kilometers, 2), "kilometers")
+print(kilometers, "kilometers is", round(kilometers_to_miles, 2), "miles")</div>
+      <p><strong>Expected output:</strong></p>
+      <div class="code-block">50.0 miles is 80.5 kilometers
+100.0 kilometers is 62.11 miles</div>
+      <div class="hint">The formulas stay the same; only the input values change.</div>
+    </div>
+
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-4">Attach screenshot</label>
+      <input type="file" id="file-task-4" accept="image/*" data-shot="task-4" data-label="Task 4: Exercise 2: Experiment with different values" />
+      <img class="shot-preview" id="preview-task-4" alt="Task 4: Exercise 2: Experiment with different values screenshot preview" />
+      <span class="shot-name" id="name-task-4"></span>
+    </div>
+  </div>
+
+  <div class="task" id="task-5">
+    <h3>Task 5 - Exercise 3: Create your own converter</h3>
+    <div class="task-tag">Experiment</div>
+    <div class="task-body">
+
+      <p>Challenge: Create a different unit converter based on the hints:</p>
+      <ul>
+        <li><strong>Temperature:</strong> Celsius to Fahrenheit: (C × 9/5) + 32</li>
+        <li><strong>Currency:</strong> USD to EUR (find current exchange rate)</li>
+        <li><strong>Weight:</strong> Pounds to kilograms: lbs / 2.205</li>
+        <li><strong>Length:</strong> Inches to centimeters: inches × 2.54</li>
+      </ul>
+      <p><strong>Example: Temperature converter</strong></p>
+      <div class="code-block">celsius = 25
+fahrenheit = (celsius * 9/5) + 32
+
+print(celsius, "°C is", round(fahrenheit, 2), "°F")</div>
+      <div class="hint">Choose any conversion you like and implement it using the same pattern as the miles/kilometers converter.</div>
+    </div>
+
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-5">Attach screenshot</label>
+      <input type="file" id="file-task-5" accept="image/*" data-shot="task-5" data-label="Task 5: Exercise 3: Create your own converter" />
+      <img class="shot-preview" id="preview-task-5" alt="Task 5: Exercise 3: Create your own converter screenshot preview" />
+      <span class="shot-name" id="name-task-5"></span>
+    </div>
+  </div>
+
+  <div class="finish">
+    <strong>Lab complete!</strong> Review your screenshots, generate the PDF, and upload the PDF to Blackboard.
+  </div>
+
+  <div class="submit-wrap">
+    <div class="student-name">
+      <label for="studentName">Your name:</label>
+      <input type="text" id="studentName" placeholder="e.g. Alice Smith" />
+    </div>
+    <button id="generatePdf" type="button">Generate PDF for Blackboard Submission</button>
+    <div class="pdf-message" id="pdfMessage"></div>
+  </div>
+
+  <script>
+    const labTitle = "Lab 2.4.1.8: Unit Conversion";
+    const labNumber = "2.4.1.8";
+    const shots = {};
+
+    document.querySelectorAll("input[type=file]").forEach((input) => {
+      input.addEventListener("change", () => {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        if (!file.type.startsWith("image/")) {
+          alert("Please choose an image file for the screenshot.");
+          input.value = "";
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          const id = input.dataset.shot;
+          shots[id] = { dataUrl: reader.result, filename: file.name, label: input.dataset.label || "Screenshot" };
+          const preview = document.getElementById("preview-" + id);
+          const name = document.getElementById("name-" + id);
+          preview.src = reader.result;
+          preview.style.display = "inline-block";
+          name.textContent = file.name + " attached";
+        };
+        reader.onerror = () => alert("The screenshot could not be read. Please try another image.");
+        reader.readAsDataURL(file);
+      });
+    });
+
+    function safeFilePart(value) {
+      return (value || "student").trim().replace(/[^a-z0-9]+/gi, "_").replace(/^_+|_+$/g, "").toLowerCase() || "student";
+    }
+    function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = () => reject(new Error("Image failed to load."));
+        image.src = src;
+      });
+    }
+    function ensureRoom(doc, y, needed) {
+      const height = doc.internal.pageSize.getHeight();
+      if (y + needed <= height - 18) return y;
+      doc.addPage();
+      return 18;
+    }
+    function addWrappedText(doc, text, x, y, width, lineHeight) {
+      const lines = doc.splitTextToSize(text, width);
+      doc.text(lines, x, y);
+      return y + lines.length * lineHeight;
+    }
+    async function addScreenshot(doc, shot, y) {
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 14;
+      const maxWidth = pageWidth - margin * 2;
+      const maxHeight = pageHeight - 55;
+      const image = await loadImage(shot.dataUrl);
+      const canvas = document.createElement("canvas");
+      canvas.width = image.naturalWidth || image.width;
+      canvas.height = image.naturalHeight || image.height;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(image, 0, 0);
+      const pdfImage = canvas.toDataURL("image/jpeg", 0.92);
+      let drawWidth = maxWidth;
+      let drawHeight = (image.height / image.width) * drawWidth;
+      if (drawHeight > maxHeight) {
+        drawHeight = maxHeight;
+        drawWidth = (image.width / image.height) * drawHeight;
+      }
+      y = ensureRoom(doc, y, drawHeight + 12);
+      doc.addImage(pdfImage, "JPEG", margin, y, drawWidth, drawHeight, undefined, "FAST");
+      doc.setDrawColor(226, 232, 240);
+      doc.setLineWidth(0.35);
+      doc.rect(margin, y, drawWidth, drawHeight, "S");
+      return y + drawHeight + 10;
+    }
+    function addFooter(doc, pageNumber) {
+      const width = doc.internal.pageSize.getWidth();
+      const height = doc.internal.pageSize.getHeight();
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(100, 116, 139);
+      doc.text(labTitle, 14, height - 8);
+      doc.text("Page " + pageNumber, width - 14, height - 8, { align: "right" });
+    }
+
+    document.getElementById("generatePdf").addEventListener("click", async () => {
+      const message = document.getElementById("pdfMessage");
+      message.textContent = "Building PDF...";
+      try {
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+          throw new Error("The PDF library did not load. Check your internet connection and refresh the page.");
+        }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: "mm", format: "letter" });
+        const studentName = document.getElementById("studentName").value.trim() || "Student";
+        let y = 18;
+        doc.setFillColor(15, 23, 42);
+        doc.rect(0, 0, doc.internal.pageSize.getWidth(), 30, "F");
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(17);
+        doc.setTextColor(255, 255, 255);
+        doc.text(labTitle, 14, 18, { maxWidth: 184 });
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.text("Submission for " + studentName, 14, 26);
+        y = 42;
+        doc.setTextColor(30, 41, 59);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        y = addWrappedText(doc, "This PDF includes screenshot evidence for the completed lab work.", 14, y, 180, 6) + 5;
+
+        const attached = Object.values(shots);
+        if (!attached.length) {
+          doc.setTextColor(192, 57, 43);
+          doc.setFont("helvetica", "bold");
+          doc.text("No screenshots were attached.", 14, y);
+        }
+        for (const shot of attached) {
+          y = ensureRoom(doc, y, 16);
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12);
+          doc.setTextColor(26, 92, 138);
+          doc.text(shot.label + ": " + shot.filename, 14, y, { maxWidth: 180 });
+          y += 7;
+          y = await addScreenshot(doc, shot, y);
+        }
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let page = 1; page <= pageCount; page += 1) {
+          doc.setPage(page);
+          addFooter(doc, page);
+        }
+        doc.save("Lab_2_4_1_8_" + safeFilePart(studentName) + ".pdf");
+        message.textContent = "PDF generated. Check your downloads folder.";
+      } catch (error) {
+        console.error(error);
+        message.textContent = "";
+        alert(error.message || "The PDF could not be generated.");
+      }
+    });
+  </script>
+</body>
+</html>

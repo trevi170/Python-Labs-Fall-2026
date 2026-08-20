@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>End Semester Project: Cybersecurity Log Analysis - Submission</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root { --primary: #1a5c8a; --primary-light: #eef6fd; --text: #333333; --text-secondary: #666666; --border: #e3e8ee; --bg: #ffffff; --bg-secondary: #fafbfc; --success: #2e7d32; --success-light: #d4edda; --radius: 8px; --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { font-family: var(--font-sans); max-width: 850px; margin: 40px auto; padding: 0 20px; line-height: 1.7; color: var(--text); background: var(--bg); }
+    h1 { color: var(--primary); border-bottom: 3px solid #f0ad4e; padding-bottom: 10px; }
+    h2 { color: #1f2937; margin-top: 28px; }
+    h3 { margin-bottom: 6px; }
+    a { color: var(--primary); }
+    .badge { display: inline-block; background: #f0ad4e; color: #fff; padding: 2px 10px; border-radius: 4px; font-size: 0.85em; margin-bottom: 8px; }
+    .meta { color: #777; font-size: 0.9em; margin-bottom: 24px; }
+    pre, .code-block { background: #f5f5f5; border-left: 4px solid var(--primary); padding: 12px 16px; overflow-x: auto; font-family: "Courier New", monospace; font-size: 0.92em; white-space: pre-wrap; }
+    code { background: #eef; padding: 2px 5px; border-radius: 3px; }
+    pre code { background: none; padding: 0; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; vertical-align: top; }
+    th { background: #f0f4f8; }
+    .objectives { background: #fffaf0; border: 1px solid #f4d49b; border-radius: 8px; padding: 14px 18px; margin: 18px 0 24px; }
+    .lesson-box { background: #f8fbff; border: 1px solid #cfe1f3; border-left: 5px solid var(--primary); border-radius: 8px; padding: 16px 18px; margin: 18px 0 24px; }
+    .task { margin-bottom: 28px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .task-tag { display: inline-block; background: #e8f2fb; color: var(--primary); border-radius: 4px; padding: 2px 8px; font-size: 0.8em; font-weight: 600; margin-bottom: 10px; }
+    .task-body p { margin-top: 0; }
+    .info-box, .test-data { margin: 12px 0; padding: 12px 16px; background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; }
+    .warning { margin: 12px 0; padding: 12px 16px; background: #fff7ed; border-left: 4px solid #f97316; border-radius: 0 4px 4px 0; }
+    .hint { font-size: 0.92em; color: var(--text-secondary); font-style: italic; }
+    .upload-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+    .attach-btn { display: inline-block; background: var(--primary); color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9em; }
+    .attach-btn:hover { background: #14476b; }
+    input[type=file] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+    .shot-preview { max-width: 260px; max-height: 160px; border: 2px solid #cfd8e3; border-radius: 6px; display: none; }
+    .shot-name { font-size: 0.85em; color: #555; }
+    .finish { background: var(--success-light); border: 1px solid #c3e6cb; padding: 12px 16px; border-radius: 6px; margin-top: 20px; }
+    .submit-wrap { text-align: center; margin-top: 28px; }
+    #generatePdf { background: var(--success); color: #fff; font-size: 1.05em; padding: 14px 28px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    #generatePdf:hover { background: #256428; }
+    .student-name { margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+    input[type=text] { padding: 8px; border: 1px solid #cfd8e3; border-radius: 6px; font-size: 0.95em; width: 240px; }
+    .pdf-message { min-height: 1.4em; margin-top: 10px; color: var(--success); font-size: 0.95em; }
+  </style>
+</head>
+<body>
+  <div class="badge">FINAL PROJECT</div>
+  <h1>End Semester Project: Cybersecurity Log Analysis</h1>
+  <p class="meta">Python Project | Estimated time: 60-90 minutes | Difficulty: End semester | Complete the tasks, attach screenshots, and generate your PDF.</p>
+
+  <h2>Project Overview</h2>
+  <p>In this final project, you will build a small defensive cybersecurity tool. Your program will scan a separate sample login log file, count failed login attempts, identify suspicious users, and print a short security report.</p>
+
+  <div class="objectives">
+    <h2>Learning Objectives</h2>
+    <p>This project brings together skills from the semester:</p>
+    <ul>
+      <li>using variables, lists, and dictionaries;</li>
+      <li>using <code>for</code> loops and <code>if</code> statements;</li>
+      <li>writing and calling functions;</li>
+      <li>checking whether text contains a keyword;</li>
+      <li>printing a clear cybersecurity report.</li>
+    </ul>
+  </div>
+
+  <h2>Scenario</h2>
+  <div class="lesson-box">
+    <p>You are helping a small company review a login log. The log contains successful and failed sign-in attempts. Your job is to write a Python script that scans the file and finds accounts that may need attention.</p>
+    <p>This is a defensive analysis project. You will not connect to any real system, attack anything, or use real personal data. You will only analyze the sample log file included in the assignment.</p>
+  </div>
+
+  <h2>Where to Code</h2>
+  <p>Use <strong>GitHub Codespaces</strong> for this project.</p>
+  <ul>
+    <li><a href="https://github.com/codespaces" target="_blank" rel="noreferrer">Open GitHub Codespaces</a>.</li>
+    <li>Create a data file named <code>sample_login_logs.txt</code>.</li>
+    <li>Create a Python file named <code>final_cybersecurity_log_analysis_first_last_name.py</code>.</li>
+    <li>Type your data and code, run the script, test it, and attach screenshots of your code and output.</li>
+  </ul>
+
+  <h2>Tasks</h2>
+  <p><em>Complete each task in GitHub Codespaces. Attach screenshots where requested, then generate the PDF for Blackboard.</em></p>
+
+  <div class="task" id="task-1">
+    <h3>Task 1 - Create the sample log file</h3>
+    <div class="task-tag">Data</div>
+    <div class="task-body">
+      <p>Create a file named <code>sample_login_logs.txt</code>. Paste this safe sample data into it. Each line follows this pattern: date, time, username, IP address, and result.</p>
+      <div class="code-block">2026-12-01 08:01 user=alice ip=10.0.0.5 result=SUCCESS
+2026-12-01 08:03 user=bob ip=10.0.0.8 result=FAILED
+2026-12-01 08:04 user=bob ip=10.0.0.8 result=FAILED
+2026-12-01 08:05 user=bob ip=10.0.0.8 result=FAILED
+2026-12-01 08:06 user=bob ip=10.0.0.8 result=FAILED
+2026-12-01 08:07 user=carla ip=10.0.0.11 result=SUCCESS
+2026-12-01 08:10 user=dana ip=203.0.113.50 result=FAILED
+2026-12-01 08:11 user=dana ip=203.0.113.50 result=FAILED
+2026-12-01 08:12 user=dana ip=203.0.113.50 result=FAILED
+2026-12-01 08:13 user=dana ip=203.0.113.50 result=FAILED
+2026-12-01 08:14 user=dana ip=203.0.113.50 result=FAILED
+2026-12-01 08:20 user=eric ip=10.0.0.19 result=SUCCESS</div>
+      <div class="info-box"><p><strong>Important:</strong> Save the text file in the same folder as your Python script. The script will scan this file. If you are using this project folder directly, the sample file is also available here: <a href="sample_login_logs.txt" target="_blank" rel="noreferrer">sample_login_logs.txt</a>.</p></div>
+    </div>
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-1">Attach screenshot</label>
+      <input type="file" id="file-task-1" accept="image/*" data-shot="task-1" data-label="Task 1: Create the sample log file" />
+      <img class="shot-preview" id="preview-task-1" alt="Task 1 screenshot preview" />
+      <span class="shot-name" id="name-task-1"></span>
+    </div>
+  </div>
+
+  <div class="task" id="task-2">
+    <h3>Task 2 - Read the log file with Python</h3>
+    <div class="task-tag">File Input</div>
+    <div class="task-body">
+      <p>Create your Python file. First, read the log file into a list named <code>login_logs</code>.</p>
+      <div class="code-block">with open("sample_login_logs.txt", "r") as file:
+    login_logs = file.readlines()
+
+print("Total log entries:", len(login_logs))</div>
+      <div class="info-box">
+        <p><strong>How this works:</strong> <code>open()</code> opens the text file. <code>readlines()</code> reads each line into a list so your program can scan it with a loop.</p>
+      </div>
+    </div>
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-2">Attach screenshot</label>
+      <input type="file" id="file-task-2" accept="image/*" data-shot="task-2" data-label="Task 2: Read the log file with Python" />
+      <img class="shot-preview" id="preview-task-2" alt="Task 2 screenshot preview" />
+      <span class="shot-name" id="name-task-2"></span>
+    </div>
+  </div>
+
+  <div class="task" id="task-3">
+    <h3>Task 3 - Create helper functions</h3>
+    <div class="task-tag">Functions</div>
+    <div class="task-body">
+      <p>Write two small functions. One function extracts the username from a log line. The other function extracts the IP address.</p>
+      <div class="code-block">def get_user(log_line):
+    parts = log_line.split()
+    for part in parts:
+        if part.startswith("user="):
+            return part.replace("user=", "")
+    return "unknown"
+
+def get_ip(log_line):
+    parts = log_line.split()
+    for part in parts:
+        if part.startswith("ip="):
+            return part.replace("ip=", "")
+    return "unknown"</div>
+      <div class="info-box">
+        <p><strong>How this works:</strong> <code>split()</code> breaks the line into pieces. The loop checks each piece until it finds the part that starts with <code>user=</code> or <code>ip=</code>.</p>
+      </div>
+    </div>
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-3">Attach screenshot</label>
+      <input type="file" id="file-task-3" accept="image/*" data-shot="task-3" data-label="Task 3: Create helper functions" />
+      <img class="shot-preview" id="preview-task-3" alt="Task 3 screenshot preview" />
+      <span class="shot-name" id="name-task-3"></span>
+    </div>
+  </div>
+
+  <div class="task" id="task-4">
+    <h3>Task 4 - Count failed login attempts</h3>
+    <div class="task-tag">Analysis</div>
+    <div class="task-body">
+      <p>Create a dictionary that counts failed attempts per user.</p>
+      <div class="code-block">failed_attempts = {}
+
+for log in login_logs:
+    if "result=FAILED" in log:
+        user = get_user(log)
+        if user not in failed_attempts:
+            failed_attempts[user] = 0
+        failed_attempts[user] += 1
+
+print("Failed attempts by user:")
+print(failed_attempts)</div>
+      <div class="warning">
+        <p><strong>Indentation reminder:</strong> The lines inside the <code>for</code> loop are indented. The lines inside each <code>if</code> statement are indented again.</p>
+      </div>
+    </div>
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-4">Attach screenshot</label>
+      <input type="file" id="file-task-4" accept="image/*" data-shot="task-4" data-label="Task 4: Count failed login attempts" />
+      <img class="shot-preview" id="preview-task-4" alt="Task 4 screenshot preview" />
+      <span class="shot-name" id="name-task-4"></span>
+    </div>
+  </div>
+
+  <div class="task" id="task-5">
+    <h3>Task 5 - Flag suspicious accounts</h3>
+    <div class="task-tag">Detection</div>
+    <div class="task-body">
+      <p>Flag any user with <code>4</code> or more failed login attempts.</p>
+      <div class="code-block">suspicious_users = []
+
+for user in failed_attempts:
+    if failed_attempts[user] >= 4:
+        suspicious_users.append(user)
+
+print("Suspicious users:")
+print(suspicious_users)</div>
+      <p>This is a simple rule-based detection. In real cybersecurity work, rules like this are used as a starting point for investigation.</p>
+    </div>
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-5">Attach screenshot</label>
+      <input type="file" id="file-task-5" accept="image/*" data-shot="task-5" data-label="Task 5: Flag suspicious accounts" />
+      <img class="shot-preview" id="preview-task-5" alt="Task 5 screenshot preview" />
+      <span class="shot-name" id="name-task-5"></span>
+    </div>
+  </div>
+
+  <div class="task" id="task-6">
+    <h3>Task 6 - Print the final security report</h3>
+    <div class="task-tag">Report</div>
+    <div class="task-body">
+      <p>Finish by printing a readable report.</p>
+      <div class="code-block">print()
+print("SECURITY LOG REPORT")
+print("-------------------")
+print("Total log entries:", len(login_logs))
+print("Users with failed logins:", len(failed_attempts))
+print()
+
+for user in failed_attempts:
+    print(user, "had", failed_attempts[user], "failed login attempts")
+
+print()
+if len(suspicious_users) > 0:
+    print("Accounts to review:")
+    for user in suspicious_users:
+        print("-", user)
+else:
+    print("No suspicious accounts found.")</div>
+      <p><strong>Expected key findings:</strong> <code>bob</code> and <code>dana</code> should be flagged for review.</p>
+    </div>
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-6">Attach screenshot</label>
+      <input type="file" id="file-task-6" accept="image/*" data-shot="task-6" data-label="Task 6: Print the final security report" />
+      <img class="shot-preview" id="preview-task-6" alt="Task 6 screenshot preview" />
+      <span class="shot-name" id="name-task-6"></span>
+    </div>
+  </div>
+
+  <div class="task" id="task-7">
+    <h3>Task 7 - Reflection questions</h3>
+    <div class="task-tag">Reflection</div>
+    <div class="task-body">
+      <p>Answer these questions in comments at the bottom of your Python file:</p>
+      <div class="code-block"># 1. Which users were suspicious, and why?
+# 2. Why is a failed login not always an attack?
+# 3. What is one improvement you could add to this program?</div>
+      <p>Possible improvements include counting failed attempts by IP address, changing the threshold, or adding more sample log entries.</p>
+    </div>
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-7">Attach screenshot</label>
+      <input type="file" id="file-task-7" accept="image/*" data-shot="task-7" data-label="Task 7: Reflection questions" />
+      <img class="shot-preview" id="preview-task-7" alt="Task 7 screenshot preview" />
+      <span class="shot-name" id="name-task-7"></span>
+    </div>
+  </div>
+
+  <h2>Complete Example</h2>
+  <p>Use this only after you have tried the tasks above.</p>
+  <div class="code-block">with open("sample_login_logs.txt", "r") as file:
+    login_logs = file.readlines()
+
+def get_user(log_line):
+    parts = log_line.split()
+    for part in parts:
+        if part.startswith("user="):
+            return part.replace("user=", "")
+    return "unknown"
+
+def get_ip(log_line):
+    parts = log_line.split()
+    for part in parts:
+        if part.startswith("ip="):
+            return part.replace("ip=", "")
+    return "unknown"
+
+failed_attempts = {}
+
+for log in login_logs:
+    if "result=FAILED" in log:
+        user = get_user(log)
+        if user not in failed_attempts:
+            failed_attempts[user] = 0
+        failed_attempts[user] += 1
+
+suspicious_users = []
+
+for user in failed_attempts:
+    if failed_attempts[user] >= 4:
+        suspicious_users.append(user)
+
+print("SECURITY LOG REPORT")
+print("-------------------")
+print("Total log entries:", len(login_logs))
+print("Users with failed logins:", len(failed_attempts))
+print()
+
+for user in failed_attempts:
+    print(user, "had", failed_attempts[user], "failed login attempts")
+
+print()
+if len(suspicious_users) > 0:
+    print("Accounts to review:")
+    for user in suspicious_users:
+        print("-", user)
+else:
+    print("No suspicious accounts found.")
+
+# 1. Which users were suspicious, and why?
+# 2. Why is a failed login not always an attack?
+# 3. What is one improvement you could add to this program?</div>
+
+  <div class="finish">
+    <strong>Project complete!</strong> Review your screenshots, generate the PDF, and upload the PDF to Blackboard.
+  </div>
+
+  <div class="submit-wrap">
+    <div class="student-name">
+      <label for="studentName">Your name:</label>
+      <input type="text" id="studentName" placeholder="e.g. Alice Smith" />
+    </div>
+    <button id="generatePdf" type="button">Generate PDF for Blackboard Submission</button>
+    <div class="pdf-message" id="pdfMessage"></div>
+  </div>
+
+  <script>
+    const labTitle = "End Semester Project: Cybersecurity Log Analysis";
+    const labNumber = "end-semester-cybersecurity-log-analysis";
+    const shots = {};
+
+    document.querySelectorAll("input[type=file]").forEach((input) => {
+      input.addEventListener("change", () => {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        if (!file.type.startsWith("image/")) {
+          alert("Please choose an image file for the screenshot.");
+          input.value = "";
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          const id = input.dataset.shot;
+          shots[id] = { dataUrl: reader.result, filename: file.name, label: input.dataset.label || "Screenshot" };
+          const preview = document.getElementById("preview-" + id);
+          const name = document.getElementById("name-" + id);
+          preview.src = reader.result;
+          preview.style.display = "inline-block";
+          name.textContent = file.name + " attached";
+        };
+        reader.onerror = () => alert("The screenshot could not be read. Please try another image.");
+        reader.readAsDataURL(file);
+      });
+    });
+
+    function safeFilePart(value) {
+      return (value || "student").trim().replace(/[^a-z0-9]+/gi, "_").replace(/^_+|_+$/g, "").toLowerCase() || "student";
+    }
+
+    function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = () => reject(new Error("Image failed to load."));
+        image.src = src;
+      });
+    }
+
+    function ensureRoom(doc, y, needed) {
+      const height = doc.internal.pageSize.getHeight();
+      if (y + needed <= height - 18) return y;
+      doc.addPage();
+      return 18;
+    }
+
+    function addWrappedText(doc, text, x, y, maxWidth, lineHeight) {
+      const lines = doc.splitTextToSize(text, maxWidth);
+      for (const line of lines) {
+        y = ensureRoom(doc, y, lineHeight);
+        doc.text(line, x, y);
+        y += lineHeight;
+      }
+      return y;
+    }
+
+    async function addScreenshot(doc, shot, y) {
+      const image = await loadImage(shot.dataUrl);
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const maxWidth = pageWidth - 28;
+      const maxHeight = 105;
+      let drawWidth = maxWidth;
+      let drawHeight = image.height * (drawWidth / image.width);
+      if (drawHeight > maxHeight) {
+        drawHeight = maxHeight;
+        drawWidth = image.width * (drawHeight / image.height);
+      }
+      y = ensureRoom(doc, y, drawHeight + 18);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.text(shot.label, 14, y);
+      y += 6;
+      doc.addImage(shot.dataUrl, "JPEG", 14, y, drawWidth, drawHeight);
+      return y + drawHeight + 10;
+    }
+
+    document.getElementById("generatePdf").addEventListener("click", async () => {
+      const studentName = document.getElementById("studentName").value.trim() || "Student";
+      const message = document.getElementById("pdfMessage");
+      const attached = Object.values(shots);
+      message.textContent = "Generating PDF...";
+
+      try {
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+          throw new Error("PDF library not loaded.");
+        }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: "mm", format: "letter" });
+        let y = 18;
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        y = addWrappedText(doc, labTitle, 14, y, 180, 7);
+        y += 2;
+        doc.setFontSize(12);
+        doc.text("Submission for " + studentName, 14, y);
+        y += 8;
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.text("Generated: " + new Date().toLocaleString(), 14, y);
+        y += 8;
+        y = addWrappedText(doc, "This PDF includes screenshot evidence for the completed final cybersecurity project.", 14, y, 180, 6) + 5;
+
+        if (!attached.length) {
+          y = addWrappedText(doc, "No screenshots were attached before generating this PDF.", 14, y, 180, 6);
+        }
+
+        for (const shot of attached) {
+          y = await addScreenshot(doc, shot, y);
+        }
+
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let page = 1; page <= pageCount; page += 1) {
+          doc.setPage(page);
+          doc.setFontSize(9);
+          doc.setTextColor(120);
+          doc.text("Page " + page + " of " + pageCount, 14, doc.internal.pageSize.getHeight() - 10);
+        }
+
+        doc.save(labNumber + "_" + safeFilePart(studentName) + "_submission.pdf");
+        message.textContent = "PDF generated. Upload it to Blackboard.";
+      } catch (error) {
+        console.error(error);
+        message.textContent = "The PDF could not be generated. Check your browser settings and try again.";
+      }
+    });
+  </script>
+</body>
+</html>

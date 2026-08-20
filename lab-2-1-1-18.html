@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 2.1.1.18: The print() Function - sep and end - Submission</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root { --primary: #1a5c8a; --primary-light: #eef6fd; --text: #333333; --text-secondary: #666666; --border: #e3e8ee; --bg: #ffffff; --bg-secondary: #fafbfc; --success: #2e7d32; --success-light: #d4edda; --radius: 8px; --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.7; color: #333; }
+    h1 { color: #1a5c8a; border-bottom: 3px solid #f0ad4e; padding-bottom: 10px; }
+    h2 { color: #1f2937; margin-top: 28px; }
+    h3 { margin-bottom: 6px; }
+    a { color: #1a5c8a; }
+    .badge { display: inline-block; background: #f0ad4e; color: #fff; padding: 2px 10px; border-radius: 4px; font-size: 0.85em; margin-bottom: 8px; }
+    .meta { color: #777; font-size: 0.9em; margin-bottom: 24px; }
+    pre, .code-block { background: #f5f5f5; border-left: 4px solid #1a5c8a; padding: 12px 16px; overflow-x: auto; font-family: "Courier New", monospace; font-size: 0.95em; white-space: pre-wrap; }
+    code { background: #eef; padding: 2px 5px; border-radius: 3px; }
+    pre code { background: none; padding: 0; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f0f4f8; }
+    img { max-width: 100%; height: auto; }
+    .objectives { background: #fffaf0; border: 1px solid #f4d49b; border-radius: 8px; padding: 14px 18px; margin: 18px 0 24px; }
+    .lesson-box { background: #f8fbff; border: 1px solid #cfe1f3; border-left: 5px solid #1a5c8a; border-radius: 8px; padding: 16px 18px; margin: 18px 0 24px; }
+    .task { margin-bottom: 28px; background: #fafbfc; border: 1px solid #e3e8ee; border-radius: 8px; padding: 16px; }
+    .task-tag { display: inline-block; background: #e8f2fb; color: #1a5c8a; border-radius: 4px; padding: 2px 8px; font-size: 0.8em; font-weight: 600; margin-bottom: 10px; }
+    .task-body p { margin-top: 0; }
+    .info-box, .test-data { margin: 12px 0; padding: 12px 16px; background: #eef6fd; border-left: 4px solid #1a5c8a; border-radius: 0 4px 4px 0; }
+    .hint { font-size: 0.92em; color: #666; font-style: italic; }
+    .error { color: #c0392b; font-weight: bold; }
+    .upload-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+    .attach-btn { display: inline-block; background: #1a5c8a; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9em; }
+    .attach-btn:hover { background: #14476b; }
+    input[type=file] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+    .shot-preview { max-width: 260px; max-height: 160px; border: 2px solid #cfd8e3; border-radius: 6px; display: none; }
+    .shot-name { font-size: 0.85em; color: #555; }
+    .finish { background: #d4edda; border: 1px solid #c3e6cb; padding: 12px 16px; border-radius: 6px; margin-top: 20px; }
+    .submit-wrap { text-align: center; margin-top: 28px; }
+    #generatePdf { background: #2e7d32; color: #fff; font-size: 1.05em; padding: 14px 28px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    #generatePdf:hover { background: #256428; }
+    .student-name { margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+    input[type=text] { padding: 8px; border: 1px solid #cfd8e3; border-radius: 6px; font-size: 0.95em; width: 240px; }
+    .pdf-message { min-height: 1.4em; margin-top: 10px; color: #2e7d32; font-size: 0.95em; }
+  </style>
+</head>
+<body>
+  <div class="badge">LAB</div>
+  <h1>Lab 2.1.1.18: The print() Function - sep and end</h1>
+  <p class="meta">Python Lab | Submission handout | Complete the tasks, attach screenshots, and generate your PDF.</p>
+
+  <h2>Lab Overview</h2>
+  <p>In this lab, you'll explore advanced features of the print() function. You'll learn how to use the `sep` parameter to change the separator between arguments and the `end` parameter to change what appears at the end of the output.</p>
+
+  <div class="objectives">
+    <h2>Learning Objectives</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+      <li>Use the `sep` parameter to customize output separators</li>
+      <li>Use the `end` parameter to customize line endings</li>
+      <li>Experiment with different print() formatting options</li>
+      <li>Understand how print() parameters affect output</li>
+    </ul>
+  </div>
+
+  <h2>Lesson Explanation</h2>
+  <div class="lesson-box">
+    <p>Master advanced print() function features. Learn how to customize separators and line endings to control output formatting.</p>
+    <p>As you work, pay attention to the relationship between the code you type and the output Python displays. If you get an error, read the message as a clue: it usually points to the line or idea that needs attention.</p>
+  </div>
+
+  <h2>Where to Code</h2>
+  <p>You will complete this lab using <strong>GitHub Codespaces</strong>, a free browser-based development environment that lets you write and run Python without installing anything.</p>
+  <ul>
+    <li><a href="https://github.com/codespaces" target="_blank" rel="noreferrer">Open GitHub Codespaces</a>.</li>
+    <li>Sign in with your free GitHub account.</li>
+    <li>Create a new codespace and choose the <strong>Python</strong> template when prompted.</li>
+    <li>Create a file named <code>lab-2-1-1-18_first_last_name.py</code>.</li>
+    <li>Type your code, run it, and check the output.</li>
+    <li>After each coding or output task, take a screenshot and attach it below that task.</li>
+  </ul>
+
+  <h2>Tasks</h2>
+  <p><em>Complete each task in GitHub Codespaces. Attach screenshots only on tasks where you write, run, test, or show code output, then generate the PDF for Blackboard.</em></p>
+
+  <div class="task" id="task-1">
+    <h3>Task 1 - Understand print() parameters</h3>
+    <div class="task-tag">Context</div>
+    <div class="task-body">
+
+      <p><strong>What you'll learn:</strong> The print() function has two powerful optional parameters: <code>sep</code> and <code>end</code>.</p>
+      <ul>
+        <li><strong>sep</strong> - Changes the separator between arguments (default: space)</li>
+        <li><strong>end</strong> - Changes what appears at the end of output (default: newline)</li>
+      </ul>
+      <div class="info-box"><p><strong>Your task:</strong> Follow the exercises below to experiment with these parameters and observe how they change the output.</p>
+            <p><strong>Complete Solution:</strong></p>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYAAAACACAIAAACN0ilcAAAPR0lEQVR4nO3deVRTVx4H8Is6OMU2YkUJ0DMCtdqpbMaNRUFbJYKSEQoKitgBWxCsglqr1o4b4kpdwLZKpU4FV6xrgToj4NZScAPEtUJ6FASCUgso5IjMH8/JMCR5eUme3ES+n5NzjC839/1u8viRhCRfE6lUSgAAaOhCuwAA6Ly6Mf8Irazp1gEAnUrV/UqCR0AAQBEaEABQgwYEANSgAQEANWhAAEANGhAAUIMGBADUoAEBADVoQABADRoQAFCDBgQA1KABAQA1aEAAQA0aEABQgwYEANSgAQEANWhAAEANGhAAUIMGBADU0GlACQmrFy36VP95YqKjMzIy9J+Hi7f6v2lvZ2tvZ/vHH390zB5ZBPhP2r9/H+0qaAoKCkxPT6ddRScVH78qKWkrL1N142UWbS1Z8pn+k1wtKSkqurKVpxtCo9u/3qmquu/u5tYxuwMwWJGRUd7jxoaGTu/Vq5eeUxn6U7Dz58+5u7mqvGh32m6J5G9du/5fDx092is/P/+77/4Z+dGHHVIgG16KMagVqcNXkZ1qsS/Oi747+vTpM1gkOnz4sH5lEmL4DUid1tbWf5086enlRbsQgM7I09MzOytL/3n0bUASid/KFSu8x411cnSYO3dOQ0OD4qKIiPCFnywInjL57YED7O1ss7IyCSEZGRnMKyltXwMKCgpcv35dYOD77/z17emhoY8ePSKE3Lp1097OdnpoaFVVFXOVhITViquUl5f//vvvDg4OXIqsqKiY8/FsF2enoUNE8fGrWlpaWIpnWZFKjx83rli+3N3NTTTYZcH8+RrH80VaLhV7j3NydIiJjmZuMaJ+pSpvYW3HqxvcAc6ePRvgP8nRYZBE4nfxwoX/Fn9PeUUsd4fKA1Ll9rKysrf696+pqWEGVFZWvtX/zXv37vG1nEePHs2KinRxdnJzHbEtOfnZs2fsxWt7THYABweH4uIi/Y8BHh4BZWdnJ2/bdiont+LevcSNG9tedOLEifCImZevFJWVS318fAkhgYGBZeXSmR+2f2SYlZm1du26M2fP1chq9u7ZQwgZMGBgWbl0d1qaUCgsK5eWlUvbvnJUXVVlamr66quvcqlw/759vr4T8n8pyDh0KC83Nz09jb14lhUpW7x48c2bNw5mZJzKyWlsbFgdH8+lJP0dOXJ4y9aknNw8mUy2evXznbKsVPkW1nY8y+AXqri4aGZE+LTQ6T/n/7Jhw4b8/HyWFbHfHcoHpMrt9vb2LoNdvv/+EHNpRsbB4SNGvPHGG3ytKCVlh6y29lRO7rHjJ+RyeVlZmcbi2x2TqampzG/ltqfz58/xVaFGFhYWcrlc0fd1J5VKpVJpU7Nct5O3WLxu3Xrm/NFjx11cXBQXTQsNnT9/gcpr/WPZsti4OMV//SSS9Rs2MOdXrlwVHR2juOhUTo5IJFKeITc3z9bWVoeC161fHxExk6V4lhVJf/vN2tq6Rlar2CKrfWBtbV1UXMz89+KlywMHDtT5xuR+8vX1XZ2QwJz/ITNT5U7brpTlFtZtfNvBL/oUFzcvatasdhtVVsh+d6g7IFVuT0tL9/DwaGqWP2lqdnV13bd/P48rWrt2nb+/f3WNrO1GluJZjklap+s3blpbW1fer9J5Bqbz8PBXsL6WfZkzQqGwtrb22bNnXbo8f2DF/ZdG794WzJnu3bs3NTdpHG8pFMrl8vr6+tdee03j4JycU1s2b7lz587jx42EEK82rxwpF8++onYqKioIIT7jx7fd2NjY2KNHD41V6cmyr+XzM5bC+vp6uVxuamrKslKVt7BW41kGv1AVFRVDhgxR3q5coca7Q90Bqbzdd8KEFSuWFxYWPH3a8vDhQ7F4vMor6uajyMjW1tbwv3/Q1NTk5TU6Ni7O1NSUvXjux2THePCg1tTUtGfPnnrOw0MDqql+/lS5urr69ddfb3u7mJiY6Dl5F5Mura2tytvt7OzMzc1LS0tdXVX/jUzh8ePHs6KiEtas9fHxMTMzS0zcWFJczF68uhV17/5nQohcLldc3dramhBSUHjBwsJC5zXqprqmmjlTU1Ntbm5uamrKvlJlWo3XdnIe2djYlEvLuYzUeHeoOyCVt5uZmU2c6HfwwIGWlmcTJ/q98sor2pSsgZmZWdy8eXHz5tXV1U0NCRFaCcPCZrAX3+6Y3LVrV/yqle3G7E5L8/AYyWOdLEpLSx2dnLp27arnPDw00YMHD9y+fbu2tjYlZYd4PJ+/KAghlkJhbe2D69evt9tuYmIyztv7zOnTGmeQy+VPnz7t3bt3t27dLlwozDh4sO2lKotXt6JevXoJhcKTJ08qeqJAIJg4ceLSz5bcvXu3oaHh1Kl/L1m8mMu6Jvj6BPhP4jJSnUMZh27duvngwYMd27f7+vpqXKkyrcZrO7mC/isNDgnJysw8cuRwY2Pj7du3v/76K3Ujdb47VAqaPDkzMzM7OyswKIjLeO4rTUzceOLEifr6+oaGhqampm7d/qSx+HbHZHh4OPPCaNsTl+6j/93ByMvN9Rnvo/88PDQgPz9JVORH744ZbSUULlyo4f3No0Z62NvZfpOScmD/fns7W2cnR/bx9vb2YWFh06aGtPsrGCFkeuj0o0ePtLQ8ZZ/B3Nx85ar4JYsXOTs5Jicl+UkkGotnWVFCwpptyUlv2tutWvn898+atetsbN4ICZ7i7ua6b+++GR/MYK+H8eRJk+IZhG4kEsnsmJjRXp59+vT9dNFijStVptV4bSdX0H+lzs7O23ek7Pp214jhw+fPi3N3d2cZrNvdoZJIJLKxsREKhSKRiMt47isNDg45+WP2SA/39wP8Pb08J0+erLF4rX7KeCmSRU1NzeXLl/0DAvSchxBiIpVKCSFCK2vdri+R+IWFzQgMDNS/FB3MjokZPXo0x19QylQW3wErqqt7OHTIkPQ9ezU+fzR2xr7SkOApo0Z5RsfEaBz5QlfK1zHJV5Hx8asEAsGcOXP1maTqfiWh9VEMviRv20a7BF0UFBQOFomM9GdSK0a90rNnz166dGnzFk6f9TGKlfJV5NKln/NSDzH2BmSkxGKxWCymXUVHMN6VisXev9fVLVu+wtLSktt4I1ipARap71MwAAAdME/BjPWzYADwEkADAgBq0IAAgBo0IACgBg0IAKhBAwIAatCAAICaTpGKwR5owVcx3PEYKgBg1Iz4jYhXS0qioiJPnznT7nvpVWICLa4UFQsEgg6ojZ1MJvMeNzYnN0//UAEAI2Ucb0Q0/FQMxZdjvtX/zXYXdUCoAIBRM/QGpI7hpGIw38zyzc6dWl2Lr1ABAKPWKVIx1OFeDOE7/YKvUAEAo9YpUjHU4V4M4Tv9grdQAQBjxsPXcUyZMmXAgIGEkA8/ilz2j8+XLV+uuMjfP8Db25vLJP4B/v379yeEvPfue7du3dK5mLy804QQV1fXsDDdvwpPuZj6+vrjx45lZWfb2NgQQmZ/PGdqSPCatWt1LkbV91wDdDqdIhVDWzrELWiLr1ABAKP28qdiMJQDLbTCe/oFX6ECAEbt5U/FYCgHWmiF37gFwl+oAIBRe/lTMRSUAy20KkZdYsHp06ft7WxnRkS0tLRwWRHhNVQAwKh16lQMWngJFQAwakjFoIbHUAEAo2as74QGgJeAvo+Ajh07zksdANAJ4REQAFCDBgQA1KABAQA1aEAAQA0aEABQgwYEANSgAQEANUjFoJCK0TFexLqQ5wH8ovNRjLbfbaizqyUlRUVXtnL4ebj96x0mFePFFdNJREZGeY8bGxo6HXkewAtDfwpm+KkYP50/PzkoyGHQO16eo7Zv/5puMTpQV6TK7cjzAH4ZegNSx3BSMVJTU+PmzSsoLEz84ovkpCQuTwmNGvI8gEdIxdA3FeObnTvd3NzMzHoMHTps2PDhhYUF+pTUjrqdqivy7t2706aGOAx6JygosLq6msdKFJDnATxCKgZvqRhyufz6tWtOTs76lNQOy05VFhkXO9fKyvqnn/NjY2N/zM5mNiqiE9uezp8/p1tJyPMAHiEVg1MxXFIxVixf3q9fv+DgKXwVw75T5SJlMtmlS5e++GKTQCDw8Bg5ZswYZmR4eHh4eLi6vagrUt125HkAj5CKwakYjakYGzduKCq6kr5nL5egeo7Yd6pcpEwmI4T06fv87rC0FHK5JbWFPA/gEVIxOGFPxUhM3JiXm7s7LZ3fH0ttozj69u1LCJHV1PylXz9CSHV1VU9zc0JIampq/KqV7QbvTkvz8BipQ1XI8wAeIRWDE5ZUjA0b1ufl5qal79HqrTETfH0C/CfpvFOVLCwshg4dlpycVF9f//NPP+Xl5THbmfT6difdug9BngfwCqkYeqViNDc3f/Xll6WlpaLBLsyLux/MCONSzJMnTYrnUNrulMWmzZsrKitdRwzftGmTn0TCpRKtIM8D+IVUDArq6h4OHTIkfc9ejs8fDQfyPIAvSMWgpqCgcLBIZHTdhyDPA/hm3A3ISInFYrFYTLsKAPqQigEA1BjrZ8EA4CWABgQA1KABAQA1aEAAQA0aEABQgwYEANSgAQEANUjFoJCKgWwJAIa+nwWj6GpJSVRU5OkzZ7h8BQ+TinGlqFggEHRAbexkMpn3uLE5uXnIloBOi/ksmKE/BTP8VIyrV6/OjIhwdBjk5TkqJWUHl2KQLQHAMPQGpI7hpGLs+vbb8PDwXwoKtiYlf/Xll8eOHuVyLWRLABCkYuifirExMdHdw8PMrIezs/OwYcMuXrrIZdfIlgAgSMXgKxWjpeXpxQsXCgsL3VxV56+2g2wJAIJUDI7FsAdUbNm8ecuWzYSQWdHR433+93WlLMUgWwKAIBWDYzHsARVzY2Nnfzz7xo2bcbFzBQJBZGSUxl0gWwKA8PIUjG4qBsd5+ErFaPu97opMHkJI167dBg0aNGmSf+YPmVwmRLYEAEEqBkfqAioqKysXzJ9/48aN5ubma9euHT16xNGR0+viyJYAIEjF0DMVw8rKatSoUQsXfjLYxXlmRISbm/uSz5ZqrATZEgAMpGJQgGwJAKRiUINsCQCGsb4TGgBeAkjFAABq8AgIAKhBAwIAatCAAIAaNCAAoAYNCACoQQMCAGrQgACAGjQgAKAGDQgAqEEDAgBq0IAAgBo0IACgBg0IAKhBAwIAatCAAIAaNCAAoAYNCACoQQMCAGrQgACAGjQgAKAGDQgAqEEDAgBq0IAAgJrnuWBMTCoAQEfCIyAAoOY/CzQhmoLwthgAAAAASUVORK5CYII=" alt="Complete solution code" style="max-width: 100%; border: 1px solid #e0e0e0; border-radius: 4px; margin: 12px 0; display: block;">
+      <p style="font-size: 12px; color: #999; margin-top: 8px;"><em>💡 Image format prevents copy-pasting - type it out to learn!</em></p>
+      
+      <p style="margin-top: 16px; font-size: 14px; font-weight: 600;">What each line does:</p>
+      <ul style="font-size: 13px; margin-top: 8px;">
+        <li><strong>Line 1:</strong> Print three items separated by ", " (comma-space) instead of default space</li>
+        <li><strong>Line 2:</strong> Print "line1" with default newline at end</li>
+        <li><strong>Line 3:</strong> Print "line2" but end with empty string (no newline)</li>
+        <li><strong>Line 4:</strong> Print "line3" (appears on same line as line 2)</li>
+      </ul>
+      
+      <p style="margin-top: 16px;"><strong>Test your code:</strong></p></div>
+    </div>
+
+  </div>
+
+  <div class="task" id="task-2">
+    <h3>Task 2 - Choose your platform</h3>
+    <div class="task-tag">Setup</div>
+    <div class="task-body">
+<p>Use <strong>GitHub Codespaces</strong> for this lab.</p>
+      <div class="info-box"><p><strong>Open the coding environment:</strong> <a href="https://github.com/codespaces" target="_blank" rel="noreferrer">Open GitHub Codespaces</a></p></div>
+      <ul>
+        <li>Sign in with your free GitHub account.</li>
+        <li>Create a new codespace and choose the <strong>Python</strong> template when prompted.</li>
+        <li>Create your Python file for this lab.</li>
+        <li>Run your code in the terminal and take a screenshot when you are finished with this task.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="task" id="task-3">
+    <h3>Task 3 - Exercise 1: Using sep parameter</h3>
+    <div class="task-tag">Experiment</div>
+    <div class="task-body">
+
+      <p>Write Python code that uses the <code>sep</code> parameter:</p>
+      <ul>
+        <li>Print three words using the default separator (space)</li>
+        <li>Print the same three words using <code>sep="***"</code></li>
+        <li>Print the same three words using <code>sep="..."</code></li>
+        <li>Take a screenshot of your code and output</li>
+      </ul>
+      <div class="code-block">print("Programming", "Essentials", "in Python")
+print("Programming", "Essentials", "in Python", sep="***")
+print("Programming", "Essentials", "in Python", sep="...")</div>
+      <p><strong>Expected output:</strong></p>
+      <div class="code-block">Programming Essentials in Python
+Programming***Essentials***in Python
+Programming...Essentials...in Python</div>
+      <div class="hint">Notice how the separator changes between the words in each line.</div>
+    </div>
+
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-3">Attach screenshot</label>
+      <input type="file" id="file-task-3" accept="image/*" data-shot="task-3" data-label="Task 3: Exercise 1: Using sep parameter" />
+      <img class="shot-preview" id="preview-task-3" alt="Task 3: Exercise 1: Using sep parameter screenshot preview" />
+      <span class="shot-name" id="name-task-3"></span>
+    </div>
+  </div>
+
+  <div class="task" id="task-4">
+    <h3>Task 4 - Exercise 2: Using end parameter</h3>
+    <div class="task-tag">Experiment</div>
+    <div class="task-body">
+
+      <p>Write Python code that uses the <code>end</code> parameter:</p>
+      <ul>
+        <li>Print a line with default end parameter</li>
+        <li>Print a line with <code>end="***"</code></li>
+        <li>Print a line with <code>end=""</code></li>
+        <li>Print another line immediately after (to see the effect)</li>
+        <li>Take a screenshot showing all outputs</li>
+      </ul>
+      <div class="code-block">print("Line 1")
+print("Line 2", end="***")
+print("Line 3", end="")
+print("Line 4")</div>
+      <p><strong>Expected output:</strong></p>
+      <div class="code-block">Line 1
+Line 2***Line 3Line 4</div>
+      <div class="hint">Notice how the end parameter changes what appears after each line. When <code>end=""</code>, the next print continues on the same line.</div>
+    </div>
+
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-4">Attach screenshot</label>
+      <input type="file" id="file-task-4" accept="image/*" data-shot="task-4" data-label="Task 4: Exercise 2: Using end parameter" />
+      <img class="shot-preview" id="preview-task-4" alt="Task 4: Exercise 2: Using end parameter screenshot preview" />
+      <span class="shot-name" id="name-task-4"></span>
+    </div>
+  </div>
+
+  <div class="task" id="task-5">
+    <h3>Task 5 - Exercise 3: Combining sep and end</h3>
+    <div class="task-tag">Experiment</div>
+    <div class="task-body">
+
+      <p>Write Python code that combines both <code>sep</code> and <code>end</code> parameters:</p>
+      <ul>
+        <li>Use both parameters together in the same print() statement</li>
+        <li>Experiment with different combinations</li>
+        <li>Observe how they work together</li>
+        <li>Take a screenshot of your code and output</li>
+      </ul>
+      <div class="code-block">print("A", "B", "C", sep="-", end="!")
+print()
+print("1", "2", "3", sep="|", end="***")</div>
+      <p><strong>Expected output:</strong></p>
+      <div class="code-block">A-B-C!
+1|2|3***</div>
+      <div class="hint">Both parameters can be used in the same print() statement for more control over output formatting. The <code>sep</code> parameter affects how arguments are joined, while <code>end</code> controls what appears at the end.</div>
+    </div>
+
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-5">Attach screenshot</label>
+      <input type="file" id="file-task-5" accept="image/*" data-shot="task-5" data-label="Task 5: Exercise 3: Combining sep and end" />
+      <img class="shot-preview" id="preview-task-5" alt="Task 5: Exercise 3: Combining sep and end screenshot preview" />
+      <span class="shot-name" id="name-task-5"></span>
+    </div>
+  </div>
+
+  <div class="finish">
+    <strong>Lab complete!</strong> Review your screenshots, generate the PDF, and upload the PDF to Blackboard.
+  </div>
+
+  <div class="submit-wrap">
+    <div class="student-name">
+      <label for="studentName">Your name:</label>
+      <input type="text" id="studentName" placeholder="e.g. Alice Smith" />
+    </div>
+    <button id="generatePdf" type="button">Generate PDF for Blackboard Submission</button>
+    <div class="pdf-message" id="pdfMessage"></div>
+  </div>
+
+  <script>
+    const labTitle = "Lab 2.1.1.18: The print() Function - sep and end";
+    const labNumber = "2.1.1.18";
+    const shots = {};
+
+    document.querySelectorAll("input[type=file]").forEach((input) => {
+      input.addEventListener("change", () => {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        if (!file.type.startsWith("image/")) {
+          alert("Please choose an image file for the screenshot.");
+          input.value = "";
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          const id = input.dataset.shot;
+          shots[id] = { dataUrl: reader.result, filename: file.name, label: input.dataset.label || "Screenshot" };
+          const preview = document.getElementById("preview-" + id);
+          const name = document.getElementById("name-" + id);
+          preview.src = reader.result;
+          preview.style.display = "inline-block";
+          name.textContent = file.name + " attached";
+        };
+        reader.onerror = () => alert("The screenshot could not be read. Please try another image.");
+        reader.readAsDataURL(file);
+      });
+    });
+
+    function safeFilePart(value) {
+      return (value || "student").trim().replace(/[^a-z0-9]+/gi, "_").replace(/^_+|_+$/g, "").toLowerCase() || "student";
+    }
+    function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = () => reject(new Error("Image failed to load."));
+        image.src = src;
+      });
+    }
+    function ensureRoom(doc, y, needed) {
+      const height = doc.internal.pageSize.getHeight();
+      if (y + needed <= height - 18) return y;
+      doc.addPage();
+      return 18;
+    }
+    function addWrappedText(doc, text, x, y, width, lineHeight) {
+      const lines = doc.splitTextToSize(text, width);
+      doc.text(lines, x, y);
+      return y + lines.length * lineHeight;
+    }
+    async function addScreenshot(doc, shot, y) {
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 14;
+      const maxWidth = pageWidth - margin * 2;
+      const maxHeight = pageHeight - 55;
+      const image = await loadImage(shot.dataUrl);
+      const canvas = document.createElement("canvas");
+      canvas.width = image.naturalWidth || image.width;
+      canvas.height = image.naturalHeight || image.height;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(image, 0, 0);
+      const pdfImage = canvas.toDataURL("image/jpeg", 0.92);
+      let drawWidth = maxWidth;
+      let drawHeight = (image.height / image.width) * drawWidth;
+      if (drawHeight > maxHeight) {
+        drawHeight = maxHeight;
+        drawWidth = (image.width / image.height) * drawHeight;
+      }
+      y = ensureRoom(doc, y, drawHeight + 12);
+      doc.addImage(pdfImage, "JPEG", margin, y, drawWidth, drawHeight, undefined, "FAST");
+      doc.setDrawColor(226, 232, 240);
+      doc.setLineWidth(0.35);
+      doc.rect(margin, y, drawWidth, drawHeight, "S");
+      return y + drawHeight + 10;
+    }
+    function addFooter(doc, pageNumber) {
+      const width = doc.internal.pageSize.getWidth();
+      const height = doc.internal.pageSize.getHeight();
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(100, 116, 139);
+      doc.text(labTitle, 14, height - 8);
+      doc.text("Page " + pageNumber, width - 14, height - 8, { align: "right" });
+    }
+
+    document.getElementById("generatePdf").addEventListener("click", async () => {
+      const message = document.getElementById("pdfMessage");
+      message.textContent = "Building PDF...";
+      try {
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+          throw new Error("The PDF library did not load. Check your internet connection and refresh the page.");
+        }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: "mm", format: "letter" });
+        const studentName = document.getElementById("studentName").value.trim() || "Student";
+        let y = 18;
+        doc.setFillColor(15, 23, 42);
+        doc.rect(0, 0, doc.internal.pageSize.getWidth(), 30, "F");
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(17);
+        doc.setTextColor(255, 255, 255);
+        doc.text(labTitle, 14, 18, { maxWidth: 184 });
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.text("Submission for " + studentName, 14, 26);
+        y = 42;
+        doc.setTextColor(30, 41, 59);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        y = addWrappedText(doc, "This PDF includes screenshot evidence for the completed lab work.", 14, y, 180, 6) + 5;
+
+        const attached = Object.values(shots);
+        if (!attached.length) {
+          doc.setTextColor(192, 57, 43);
+          doc.setFont("helvetica", "bold");
+          doc.text("No screenshots were attached.", 14, y);
+        }
+        for (const shot of attached) {
+          y = ensureRoom(doc, y, 16);
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12);
+          doc.setTextColor(26, 92, 138);
+          doc.text(shot.label + ": " + shot.filename, 14, y, { maxWidth: 180 });
+          y += 7;
+          y = await addScreenshot(doc, shot, y);
+        }
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let page = 1; page <= pageCount; page += 1) {
+          doc.setPage(page);
+          addFooter(doc, page);
+        }
+        doc.save("Lab_2_1_1_18_" + safeFilePart(studentName) + ".pdf");
+        message.textContent = "PDF generated. Check your downloads folder.";
+      } catch (error) {
+        console.error(error);
+        message.textContent = "";
+        alert(error.message || "The PDF could not be generated.");
+      }
+    });
+  </script>
+</body>
+</html>

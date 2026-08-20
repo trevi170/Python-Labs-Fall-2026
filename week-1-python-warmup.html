@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Week 1 Warm-Up: Code, Run, and Read Python - Submission</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root { --primary: #1a5c8a; --primary-light: #eef6fd; --text: #333333; --text-secondary: #666666; --border: #e3e8ee; --bg: #ffffff; --bg-secondary: #fafbfc; --success: #2e7d32; --success-light: #d4edda; --radius: 8px; --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { font-family: var(--font-sans); max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.7; color: var(--text); background: var(--bg); }
+    h1 { color: var(--primary); border-bottom: 3px solid #f0ad4e; padding-bottom: 10px; }
+    h2 { color: #1f2937; margin-top: 28px; }
+    h3 { margin-bottom: 6px; }
+    a { color: var(--primary); }
+    .badge { display: inline-block; background: #f0ad4e; color: #fff; padding: 2px 10px; border-radius: 4px; font-size: 0.85em; margin-bottom: 8px; }
+    .meta { color: #777; font-size: 0.9em; margin-bottom: 24px; }
+    pre, .code-block { background: #f5f5f5; border-left: 4px solid var(--primary); padding: 12px 16px; overflow-x: auto; font-family: "Courier New", monospace; font-size: 0.95em; white-space: pre-wrap; }
+    code { background: #eef; padding: 2px 5px; border-radius: 3px; }
+    pre code { background: none; padding: 0; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; vertical-align: top; }
+    th { background: #f0f4f8; }
+    .objectives { background: #fffaf0; border: 1px solid #f4d49b; border-radius: 8px; padding: 14px 18px; margin: 18px 0 24px; }
+    .lesson-box { background: #f8fbff; border: 1px solid #cfe1f3; border-left: 5px solid var(--primary); border-radius: 8px; padding: 16px 18px; margin: 18px 0 24px; }
+    .task { margin-bottom: 28px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .task-tag { display: inline-block; background: #e8f2fb; color: var(--primary); border-radius: 4px; padding: 2px 8px; font-size: 0.8em; font-weight: 600; margin-bottom: 10px; }
+    .task-body p { margin-top: 0; }
+    .info-box, .test-data { margin: 12px 0; padding: 12px 16px; background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0; }
+    .hint { font-size: 0.92em; color: var(--text-secondary); font-style: italic; }
+    .error { color: #c0392b; font-weight: bold; }
+    .upload-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+    .attach-btn { display: inline-block; background: var(--primary); color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9em; }
+    .attach-btn:hover { background: #14476b; }
+    input[type=file] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+    .shot-preview { max-width: 260px; max-height: 160px; border: 2px solid #cfd8e3; border-radius: 6px; display: none; }
+    .shot-name { font-size: 0.85em; color: #555; }
+    .finish { background: var(--success-light); border: 1px solid #c3e6cb; padding: 12px 16px; border-radius: 6px; margin-top: 20px; }
+    .submit-wrap { text-align: center; margin-top: 28px; }
+    #generatePdf { background: var(--success); color: #fff; font-size: 1.05em; padding: 14px 28px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    #generatePdf:hover { background: #256428; }
+    .student-name { margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+    input[type=text] { padding: 8px; border: 1px solid #cfd8e3; border-radius: 6px; font-size: 0.95em; width: 240px; }
+    .pdf-message { min-height: 1.4em; margin-top: 10px; color: var(--success); font-size: 0.95em; }
+  </style>
+</head>
+<body>
+  <div class="badge">WEEK 1</div>
+  <h1>Week 1 Warm-Up: Code, Run, and Read Python</h1>
+  <p class="meta">Python Warm-Up | Estimated time: 10-15 minutes | Difficulty: First week | Complete the tasks, attach screenshots, and generate your PDF.</p>
+
+  <h2>Lab Overview</h2>
+  <p>This short warm-up is for students who are just getting started. You will create a Python file, run it, read the console output, use a variable, and practice one tiny indented block.</p>
+
+  <div class="objectives">
+    <h2>Learning Objectives</h2>
+    <p>By the end of this activity, you should be able to:</p>
+    <ul>
+      <li>create and run a Python file in GitHub Codespaces;</li>
+      <li>use <code>print()</code> to display output;</li>
+      <li>store text in a variable;</li>
+      <li>recognize that indentation creates a block of code;</li>
+      <li>read simple error messages without panic.</li>
+    </ul>
+  </div>
+
+  <h2>Before You Start</h2>
+  <div class="lesson-box">
+    <p>Python follows your spacing carefully. A line that ends with a colon <code>:</code> usually starts a block. The lines inside that block are indented, usually four spaces.</p>
+    <p>Do not worry about memorizing everything today. The goal is to type a small program, run it, and connect what you wrote to what Python prints.</p>
+  </div>
+
+  <h2>Where to Code</h2>
+  <p>You will complete this activity using <strong>GitHub Codespaces</strong>, a free browser-based development environment that lets you write and run Python without installing anything.</p>
+  <ul>
+    <li><a href="https://github.com/codespaces" target="_blank" rel="noreferrer">Open GitHub Codespaces</a>.</li>
+    <li>Sign in with your free GitHub account.</li>
+    <li>Create a new codespace and choose the <strong>Python</strong> template when prompted.</li>
+    <li>Create a file named <code>week_1_warmup_first_last_name.py</code>.</li>
+    <li>Run your file from the terminal and check the output.</li>
+  </ul>
+
+  <h2>Tasks</h2>
+  <p><em>Complete each task in GitHub Codespaces. Attach screenshots only on tasks where you write, run, test, or show code output, then generate the PDF for Blackboard.</em></p>
+
+  <div class="task" id="task-1">
+    <h3>Task 1 - Make Python talk</h3>
+    <div class="task-tag">Code</div>
+    <div class="task-body">
+      <p>Type this code, then run the file:</p>
+      <div class="code-block">print("Python is working.")
+print("This is my first week warm-up.")</div>
+      <p><strong>Expected output:</strong></p>
+      <div class="code-block">Python is working.
+This is my first week warm-up.</div>
+      <div class="hint">Each <code>print()</code> statement creates one line of output.</div>
+    </div>
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-1">Attach screenshot</label>
+      <input type="file" id="file-task-1" accept="image/*" data-shot="task-1" data-label="Task 1: Make Python talk" />
+      <img class="shot-preview" id="preview-task-1" alt="Task 1 screenshot preview" />
+      <span class="shot-name" id="name-task-1"></span>
+    </div>
+  </div>
+
+  <div class="task" id="task-2">
+    <h3>Task 2 - Use a variable</h3>
+    <div class="task-tag">Code</div>
+    <div class="task-body">
+      <p>A variable stores a value so your program can use it later. Replace <code>Alice</code> with your own first name.</p>
+      <div class="code-block">student_name = "Alice"
+
+print("Student name:")
+print(student_name)</div>
+      <p><strong>Expected output example:</strong></p>
+      <div class="code-block">Student name:
+Alice</div>
+      <div class="info-box"><p><strong>Notice:</strong> <code>"Alice"</code> has quotes because it is text. <code>student_name</code> does not have quotes because it is the variable name.</p></div>
+    </div>
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-2">Attach screenshot</label>
+      <input type="file" id="file-task-2" accept="image/*" data-shot="task-2" data-label="Task 2: Use a variable" />
+      <img class="shot-preview" id="preview-task-2" alt="Task 2 screenshot preview" />
+      <span class="shot-name" id="name-task-2"></span>
+    </div>
+  </div>
+
+  <div class="task" id="task-3">
+    <h3>Task 3 - Practice one indented block</h3>
+    <div class="task-tag">Indentation</div>
+    <div class="task-body">
+      <p>Type this code exactly. The two lines after <code>if ready:</code> must be indented because they belong inside the <code>if</code> block.</p>
+      <div class="code-block">ready = True
+
+if ready:
+    print("I am inside the block.")
+    print("Indented lines belong together.")
+
+print("I am outside the block.")</div>
+      <p><strong>Expected output:</strong></p>
+      <div class="code-block">I am inside the block.
+Indented lines belong together.
+I am outside the block.</div>
+      <div class="info-box">
+        <p><strong>Block rule:</strong> The colon <code>:</code> starts the block. Four spaces show which lines are inside it. Moving back to the left ends the block.</p>
+      </div>
+    </div>
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-3">Attach screenshot</label>
+      <input type="file" id="file-task-3" accept="image/*" data-shot="task-3" data-label="Task 3: Practice one indented block" />
+      <img class="shot-preview" id="preview-task-3" alt="Task 3 screenshot preview" />
+      <span class="shot-name" id="name-task-3"></span>
+    </div>
+  </div>
+
+  <div class="task" id="task-4">
+    <h3>Task 4 - Read one common error</h3>
+    <div class="task-tag">Debugging</div>
+    <div class="task-body">
+      <p>Now test what happens when indentation is missing. Type this broken version and run it:</p>
+      <div class="code-block">ready = True
+
+if ready:
+print("This line should have been indented.")</div>
+      <p><strong>Expected result:</strong> Python should show an <span class="error">IndentationError</span>.</p>
+      <div class="info-box"><p><strong>Fix it:</strong> Add four spaces before the final <code>print()</code> line, run the file again, and make sure the program works.</p></div>
+    </div>
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-4">Attach screenshot</label>
+      <input type="file" id="file-task-4" accept="image/*" data-shot="task-4" data-label="Task 4: Read one common error" />
+      <img class="shot-preview" id="preview-task-4" alt="Task 4 screenshot preview" />
+      <span class="shot-name" id="name-task-4"></span>
+    </div>
+  </div>
+
+  <h2>Quick Reference</h2>
+  <table>
+    <tr><th>Python idea</th><th>What it means</th></tr>
+    <tr><td><code>print("Hello")</code></td><td>Displays text in the console.</td></tr>
+    <tr><td><code>name = "Alice"</code></td><td>Stores text in a variable.</td></tr>
+    <tr><td><code>if ready:</code></td><td>Starts a block because the line ends with a colon.</td></tr>
+    <tr><td>Four spaces</td><td>Shows that a line belongs inside the block above it.</td></tr>
+    <tr><td><code>IndentationError</code></td><td>Python found a spacing problem in a block.</td></tr>
+  </table>
+
+  <div class="finish">
+    <strong>Warm-up complete!</strong> Review your screenshots, generate the PDF, and upload the PDF to Blackboard.
+  </div>
+
+  <div class="submit-wrap">
+    <div class="student-name">
+      <label for="studentName">Your name:</label>
+      <input type="text" id="studentName" placeholder="e.g. Alice Smith" />
+    </div>
+    <button id="generatePdf" type="button">Generate PDF for Blackboard Submission</button>
+    <div class="pdf-message" id="pdfMessage"></div>
+  </div>
+
+  <script>
+    const labTitle = "Week 1 Warm-Up: Code, Run, and Read Python";
+    const labNumber = "week-1-warmup";
+    const shots = {};
+
+    document.querySelectorAll("input[type=file]").forEach((input) => {
+      input.addEventListener("change", () => {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        if (!file.type.startsWith("image/")) {
+          alert("Please choose an image file for the screenshot.");
+          input.value = "";
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          const id = input.dataset.shot;
+          shots[id] = { dataUrl: reader.result, filename: file.name, label: input.dataset.label || "Screenshot" };
+          const preview = document.getElementById("preview-" + id);
+          const name = document.getElementById("name-" + id);
+          preview.src = reader.result;
+          preview.style.display = "inline-block";
+          name.textContent = file.name + " attached";
+        };
+        reader.onerror = () => alert("The screenshot could not be read. Please try another image.");
+        reader.readAsDataURL(file);
+      });
+    });
+
+    function safeFilePart(value) {
+      return (value || "student").trim().replace(/[^a-z0-9]+/gi, "_").replace(/^_+|_+$/g, "").toLowerCase() || "student";
+    }
+
+    function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = () => reject(new Error("Image failed to load."));
+        image.src = src;
+      });
+    }
+
+    function ensureRoom(doc, y, needed) {
+      const height = doc.internal.pageSize.getHeight();
+      if (y + needed <= height - 18) return y;
+      doc.addPage();
+      return 18;
+    }
+
+    function addWrappedText(doc, text, x, y, maxWidth, lineHeight) {
+      const lines = doc.splitTextToSize(text, maxWidth);
+      for (const line of lines) {
+        y = ensureRoom(doc, y, lineHeight);
+        doc.text(line, x, y);
+        y += lineHeight;
+      }
+      return y;
+    }
+
+    async function addScreenshot(doc, shot, y) {
+      const image = await loadImage(shot.dataUrl);
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const maxWidth = pageWidth - 28;
+      const maxHeight = 105;
+      let drawWidth = maxWidth;
+      let drawHeight = image.height * (drawWidth / image.width);
+      if (drawHeight > maxHeight) {
+        drawHeight = maxHeight;
+        drawWidth = image.width * (drawHeight / image.height);
+      }
+      y = ensureRoom(doc, y, drawHeight + 18);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.text(shot.label, 14, y);
+      y += 6;
+      doc.addImage(shot.dataUrl, "JPEG", 14, y, drawWidth, drawHeight);
+      return y + drawHeight + 10;
+    }
+
+    document.getElementById("generatePdf").addEventListener("click", async () => {
+      const studentName = document.getElementById("studentName").value.trim() || "Student";
+      const message = document.getElementById("pdfMessage");
+      const attached = Object.values(shots);
+      message.textContent = "Generating PDF...";
+
+      try {
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+          throw new Error("PDF library not loaded.");
+        }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: "mm", format: "letter" });
+        let y = 18;
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        y = addWrappedText(doc, labTitle, 14, y, 180, 7);
+        y += 2;
+        doc.setFontSize(12);
+        doc.text("Submission for " + studentName, 14, y);
+        y += 8;
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.text("Generated: " + new Date().toLocaleString(), 14, y);
+        y += 8;
+        y = addWrappedText(doc, "This PDF includes screenshot evidence for the completed warm-up activity.", 14, y, 180, 6) + 5;
+
+        if (!attached.length) {
+          y = addWrappedText(doc, "No screenshots were attached before generating this PDF.", 14, y, 180, 6);
+        }
+
+        for (const shot of attached) {
+          y = await addScreenshot(doc, shot, y);
+        }
+
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let page = 1; page <= pageCount; page += 1) {
+          doc.setPage(page);
+          doc.setFontSize(9);
+          doc.setTextColor(120);
+          doc.text("Page " + page + " of " + pageCount, 14, doc.internal.pageSize.getHeight() - 10);
+        }
+
+        doc.save(labNumber + "_" + safeFilePart(studentName) + "_submission.pdf");
+        message.textContent = "PDF generated. Upload it to Blackboard.";
+      } catch (error) {
+        console.error(error);
+        message.textContent = "The PDF could not be generated. Check your browser settings and try again.";
+      }
+    });
+  </script>
+</body>
+</html>

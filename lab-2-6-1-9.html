@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 2.6.1.9: Simple Input and Output - Submission</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root { --primary: #1a5c8a; --primary-light: #eef6fd; --text: #333333; --text-secondary: #666666; --border: #e3e8ee; --bg: #ffffff; --bg-secondary: #fafbfc; --success: #2e7d32; --success-light: #d4edda; --radius: 8px; --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.7; color: #333; }
+    h1 { color: #1a5c8a; border-bottom: 3px solid #f0ad4e; padding-bottom: 10px; }
+    h2 { color: #1f2937; margin-top: 28px; }
+    h3 { margin-bottom: 6px; }
+    a { color: #1a5c8a; }
+    .badge { display: inline-block; background: #f0ad4e; color: #fff; padding: 2px 10px; border-radius: 4px; font-size: 0.85em; margin-bottom: 8px; }
+    .meta { color: #777; font-size: 0.9em; margin-bottom: 24px; }
+    pre, .code-block { background: #f5f5f5; border-left: 4px solid #1a5c8a; padding: 12px 16px; overflow-x: auto; font-family: "Courier New", monospace; font-size: 0.95em; white-space: pre-wrap; }
+    code { background: #eef; padding: 2px 5px; border-radius: 3px; }
+    pre code { background: none; padding: 0; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f0f4f8; }
+    img { max-width: 100%; height: auto; }
+    .objectives { background: #fffaf0; border: 1px solid #f4d49b; border-radius: 8px; padding: 14px 18px; margin: 18px 0 24px; }
+    .lesson-box { background: #f8fbff; border: 1px solid #cfe1f3; border-left: 5px solid #1a5c8a; border-radius: 8px; padding: 16px 18px; margin: 18px 0 24px; }
+    .task { margin-bottom: 28px; background: #fafbfc; border: 1px solid #e3e8ee; border-radius: 8px; padding: 16px; }
+    .task-tag { display: inline-block; background: #e8f2fb; color: #1a5c8a; border-radius: 4px; padding: 2px 8px; font-size: 0.8em; font-weight: 600; margin-bottom: 10px; }
+    .task-body p { margin-top: 0; }
+    .info-box, .test-data { margin: 12px 0; padding: 12px 16px; background: #eef6fd; border-left: 4px solid #1a5c8a; border-radius: 0 4px 4px 0; }
+    .hint { font-size: 0.92em; color: #666; font-style: italic; }
+    .error { color: #c0392b; font-weight: bold; }
+    .upload-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+    .attach-btn { display: inline-block; background: #1a5c8a; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9em; }
+    .attach-btn:hover { background: #14476b; }
+    input[type=file] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+    .shot-preview { max-width: 260px; max-height: 160px; border: 2px solid #cfd8e3; border-radius: 6px; display: none; }
+    .shot-name { font-size: 0.85em; color: #555; }
+    .finish { background: #d4edda; border: 1px solid #c3e6cb; padding: 12px 16px; border-radius: 6px; margin-top: 20px; }
+    .submit-wrap { text-align: center; margin-top: 28px; }
+    #generatePdf { background: #2e7d32; color: #fff; font-size: 1.05em; padding: 14px 28px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    #generatePdf:hover { background: #256428; }
+    .student-name { margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+    input[type=text] { padding: 8px; border: 1px solid #cfd8e3; border-radius: 6px; font-size: 0.95em; width: 240px; }
+    .pdf-message { min-height: 1.4em; margin-top: 10px; color: #2e7d32; font-size: 0.95em; }
+  </style>
+</head>
+<body>
+  <div class="badge">LAB</div>
+  <h1>Lab 2.6.1.9: Simple Input and Output</h1>
+  <p class="meta">Python Lab | Submission handout | Complete the tasks, attach screenshots, and generate your PDF.</p>
+
+  <h2>Lab Overview</h2>
+  <p>In this lab, you'll write a program that takes two numbers from a user, performs four arithmetic operations, and displays the results.</p>
+
+  <div class="objectives">
+    <h2>Learning Objectives</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+      <li>Use input() to get data from users</li>
+      <li>Convert user input to numbers with float()</li>
+      <li>Perform basic arithmetic operations</li>
+      <li>Display results to the console</li>
+      <li>Build an interactive program</li>
+    </ul>
+  </div>
+
+  <h2>Lesson Explanation</h2>
+  <div class="lesson-box">
+    <p>Master input and output operations in Python. Get data from users and display results of arithmetic calculations.</p>
+    <p>As you work, pay attention to the relationship between the code you type and the output Python displays. If you get an error, read the message as a clue: it usually points to the line or idea that needs attention.</p>
+  </div>
+
+  <h2>Where to Code</h2>
+  <p>You will complete this lab using <strong>GitHub Codespaces</strong>, a free browser-based development environment that lets you write and run Python without installing anything.</p>
+  <ul>
+    <li><a href="https://github.com/codespaces" target="_blank" rel="noreferrer">Open GitHub Codespaces</a>.</li>
+    <li>Sign in with your free GitHub account.</li>
+    <li>Create a new codespace and choose the <strong>Python</strong> template when prompted.</li>
+    <li>Create a file named <code>lab-2-6-1-9_first_last_name.py</code>.</li>
+    <li>Type your code, run it, and check the output.</li>
+    <li>After each coding or output task, take a screenshot and attach it below that task.</li>
+  </ul>
+
+  <h2>Tasks</h2>
+  <p><em>Complete each task in GitHub Codespaces. Attach screenshots only on tasks where you write, run, test, or show code output, then generate the PDF for Blackboard.</em></p>
+
+  <div class="task" id="task-1">
+    <h3>Task 1 - Understand input and output</h3>
+    <div class="task-tag">Context</div>
+    <div class="task-body">
+
+      <p><strong>input() function:</strong> Gets text from the user</p>
+      <ul>
+        <li><code>input("Enter your name: ")</code> displays prompt and waits for user to type</li>
+        <li>Returns whatever the user types as a string</li>
+        <li>Must convert to number with <code>float()</code> or <code>int()</code></li>
+      </ul>
+      <p><strong>print() function:</strong> Displays output to the console</p>
+      <ul>
+        <li><code>print("Hello")</code> displays text</li>
+        <li><code>print(a + b)</code> displays calculation result</li>
+      </ul>
+      <div class="info-box"><p><strong>Pattern:</strong> input → calculate → output</p></div>
+    </div>
+
+  </div>
+
+  <div class="task" id="task-2">
+    <h3>Task 2 - Choose your platform</h3>
+    <div class="task-tag">Setup</div>
+    <div class="task-body">
+<p>Use <strong>GitHub Codespaces</strong> for this lab.</p>
+      <div class="info-box"><p><strong>Open the coding environment:</strong> <a href="https://github.com/codespaces" target="_blank" rel="noreferrer">Open GitHub Codespaces</a></p></div>
+      <ul>
+        <li>Sign in with your free GitHub account.</li>
+        <li>Create a new codespace and choose the <strong>Python</strong> template when prompted.</li>
+        <li>Create your Python file for this lab.</li>
+        <li>Run your code in the terminal and take a screenshot when you are finished with this task.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="task" id="task-3">
+    <h3>Task 3 - Exercise: Complete the program</h3>
+    <div class="task-tag">Experiment</div>
+    <div class="task-body">
+
+      <p><strong>Your task:</strong> Fill in the blank lines to complete the calculator.</p>
+            <p><strong>Complete Solution:</strong></p>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAWEAAADCCAIAAAAXYuR0AAAdrklEQVR4nO3dfVzN9//H8XdEFiJKx8VXF0IjMu1LhWpztZrShYsayqILFzNpG7MxZCYXk5XvELahYnJRmtKmXMw0zORapvKdLF1oqawa+f3x8T3r1/m8333OOZ/PqVPP+2232zefjs/nfT6f8311zkmPdPLy8ggAAEWrxl4AADRputz/yLr3aNx1AEBTU/DHA4LnEQDAhhkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAogUz4v79+x4TJ/a17OPrM5Xb0teyj4W5mYW52ePHj6U77ry5cxMSEuptXLPm0yVLFkt3UKUWoxUULx+nsc6kQJp5jAm3enV4VNQXQjaKTodr5zfl5u2SJYvb6OquWLmydWtd+caCgj8c7O0vZ10xMDCQ4qDXrl4NCQk+dfp03YM2lia1GGXxXj6tIPVjTClFRUXjxo5JzzhpaGjI3igirWne3rhxY8SIkRI9ws6e/dHB3k5x+569e9zdJ2r4Ya3UYpydnTIzM3fv/iY4KFC+0ddnKvfVj/tv1MgRKh9ULNJdPqlX3ih4LyshxNjY+JWhQw8fPtzgRtFpwYwof1zeVq+tJo/4/Pnz79PSHJ2cNHlQGmUXExIyJyc3j/vvzI9nJV2bEJq/fM2Vo6NjakqKkI3iUndG5OfnL3hn/hCbwa/aDl29OvzZs2eiLIszefIkC3Oze/fyZs+aZWFuVu8FraLS0tJ3F7wz9JUh9nbDV68Or6mpYSwyO/u2hbnZjOnTCwoKuK+6a9Z8yt0+Nzf3zz//tLa2rrvzhIQE7mb1XkVPnjxp3bqISZO8B7xsNWP69LKyMm67u7vbqpUrx40dM3iQ9bvvLqioqJDfPjY2lvt4c2Tk3LlzVFiMsngXyTjokyeVK1escLC3H/rKkPfCwuSLnzUr4IP33/OZOsWqfz8Lc7OUlGPsg/JePtqZpO2/rKxsTkjwEJvB9nbDt0RH19bWMlbO69atWwNetqqsrOT+eO3atYEDXn7ypJIo/wDmvXy008VxsLebNSuAvVshrK2tr1zJqrdC3o3iUndG7N+3z9X1zcyfzyccPHgyIyM2di/jxrt27ar7TJj77+zZH2m3P3AgISc3r7ep6Y6dO3Ny8+L37WcvZvmyZY8elaZ9/0Nc/L6TGRnbtm1lLLJfv/45uXl79u6VyWTcV92lSz/ibv+woKBt27YdOnSou/NJkybl5ObNDgwkClKOpaxdG3H6zI+FRYXxcXHy7ampqdFbtpxIz8i/f3/jhg2MlSu7GBUoLpJx0A8//PD27VsHEhJOpKdXVlZ8unq1fD/JyckBs2b/ejkrJzfPxcWVcUTa5WOcSd79x8RsLyouPpGekXQ0uaamJicnh7FyXlZWVqamZsePp3J/TEpKHDtunL5+e6LkA5iGcbpEZGRkVFNTI/8ixNgoLnVnxKKwsDdcXNq1a2dmZu7m7v5z5s+MGwcEBMifBsv/GzFipJpr4Dx79iw1NXXBuwuMjIzMzc1nznz72HfHVFikCjy9PC0tLY2MjEa/Pjo7O1u+ferUqf369Tc2Ng4MCmZ/yVXByZOn7Ozs/Pz8t22Pqbt969Yv5fO37mta2iIVlZeXH01K+mTFip49exoadpn/zoJjx777Zz+eXuPGjXvppZfEvTuM/eu21m2jq6urq2tsbBy6aJGlpaUKu53oMTEpMZEQUltbm3z0qIeHJ7dd/ccG+3QRQn46l7lz5y6Be6NdVkLI8+c8t+fdKC5130lKTz+xOXLz3bt3uWduTo33Gv7Ro0fPnj01MZFxfzSRyQoLC1VbpIlMVlNTU15e3rFjRyGH7trViPtAT0+vqrpKvr2bSTfuA5lMVlxcXFtb26qV0kNZ2cWEhMz5YDHP9xRpi1SUn59PCHF54426GysrK9u3b08I6dWrl8CVq0Zx/0HBwc+fPw94e2ZVVZWTk/PC0NC2bZV+g8PDw2PT55+XlJRkZ2f//fffo0a9+Mqk/gOYfbpEVFJS3LZt206dOjW4UVxqPY948uTJnJAQP3//8xcu5OTmzZs//zlzrCn7WoNBT68dIUT+jgMhpEuXLq1b6z58WMD98WFBQbdu3RpcZCudVoprNjc379y58/Xr11VYWF2FD18MqYcPH3bp0oUbEO302lVXV3Pbi0uK695e0sXQKB60R48ehJDzFy7Wfbonf8Tr6OhItBLa/vX19UMXLTp46PDe2LiMjIx9++JpK2eQybrb2tp+911yYuIRNzd37vss7MeG4mOM8F0+9ukS0fXr1wcNHty6desGN4pLrRlRU1Pz9OnTrl276urqXrx4IeHAAfbtRXytYWhoKJPJ0tLS5Be1devW48ePj46KKikpuXcv75tvvnZxdWlwkSYyWXFxyc2bN+tu1NHRGTtu3OlTp1RYWF0HDnx7586d4uLimJjt4//3dcbS0jLteGpZWdn169fTjh/X2GJoFA9qYGAwYcKEjz9a+vvvv1dUVJw48cPSDz+U6OhCbNy4ITk5uby8vKKioqqqSle3Dbed93QxeHh4Hkw4mJqS4uHpwW1hPzYUH2OE7/I1eLrEes/yZEaGyxsuQjaKS60Z0blz51Xhq5d+uMRm8KDoqCg3d3exliXEmjWfbYmO6mNhHr5qFbdlVXi4gUGnMaNfnzplyqhRjsHBIQ0u0sLCws/Pb9pbvvXeG58xfUZi4pFnz57Kt4waOcLC3GxHTMy3+/dbmJvZDB7U4Ard3NxDgoNef825u0z2wQcvnv8HBgXV1NTYDR+2fl3EGy7/7+oKXwxD3fcjLMzNGrw970E/WxvRs2cvX5+pDvZ2++L3+c/0F3JogZQ9kz4+vmnHU0eOcPD28nR0cpwyZQpj5Qwurq7Z2be7du06eLANt6XBB7DiY4z38kl6ujiFhYW//vqrp5dXgxtFpwX/zrKxzJ83z9nZedLkyar9dXd3Nz8//0mTJjWFxYC2W7063MDAYMGCdxvcKCLu31liRkhF3BkBoHla82+xAaARadmP2WiRpKSjjb0EABHgeQQAsGBGAAALZgQAsGBGAAALZgQAsGBGAAALZgQAsKg7I7w8Pfbv3yfKUmjQxaYtBtikuFhNqpdN62KL28vWgucR0dFRgwZZ37p9Wx4yuvPb3Z/OnZP0oNeuXs3Kuuz5vx8QlFu69KO1ayMkPbTwxYDmaeCxJ1xwcMiunTtLS0sFbleNFswIdLG1uosNouC93LQutri9bC2YEehia3UXGyRF62KL2MsWYUbk5eaNHzd28CDreXPnitveRBebthhlNUoXW7Fnzd45IeTMmTNenh6DrAe6u7v9cvEit5H3stJO+++//z7tLV/rgQMmT5708OFD9mkRq5fNe03Z95SI1J6hdbFF7GWLMCOOHDm8+Yuo9IyTRUVFn37KKgKji03TLLvYij1r9s6vXMmaPStg2vQZ5zJ/Xr9+fWZmJreddll5T3vowne7d+/x07nMhQsXHk9NZZ+TZtDLpnWxRexlizAjJk2ebGVlZWRkFBwSzL4q6GKLqOl3sXl71oydx8fFu7i6ent7d+jQoX9/q3nz5xPmZVW8R0VFRZcuXVqwYIGBgcGIESNfe+21Bhep7b1sWtBTxF62CO/JmXQzefGBiay8vLympkaFbLH60MXmNJ0uNm/PmrHz/Px8W1vbejthXFbFe1RUVEQIMe724rSbmMjY95Rofy+b1sUWsZctwox4WPjiVV9h4cPOnTszBsSuXbtWh6+qt3HP3r0qPJVgdLF79+5NFLrYaz5b6+Lioq+vv3HjhqtXrsj/FjtFbWen1hv+4nax1VwMDaOLbWRkpHh74V1srmcdumhRaWnpW76+su4yPz9/xs579uyZm5dbbyPtsvLiPlVUWNjb1JQQ8vBhQafOndmLlPeyb9y4Ua+XTXvMKD72eK8p+zSKhdbFFrGXLcJrjYMJB7Ozb5eUlGzfts3VlfUCFV1s0pK62Lw9a8bOfXx9U44dO3LkcGVl5Z07d7Zu/ZLQLysvIyOjV1/9d3R0VHl5+bmffjp58qSQdarfy+a9pprpZdO62CL2skWYEe7u7vPnzXN2cjQ27rZ4ieYi6+hi82o6XWxaz5q2cxsbm23bY77+6uvhw4aFLQp1cHDgtvNeVppNkZH5Dx7YDR+2adMmgaF29XvZtGsqdS+b1sUWt5eN5i0VutjQxNG62GL1stHFlha62KDt0MUGgIahiy0VdLGhecDzCABgwYwAABbMCABgwYwAABbMCABgwYwAABbMCABgaZwZIVawWMRaNO+SFDcqu/LG6mg3BYxmurjhZpBU4/wbKnnvSB1cLfoLzT7UlF25KPe0+QkODhk3dsz06TMMDQ0bey3QgKb+WoNRbRZeiyaEVFZWWvXvN2b06xpepHRo91QriBtuBkk19RlBo2wtOj093dTU9MGDB3eYmTZo0Pvvhe3aJbSwxiBiuBkkpe6MoNWfCaWhzFuXVrbaTJSvRaempIweM2b48OEpqf88LnkbyrSwMu/KGYukdbRp8W5a6JmIFCPhpVT9WQWMZrqI4WaQlAjPIxj1Z8WGMq0urVS1mShZi66qqjp16qSjo5Ojk1PdKi9vQ5kWVuZdOWORtHtKqzzzngSpiVJ/ZmA000UMN4OkRJgRjPqz8Iay8GozG28++PTp04To2NraOjo63bx587/37hFKQ1mFsLJSGJVnQj8JvAFlWihZKcLrz/Lfe3Dw4MHV4asa/L0HHEYzXcRwM0hKhBmhWH+Wf0p4Q1l4tZkjr0UL2XlqSoqdnV2bNm369OnTq1cv7uWGYkOZtlFEjMozUf4kqC89/cREd3frgQMtzM02R0ZyDWhe8hapt7f3x8uWC2yRKjbT5Z8SMdwMkhJhRvDWnznCG8o0vKloUqcW3eAenj59mp5+Ij39BPel7/79+9wXNHlD+X+LL6BtVHmRiuSV5xf7Z1aepcbVn/38/c9fuJCTmzdv/nyB90I4RjNdxHAzSEqEGcFbfxYLbyqaKFOLPnv2bGVl5fkLF7kvfXv27s3Kyioo+IO3oaxaWJm2SEVKVZ7llH3P8k1XFy8Bv2ScXX8WBaOZLmK4GSQlwozgrT/TKFuXpqWiieBadGpKip2dvfx3HNjbOxgbG6emphJKQ5kWVmasnHeRtNsrVXlWzV9/VclftjA0WH/mtX7DxoAAoQOL1kwXN9wMklK3edu4ZVfUohWVlj561dY2Ni5eot/ZIwqxws0gKa55q909y+gtWxp7CU3O+fMXXhk6tCkPCELIxx8va+wlgFDaPSNA0fjx48ePH9/Yq4DmQ90ZgfozQPOmrT+vAQCagRkBACyYEQDAghkBACyYEQDAghkBACyYEQDAgi52fYyac2NpyXFtQr8iiGtrBrrYWgBxbV6Ia2tGU3+tIUoX+7/37gUFBg59ZYiDvX3E2rWVldSSisqLEQX62kpBXFszmvqMoFGqix0YFGhkZPTDifTEpKTuPbqnpR2XenmgGYhra0Dz72KXlpbeyc6eHRjYpUsXY2NjPz9/T08v+XFjY2O5jzdHRs6dO4f7WLHmzF4M7z1lJKfPnDnj5ekxyHqgu7vbLxcvMvYvYlybSNbXljquTeh9bcS1NaD5d7E7d+7cu3fvzZsj72RnC2yxKdac2Yvhvae05PSVK1mzZwVMmz7jXObP69evz8zMZOwfcW0Ora+NuLYGNP8uto6OTmxc/EsvvTRjxnTboa98tHRpaekj9k4YNWfq+hXuKS05HR8X7+Lq6u3t3aFDh/79rebNn6/sfVQtrk0k62sLj2urjHZFENfWgBbRxe7Zs+fatRGZP58/fOTIgwf5YWFhDeycXnOmUbyntOR0fn6+uZm5kGXTaG9cW2769Gnca6jwVauEHIJ2RRDX1oDm38Wuy9TUbIafX9bly9wf2+m1q66u5j4uLimW34xWc2b0r+vdU0ZyumfPnrl5ubw7EdjXbgZx7b17Y7mXVMuWLxdyFNoVQVxbA5p/F5sQEhwU+MvFi0+eVObn5+/ds0f+TqelpWXa8dSysrLr16+nHf/nmx20mrPw/jUjOe3j65ty7NiRI4crKyvv3LmzdeuXyu5ftbg2kaavrYG4NqFfEcS1NaD5d7EJIdOmz1i3bt2wfw/zmOjeoUOHiHXrue2BQUE1NTV2w4etXxfxhss/DzVazZmxmHoYyWkbG5tt22O+/urr4cOGhS0KdXBwYOy/EePaRFhfW7W4trJ4rwji2pqBLjbwa/p9bcS1pYYuNrA0/b424tqaod0zAqSDvjZw0MUGABZt/XkNANAMzAgAYMGMAAAWzAgAYMGMAAAWzAgAYMGMAAAWdLHr62vZh/ux5cePHwv/W8LvEXv/kiawW3Jfm5E7R1+bTd2f12hE165eDQkJPnX6dL3srfoKCv5wsLe/nHXFwMBA3D1rZv+gyMvTY6qPz9SpPoqfKioqGjd2THrGSfS16+F+XqOpv9ZQv4sdE7Pdwtzsq69e9JfeCwuzMDc7e/ZHcRfTdLSouHZMzPZTwvoADOhrszX1GUGjVBe7t6npd8nJhJDq6uqLFy907NhR4tWB5N5/LywjPZ0Q8vz587i4uM2bI9XZG/raDM2/i00I6dWrV21tbX5+fkZ6+siRI3V1deXH5e1iK2IshpauZpwZXrT9KEa0CSVFrcIiVehrSxTXpt0pmpWrwn+59Et8XPyG9etqnz2bP/+dBvdPi2sT9LWZmn8XmzNhglty8tHEpMQJbqpEUBiLod0jwjwzinj3wxvRJpQUtQqL1Oq+trwPKDCJSItrE/S1mZp/F5vz5oQJhw4dunnjxrBhw1TeubIYZ0YgWkRblBS1an1tieLaRMk79cnyZUNfGer7lu97739AdHSio6Ma3D8jd46+NoMI3xFQ7GLLs7ca6GILfHPBxMSki6HhgAED6yZ5pcY4MwLl5+fb2toqbk9PP7E5cvPdu3e5CLWTsPdl6mmCfW3hd2r9ho2EkN/u/qajozNt2jQh+1eMa8vbuehrM7SgLnb8vv31Ksy0LraeXjtCiGIyX2C3Wo52Zmj7V8Qb0WanqIUvshn0tQMDg4TPR1pcm6CvzdQiutg0tC62oaGhTCZLS0ur9zAV3sXm0M4Mbf+KeCPa7BS18EWq1teWIq5NNNLXpsW1CfraTC2ii01D62ITQtas+WxLdFQfC/O6vySGdzGMe8Q4M4r7590Pb0SbnaJWapEa6GsLiWs3eKdEQcudo6/Nhi62VBr3zDQRTT+uTdDXpkMXGyTX9OPaBH3thmj3jIAmDnHtZkCLf6YLACSlHT/TBQCNCzMCAFgwIwCABTMCAFgwIwCABTMCAFgwIwCABV1s5Raj7MqRoub9FFLUWkSL/w2VdF1sEAVS1NpOO/4Nlfpd7Pv373Mpx0HWA32mTjl9+rTki9aIxkpRc5Z9/NHixR+o/NeRotYiTX1G0CjVxSaEpH3/ww8n0l1cXYMCZ6sWzge50tJHhw4dmj1brdmEFLW2aBFdbEKIjo6OiYmJv/9MT0+vrV++KLsqLubWrVsDXraqrKzk/njt2rWBA17m0mm0tHRZWdmckOAhNoPt7YZviY6ura2l7ZyjvSlqud27dw+3s+vbt2+Dt0SKuhloKV1sOZshNleuZHEfKy7GysrK1NTs+PEXQdSkpMSx48bp67dnrDwmZntRcfGJ9Iyko8k1NTU5OTm0nXO0OkVNCKmurt6ze3dgYJCQ/SNF3Qy0lC62XIcOHSsqKhiRuIkeE5MSEwkhtbW1yUePenh4so+o21q3ja6urq6usbFx6KJFlpaWjBtrdYqak5CQ0KNHD3t7eyH7R4q6GWgpXWy5ysqK9u3bM2K8Hh4emz7/vKSkJDs7+++//x41aiR7h0HBwc+fPw94e2ZVVZWTk/PC0NC6MdV6tDpFTQipra3dtXPHwoWhAvePFHUz0IK62Jysy1k2NkMYN5DJutva2n73XXJi4hE3N/cGv7Gqr68fumjRwUOH98bGZWRk7NsXz7ixtqeov//+++rqatc3Xdk3k0OKuhloQV3swsLCvXv2HD58KDgkmH1LDw/PgwkHU1NSPAQEnTdu3JCcnFxeXl5RUVFVVaWr24ZxY21PUcfEbA8ImCX8H6QgRd0MiPBag6s/FxUVOTs7C+li5+fncx9/u39/x44ds65cZdxeXnn+888/ZwcG1n3bcsb0GcHBQWHvhQl5yI4dM1pfv/3AgQO3bts+cuQo9mJcXF0/+WR5jx49Bg+2aXDlPj6+EWs/+2jph3p6ei6urlOmTGHfflV4+CfLl48Z/bqenp6r65sSpah79OjZ4M3kKerS0tLhw4e7ubtn377NuP2lS5fuZGdP/Wa38JVwKeo//vjD2fk1xRT155sihe8KGgu62M2NdCnqOSHBZmbmi5csUX9XSFFrBXSxmyeJUtT37uWdPHky4+RKUfaGFLUW0e4ZAYokSlGbmprdvMV6JQLNlbozIinpqCjrAICmSVt/XgMANAMzAgBYMCMAgAUzAgBYMCMAgAUzAgBYMCMAgAVdbKEmT54UGxurmWOprK9lHy5+9fjxYyHbVXD//n2PiRP7Wvbx9Zmq2mI2R0ZKlNXiILotrsaZEUuXfrR2bYSaO7l29WpW1mVPAT/g2HLc+e3uT+fOCd+ugujoqEGDrG/dvh2/b79qi5FacHDIrp07S0tLNX/oZqmpv9ZQv4t9717ey1b9CwoKhBxu1qwA7ktf3f/WRag4zhiLDw1dGBOzXbXdNq4bN26MGDFS87+vYKa/X/iqVXW30MrgiG6Lq6nPCBrhXWxTUzNnZ+dvvv5ayG537tzFtTMdHR3ffjuA+/iDxS30l+jwKn9c3laPGtpqIhDdFlGL6GIHBgXHxcXKa9fs4zLk599XvDFvWpq9eF60vjZlJar0rNU0efIkC3Oze/fyZs+aZWFuJn8/glb6blBVVdVMf7/Q0IXPnj0lSp4BNkS3RdQiuthDhw7t26/f/n08v1dOqRQ1741509LsxfOi9bV5qdCzVt+BAwk5uXm9TU137NyZk5snfz+CUfpmqKio8Pfz+9e//rVx4+fcKxf2GdDRUaJ8iOi2iER4Vcl1sQkhgUHBnyxf9smKFfJPcV1sITvhktCEEPW72IQQLhhdd3tgYFD4qpX+M/3rvZBW6ri8N14UFsZ9IE9L1zs0r00KCSZ5X7tTp06hixax/7pqB5UCV/qOi48zMjIyMjKaOfPt2NjYd95ZwP5bZWVl0956y8zMNHz1P0+v2GdAT09Pr127ulto15ogui0qEZ5HKHax5Z/SQBdb4P7Hjh2rp6dXN1SvwnF5b5yefmKiu7v1wIEW5mabIyO5wLQKgoKDhw0bHvD2zDddXdZFRLCfsYt1UPWxS980l375pVevXj/+eLbue8nsM9CxY0fhDXREt0XUUrrYrVq1Cpg1W/RvJbDT0rTF8xLe12YfVE+vHSFEccTQtquJXfqmHXTUqFFb/vOf0WNGL3x3gfxdA/YZWL9hY0jIHIGrQnRbRC2oi+3t7f3gwYNzon7Hnp2Wpi2el/C+NvughoaGMpksLS2t3niibSeCO9q82KVv2kF127QhhKxYsbK4uHhzZCS3kX0GFL/3yYDotohEmBFcF/v115y7y2RCutgW5mY7YmK+3b/fwtzMZvAg9u3lXWzFbw3MmD4jMfEI95a4EO3atZvh5yfuUwl5Wtpm8KDoqCg3d/e6n2UsXpGPj2/a8dSRIxy8vTwdnRzlfW1lD0oIWbPmsy3RUX0szOv9n4q2/a+/quQvo1SwKjzcwKDTmNGvT50yZdQox3qlb9pBCSH6+vpfREXv2BHz09mzRJkzwMZFtz29vFT761BPy+pil5Y+GjlixJHEJCG/z7aFkK6j3VgQ3RZLS+xiGxp28fL23rEjJiJinURL0joSdbQbEaLb4tLuGaGC8PDVDd+oJZGoow3NBrrYAMCirT+vAQCagRkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDAghkBACyYEQDA8uL3a3C/tAsAoB48jwAAlv8Dca19TJr3vAwAAAAASUVORK5CYII=" alt="Complete solution code" style="max-width: 100%; border: 1px solid #e0e0e0; border-radius: 4px; margin: 12px 0; display: block;">
+      <p style="font-size: 12px; color: #999; margin-top: 8px;"><em>💡 Image format prevents copy-pasting - type it out to learn!</em></p>
+      
+      <p style="margin-top: 16px; font-size: 14px; font-weight: 600;">What each line does:</p>
+      <ul style="font-size: 13px; margin-top: 8px;">
+        <li><strong>Line 1:</strong> Ask user for first number and store as float</li>
+        <li><strong>Line 2:</strong> Ask user for second number and store as float</li>
+        <li><strong>Line 3:</strong> Print addition result</li>
+        <li><strong>Line 4:</strong> Print subtraction result</li>
+        <li><strong>Line 5:</strong> Print multiplication result</li>
+        <li><strong>Line 6:</strong> Print division result</li>
+        <li><strong>Line 7:</strong> Print message with newline at beginning (
+)</li>
+      </ul>
+      
+      <p style="margin-top: 16px;"><strong>Test your code:</strong></p>
+      <p><strong>Starter code:</strong></p>
+      <div class="code-block"># input a float value for variable a here
+# input a float value for variable b here
+
+# output the result of addition here
+# output the result of subtraction here
+# output the result of multiplication here
+# output the result of division here
+
+print("\nThat's all, folks!")</div>
+      <p><strong>What to replace:</strong></p>
+      <ul>
+        <li>Line 1: <code>a = float(input("Enter first value: "))</code></li>
+        <li>Line 2: <code>b = float(input("Enter second value: "))</code></li>
+        <li>Line 4: <code>print("Addition:", a + b)</code></li>
+        <li>Line 5: <code>print("Subtraction:", a - b)</code></li>
+        <li>Line 6: <code>print("Multiplication:", a * b)</code></li>
+        <li>Line 7: <code>print("Division:", a / b)</code></li>
+      </ul>
+      <p><strong>Expected behavior:</strong></p>
+      <ul>
+        <li>Program asks for two numbers</li>
+        <li>You type first number, press Enter</li>
+        <li>You type second number, press Enter</li>
+        <li>Program displays four arithmetic results</li>
+        <li>Program prints "That's all, folks!"</li>
+      </ul>
+      <p><strong>Test with values 10 and 2:</strong></p>
+      <div class="code-block">Enter first value: 10
+Enter second value: 2
+Addition: 12.0
+Subtraction: 8.0
+Multiplication: 20.0
+Division: 5.0
+
+That's all, folks!</div>
+      <div class="hint">Use float(input(...)) to get a number. Use print() with multiple arguments separated by commas.</div>
+    </div>
+
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-3">Attach screenshot</label>
+      <input type="file" id="file-task-3" accept="image/*" data-shot="task-3" data-label="Task 3: Exercise: Complete the program" />
+      <img class="shot-preview" id="preview-task-3" alt="Task 3: Exercise: Complete the program screenshot preview" />
+      <span class="shot-name" id="name-task-3"></span>
+    </div>
+  </div>
+
+  <div class="finish">
+    <strong>Lab complete!</strong> Review your screenshots, generate the PDF, and upload the PDF to Blackboard.
+  </div>
+
+  <div class="submit-wrap">
+    <div class="student-name">
+      <label for="studentName">Your name:</label>
+      <input type="text" id="studentName" placeholder="e.g. Alice Smith" />
+    </div>
+    <button id="generatePdf" type="button">Generate PDF for Blackboard Submission</button>
+    <div class="pdf-message" id="pdfMessage"></div>
+  </div>
+
+  <script>
+    const labTitle = "Lab 2.6.1.9: Simple Input and Output";
+    const labNumber = "2.6.1.9";
+    const shots = {};
+
+    document.querySelectorAll("input[type=file]").forEach((input) => {
+      input.addEventListener("change", () => {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        if (!file.type.startsWith("image/")) {
+          alert("Please choose an image file for the screenshot.");
+          input.value = "";
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          const id = input.dataset.shot;
+          shots[id] = { dataUrl: reader.result, filename: file.name, label: input.dataset.label || "Screenshot" };
+          const preview = document.getElementById("preview-" + id);
+          const name = document.getElementById("name-" + id);
+          preview.src = reader.result;
+          preview.style.display = "inline-block";
+          name.textContent = file.name + " attached";
+        };
+        reader.onerror = () => alert("The screenshot could not be read. Please try another image.");
+        reader.readAsDataURL(file);
+      });
+    });
+
+    function safeFilePart(value) {
+      return (value || "student").trim().replace(/[^a-z0-9]+/gi, "_").replace(/^_+|_+$/g, "").toLowerCase() || "student";
+    }
+    function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = () => reject(new Error("Image failed to load."));
+        image.src = src;
+      });
+    }
+    function ensureRoom(doc, y, needed) {
+      const height = doc.internal.pageSize.getHeight();
+      if (y + needed <= height - 18) return y;
+      doc.addPage();
+      return 18;
+    }
+    function addWrappedText(doc, text, x, y, width, lineHeight) {
+      const lines = doc.splitTextToSize(text, width);
+      doc.text(lines, x, y);
+      return y + lines.length * lineHeight;
+    }
+    async function addScreenshot(doc, shot, y) {
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 14;
+      const maxWidth = pageWidth - margin * 2;
+      const maxHeight = pageHeight - 55;
+      const image = await loadImage(shot.dataUrl);
+      const canvas = document.createElement("canvas");
+      canvas.width = image.naturalWidth || image.width;
+      canvas.height = image.naturalHeight || image.height;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(image, 0, 0);
+      const pdfImage = canvas.toDataURL("image/jpeg", 0.92);
+      let drawWidth = maxWidth;
+      let drawHeight = (image.height / image.width) * drawWidth;
+      if (drawHeight > maxHeight) {
+        drawHeight = maxHeight;
+        drawWidth = (image.width / image.height) * drawHeight;
+      }
+      y = ensureRoom(doc, y, drawHeight + 12);
+      doc.addImage(pdfImage, "JPEG", margin, y, drawWidth, drawHeight, undefined, "FAST");
+      doc.setDrawColor(226, 232, 240);
+      doc.setLineWidth(0.35);
+      doc.rect(margin, y, drawWidth, drawHeight, "S");
+      return y + drawHeight + 10;
+    }
+    function addFooter(doc, pageNumber) {
+      const width = doc.internal.pageSize.getWidth();
+      const height = doc.internal.pageSize.getHeight();
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(100, 116, 139);
+      doc.text(labTitle, 14, height - 8);
+      doc.text("Page " + pageNumber, width - 14, height - 8, { align: "right" });
+    }
+
+    document.getElementById("generatePdf").addEventListener("click", async () => {
+      const message = document.getElementById("pdfMessage");
+      message.textContent = "Building PDF...";
+      try {
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+          throw new Error("The PDF library did not load. Check your internet connection and refresh the page.");
+        }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: "mm", format: "letter" });
+        const studentName = document.getElementById("studentName").value.trim() || "Student";
+        let y = 18;
+        doc.setFillColor(15, 23, 42);
+        doc.rect(0, 0, doc.internal.pageSize.getWidth(), 30, "F");
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(17);
+        doc.setTextColor(255, 255, 255);
+        doc.text(labTitle, 14, 18, { maxWidth: 184 });
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.text("Submission for " + studentName, 14, 26);
+        y = 42;
+        doc.setTextColor(30, 41, 59);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        y = addWrappedText(doc, "This PDF includes screenshot evidence for the completed lab work.", 14, y, 180, 6) + 5;
+
+        const attached = Object.values(shots);
+        if (!attached.length) {
+          doc.setTextColor(192, 57, 43);
+          doc.setFont("helvetica", "bold");
+          doc.text("No screenshots were attached.", 14, y);
+        }
+        for (const shot of attached) {
+          y = ensureRoom(doc, y, 16);
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12);
+          doc.setTextColor(26, 92, 138);
+          doc.text(shot.label + ": " + shot.filename, 14, y, { maxWidth: 180 });
+          y += 7;
+          y = await addScreenshot(doc, shot, y);
+        }
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let page = 1; page <= pageCount; page += 1) {
+          doc.setPage(page);
+          addFooter(doc, page);
+        }
+        doc.save("Lab_2_6_1_9_" + safeFilePart(studentName) + ".pdf");
+        message.textContent = "PDF generated. Check your downloads folder.";
+      } catch (error) {
+        console.error(error);
+        message.textContent = "";
+        alert(error.message || "The PDF could not be generated.");
+      }
+    });
+  </script>
+</body>
+</html>

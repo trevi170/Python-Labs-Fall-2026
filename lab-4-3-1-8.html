@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 4.3.1.8: Day of the Year - Submission</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root { --primary: #1a5c8a; --primary-light: #eef6fd; --text: #333333; --text-secondary: #666666; --border: #e3e8ee; --bg: #ffffff; --bg-secondary: #fafbfc; --success: #2e7d32; --success-light: #d4edda; --radius: 8px; --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.7; color: #333; }
+    h1 { color: #1a5c8a; border-bottom: 3px solid #f0ad4e; padding-bottom: 10px; }
+    h2 { color: #1f2937; margin-top: 28px; }
+    h3 { margin-bottom: 6px; }
+    a { color: #1a5c8a; }
+    .badge { display: inline-block; background: #f0ad4e; color: #fff; padding: 2px 10px; border-radius: 4px; font-size: 0.85em; margin-bottom: 8px; }
+    .meta { color: #777; font-size: 0.9em; margin-bottom: 24px; }
+    pre, .code-block { background: #f5f5f5; border-left: 4px solid #1a5c8a; padding: 12px 16px; overflow-x: auto; font-family: "Courier New", monospace; font-size: 0.95em; white-space: pre-wrap; }
+    code { background: #eef; padding: 2px 5px; border-radius: 3px; }
+    pre code { background: none; padding: 0; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f0f4f8; }
+    img { max-width: 100%; height: auto; }
+    .objectives { background: #fffaf0; border: 1px solid #f4d49b; border-radius: 8px; padding: 14px 18px; margin: 18px 0 24px; }
+    .lesson-box { background: #f8fbff; border: 1px solid #cfe1f3; border-left: 5px solid #1a5c8a; border-radius: 8px; padding: 16px 18px; margin: 18px 0 24px; }
+    .task { margin-bottom: 28px; background: #fafbfc; border: 1px solid #e3e8ee; border-radius: 8px; padding: 16px; }
+    .task-tag { display: inline-block; background: #e8f2fb; color: #1a5c8a; border-radius: 4px; padding: 2px 8px; font-size: 0.8em; font-weight: 600; margin-bottom: 10px; }
+    .task-body p { margin-top: 0; }
+    .info-box, .test-data { margin: 12px 0; padding: 12px 16px; background: #eef6fd; border-left: 4px solid #1a5c8a; border-radius: 0 4px 4px 0; }
+    .hint { font-size: 0.92em; color: #666; font-style: italic; }
+    .error { color: #c0392b; font-weight: bold; }
+    .upload-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+    .attach-btn { display: inline-block; background: #1a5c8a; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9em; }
+    .attach-btn:hover { background: #14476b; }
+    input[type=file] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+    .shot-preview { max-width: 260px; max-height: 160px; border: 2px solid #cfd8e3; border-radius: 6px; display: none; }
+    .shot-name { font-size: 0.85em; color: #555; }
+    .finish { background: #d4edda; border: 1px solid #c3e6cb; padding: 12px 16px; border-radius: 6px; margin-top: 20px; }
+    .submit-wrap { text-align: center; margin-top: 28px; }
+    #generatePdf { background: #2e7d32; color: #fff; font-size: 1.05em; padding: 14px 28px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    #generatePdf:hover { background: #256428; }
+    .student-name { margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+    input[type=text] { padding: 8px; border: 1px solid #cfd8e3; border-radius: 6px; font-size: 0.95em; width: 240px; }
+    .pdf-message { min-height: 1.4em; margin-top: 10px; color: #2e7d32; font-size: 0.95em; }
+  </style>
+</head>
+<body>
+  <div class="badge">LAB</div>
+  <h1>Lab 4.3.1.8: Day of the Year</h1>
+  <p class="meta">Python Lab | Estimated time: 20-30 minutes | Difficulty: Medium | Complete the tasks, attach screenshots, and generate your PDF.</p>
+
+  <h2>Lab Overview</h2>
+  <p>In this lab, you'll reuse your leap-year and days-in-month functions to calculate a date's position inside the year.</p>
+
+  <div class="objectives">
+    <h2>Prerequisites</h2>
+    <p>LAB 4.3.1.6</p>
+    <p>LAB 4.3.1.7</p>
+  </div>
+
+  <div class="objectives">
+    <h2>Objectives</h2>
+    <p>Familiarize yourself with:</p>
+    <ul>
+      <li>projecting and writing parameterized functions;</li>
+      <li>utilizing the <code>return</code> statement;</li>
+      <li>building a set of utility functions;</li>
+      <li>utilizing the student's own functions.</li>
+    </ul>
+  </div>
+
+  <h2>Scenario</h2>
+  <div class="lesson-box">
+    <p>Your task is to write and test a function which takes three arguments: a year, a month, and a day of the month. The function should return the corresponding day of the year, or return <code>None</code> if any argument is invalid.</p>
+    <p>Use the previously written and tested functions from LAB 4.3.1.6 and LAB 4.3.1.7. This lab is about combining smaller helper functions into a larger utility function.</p>
+    <p>For example, December 31, 2000 should return <code>366</code>, because 2000 is a leap year and December 31 is the last day of that leap year.</p>
+  </div>
+
+  <h2>Where to Code</h2>
+  <p>You will complete this lab using <strong>GitHub Codespaces</strong>, a free browser-based development environment that lets you write and run Python without installing anything.</p>
+  <ul>
+    <li><a href="https://github.com/codespaces" target="_blank" rel="noreferrer">Open GitHub Codespaces</a>.</li>
+    <li>Sign in with your free GitHub account.</li>
+    <li>Create a new codespace and choose the <strong>Python</strong> template when prompted.</li>
+    <li>Create a file named <code>lab-4-3-1-8_first_last_name.py</code>.</li>
+    <li>Type your code, run it, and check the output.</li>
+    <li>After each coding or output task, take a screenshot and attach it below that task.</li>
+  </ul>
+
+  <h2>Tasks</h2>
+  <p><em>Complete each task in GitHub Codespaces. Attach screenshots only on tasks where you write, run, test, or show code output, then generate the PDF for Blackboard.</em></p>
+
+  <div class="task" id="task-1">
+    <h3>Task 1 - Understand the problem</h3>
+    <div class="task-tag">Context</div>
+    <div class="task-body">
+
+      <p><strong>Prerequisites:</strong> This lab builds on Lab 4.3.1.6 and Lab 4.3.1.7. You will reuse <code>is_year_leap(year)</code> and <code>days_in_month(year, month)</code>.</p>
+      <p><strong>Scenario:</strong> Write and test a function that takes three arguments: a year, a month, and a day of the month. The function should return the corresponding day of the year.</p>
+      <p>If any argument is invalid, the function should return <code>None</code>.</p>
+      <ul>
+        <li>reuse your leap-year function</li>
+        <li>reuse your days-in-month function</li>
+        <li>add the days from all previous months</li>
+        <li>validate the day for the selected month</li>
+        <li>return the day number within the year</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="task" id="task-2">
+    <h3>Task 2 - Choose your platform</h3>
+    <div class="task-tag">Setup</div>
+    <div class="task-body">
+<p>Use <strong>GitHub Codespaces</strong> for this lab.</p>
+      <div class="info-box"><p><strong>Open the coding environment:</strong> <a href="https://github.com/codespaces" target="_blank" rel="noreferrer">Open GitHub Codespaces</a></p></div>
+      <ul>
+        <li>Sign in with your free GitHub account.</li>
+        <li>Create a new codespace and choose the <strong>Python</strong> template when prompted.</li>
+        <li>Create your Python file for this lab.</li>
+        <li>Run your code in the terminal and take a screenshot when you are finished with this task.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="task" id="task-3">
+    <h3>Task 3 - Starter code</h3>
+    <div class="task-tag">Starter</div>
+    <div class="task-body">
+
+      <p>Start with the two previous helper functions, the new function seed, and one test call:</p>
+      <div class="code-block">def is_year_leap(year):
+#
+# Your code from LAB 4.3.1.6.
+#
+
+def days_in_month(year, month):
+#
+# Your code from LAB 4.3.1.7.
+#
+
+def day_of_year(year, month, day):
+#
+# Write your new code here.
+#
+
+print(day_of_year(2000, 12, 31))</div>
+      <div class="info-box"><p><strong>Key idea:</strong> Complete <code>is_year_leap()</code> and <code>days_in_month()</code> first. Then use them inside <code>day_of_year()</code>.</p></div>
+    </div>
+
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-3">Attach screenshot</label>
+      <input type="file" id="file-task-3" accept="image/*" data-shot="task-3" data-label="Task 3: Starter code" />
+      <img class="shot-preview" id="preview-task-3" alt="Task 3: Starter code screenshot preview" />
+      <span class="shot-name" id="name-task-3"></span>
+    </div>
+  </div>
+
+  <div class="task" id="task-4">
+    <h3>Task 4 - Plan the day-of-year logic</h3>
+    <div class="task-tag">Guide</div>
+    <div class="task-body">
+
+      <p>The new function is <code>day_of_year(year, month, day)</code>. It works by adding the length of every month before the target month, then adding the selected day.</p>
+      <div class="code-block">def day_of_year(year, month, day):
+    days = 0
+    for m in range(1, month):
+        # get days in month m
+        # if month m is invalid, return None
+        # add month m's days to the running total
+    md = days_in_month(year, month)
+    if day &gt;= 1 and day &lt;= md:
+        # return running total plus day
+    else:
+        # return None</div>
+
+      <p style="margin-top: 16px; font-size: 14px; font-weight: 600;">What each part does:</p>
+      <ul style="font-size: 13px; margin-top: 8px;">
+        <li><strong>is_year_leap(year):</strong> Returns whether the year is a leap year.</li>
+        <li><strong>days_in_month(year, month):</strong> Returns how many days are in a month, or <code>None</code> for invalid input.</li>
+        <li><strong>days = 0:</strong> Starts the running total of days.</li>
+        <li><strong>for m in range(1, month):</strong> Loops through all months before the target month.</li>
+        <li><strong>md = days_in_month(year, m):</strong> Gets the number of days in each previous month.</li>
+        <li><strong>days += md:</strong> Adds each previous month's days to the total.</li>
+        <li><strong>md = days_in_month(year, month):</strong> Gets the length of the target month.</li>
+        <li><strong>if day &gt;= 1 and day &lt;= md:</strong> Checks whether the selected day is valid.</li>
+        <li><strong>return days + day:</strong> Returns the final day number in the year.</li>
+      </ul>
+      <div class="info-box"><p><strong>Loop idea:</strong> If the target date is December 31, the loop adds January through November first. Then the function adds day <code>31</code> from December.</p></div>
+      <table>
+        <tr><th>Date</th><th>Previous months added</th><th>Final day added</th><th>Result</th></tr>
+        <tr><td>Jan 1, 2000</td><td>0</td><td>1</td><td>1</td></tr>
+        <tr><td>Mar 1, 2000</td><td>31 + 29</td><td>1</td><td>61</td></tr>
+        <tr><td>Dec 31, 2000</td><td>Jan through Nov</td><td>31</td><td>366</td></tr>
+      </table>
+    </div>
+
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-4">Attach screenshot</label>
+      <input type="file" id="file-task-4" accept="image/*" data-shot="task-4" data-label="Task 4: Plan the day-of-year logic" />
+      <img class="shot-preview" id="preview-task-4" alt="Task 4: Plan the day-of-year logic screenshot preview" />
+      <span class="shot-name" id="name-task-4"></span>
+    </div>
+  </div>
+
+  <div class="task" id="task-5">
+    <h3>Task 5 - Complete and test the code</h3>
+    <div class="task-tag">Code</div>
+    <div class="task-body">
+
+      <p>Complete all three functions. Invalid years, months, or days should return <code>None</code>. Valid dates should return the day number in the year.</p>
+      <div class="code-block">def is_year_leap(year):
+    if year % 4 != 0:
+        return False
+    elif year % 100 != 0:
+        return True
+    elif year % 400 != 0:
+        return False
+    else:
+        return True
+
+def days_in_month(year, month):
+    if year &lt; 1582 or month &lt; 1 or month &gt; 12:
+        return None
+    days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    res = days[month - 1]
+    if month == 2 and is_year_leap(year):
+        res = 29
+    return res
+
+def day_of_year(year, month, day):
+    days = 0
+    for m in range(1, month):
+        md = days_in_month(year, m)
+        if md == None:
+            return None
+        days += md
+    md = days_in_month(year, month)
+    if md == None:
+        return None
+    if day &gt;= 1 and day &lt;= md:
+        return days + day
+    else:
+        return None
+
+print(day_of_year(2000, 12, 31))</div>
+
+      <p style="margin-top: 16px;"><strong>Expected output:</strong></p>
+      <div class="test-data">
+        <div class="test-output">366</div>
+      </div>
+      <p><strong>Try more tests:</strong></p>
+      <ul>
+        <li><code>print(day_of_year(2000, 3, 1))</code> should print <code>61</code>.</li>
+        <li><code>print(day_of_year(1987, 11, 30))</code> should print <code>334</code>.</li>
+        <li><code>print(day_of_year(2000, 2, 30))</code> should print <code>None</code>.</li>
+      </ul>
+    </div>
+
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-5">Attach screenshot</label>
+      <input type="file" id="file-task-5" accept="image/*" data-shot="task-5" data-label="Task 5: Complete and test the code" />
+      <img class="shot-preview" id="preview-task-5" alt="Task 5: Complete and test the code screenshot preview" />
+      <span class="shot-name" id="name-task-5"></span>
+    </div>
+  </div>
+
+  <div class="task" id="task-6">
+    <h3>Task 6 - Final submission screenshot</h3>
+    <div class="task-tag">Submission</div>
+    <div class="task-body">
+      <p>Take one final screenshot showing your completed Python code and successful output.</p>
+      <div class="info-box"><p><strong>Capture:</strong> Your editor or browser window showing all three functions and the output for <code>day_of_year(2000, 12, 31)</code>.</p></div>
+    </div>
+    <div class="upload-row">
+      <label class="attach-btn" for="file-task-6">Attach screenshot</label>
+      <input type="file" id="file-task-6" accept="image/*" data-shot="task-6" data-label="Task 6: Final submission screenshot" />
+      <img class="shot-preview" id="preview-task-6" alt="Task 6: Final submission screenshot preview" />
+      <span class="shot-name" id="name-task-6"></span>
+    </div>
+  </div>
+
+  <div class="finish">
+    <strong>Lab complete!</strong> Review your screenshots, generate the PDF, and upload the PDF to Blackboard.
+  </div>
+
+  <div class="submit-wrap">
+    <div class="student-name">
+      <label for="studentName">Your name:</label>
+      <input type="text" id="studentName" placeholder="e.g. Alice Smith" />
+    </div>
+    <button id="generatePdf" type="button">Generate PDF for Blackboard Submission</button>
+    <div class="pdf-message" id="pdfMessage"></div>
+  </div>
+
+  <script>
+    const labTitle = "Lab 4.3.1.8: Day of the Year";
+    const labNumber = "4.3.1.8";
+    const shots = {};
+
+    document.querySelectorAll("input[type=file]").forEach((input) => {
+      input.addEventListener("change", () => {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        if (!file.type.startsWith("image/")) {
+          alert("Please choose an image file for the screenshot.");
+          input.value = "";
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          const id = input.dataset.shot;
+          shots[id] = { dataUrl: reader.result, filename: file.name, label: input.dataset.label || "Screenshot" };
+          const preview = document.getElementById("preview-" + id);
+          const name = document.getElementById("name-" + id);
+          preview.src = reader.result;
+          preview.style.display = "inline-block";
+          name.textContent = file.name + " attached";
+        };
+        reader.onerror = () => alert("The screenshot could not be read. Please try another image.");
+        reader.readAsDataURL(file);
+      });
+    });
+
+    function safeFilePart(value) {
+      return (value || "student").trim().replace(/[^a-z0-9]+/gi, "_").replace(/^_+|_+$/g, "").toLowerCase() || "student";
+    }
+    function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = () => reject(new Error("Image failed to load."));
+        image.src = src;
+      });
+    }
+    function ensureRoom(doc, y, needed) {
+      const height = doc.internal.pageSize.getHeight();
+      if (y + needed <= height - 18) return y;
+      doc.addPage();
+      return 18;
+    }
+    function addWrappedText(doc, text, x, y, width, lineHeight) {
+      const lines = doc.splitTextToSize(text, width);
+      doc.text(lines, x, y);
+      return y + lines.length * lineHeight;
+    }
+    async function addScreenshot(doc, shot, y) {
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 14;
+      const maxWidth = pageWidth - margin * 2;
+      const maxHeight = pageHeight - 55;
+      const image = await loadImage(shot.dataUrl);
+      const canvas = document.createElement("canvas");
+      canvas.width = image.naturalWidth || image.width;
+      canvas.height = image.naturalHeight || image.height;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(image, 0, 0);
+      const pdfImage = canvas.toDataURL("image/jpeg", 0.92);
+      let drawWidth = maxWidth;
+      let drawHeight = (image.height / image.width) * drawWidth;
+      if (drawHeight > maxHeight) {
+        drawHeight = maxHeight;
+        drawWidth = (image.width / image.height) * drawHeight;
+      }
+      y = ensureRoom(doc, y, drawHeight + 12);
+      doc.addImage(pdfImage, "JPEG", margin, y, drawWidth, drawHeight, undefined, "FAST");
+      doc.setDrawColor(226, 232, 240);
+      doc.setLineWidth(0.35);
+      doc.rect(margin, y, drawWidth, drawHeight, "S");
+      return y + drawHeight + 10;
+    }
+    function addFooter(doc, pageNumber) {
+      const width = doc.internal.pageSize.getWidth();
+      const height = doc.internal.pageSize.getHeight();
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(100, 116, 139);
+      doc.text(labTitle, 14, height - 8);
+      doc.text("Page " + pageNumber, width - 14, height - 8, { align: "right" });
+    }
+
+    document.getElementById("generatePdf").addEventListener("click", async () => {
+      const message = document.getElementById("pdfMessage");
+      message.textContent = "Building PDF...";
+      try {
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+          throw new Error("The PDF library did not load. Check your internet connection and refresh the page.");
+        }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: "mm", format: "letter" });
+        const studentName = document.getElementById("studentName").value.trim() || "Student";
+        let y = 18;
+        doc.setFillColor(15, 23, 42);
+        doc.rect(0, 0, doc.internal.pageSize.getWidth(), 30, "F");
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(17);
+        doc.setTextColor(255, 255, 255);
+        doc.text(labTitle, 14, 18, { maxWidth: 184 });
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.text("Submission for " + studentName, 14, 26);
+        y = 42;
+        doc.setTextColor(30, 41, 59);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        y = addWrappedText(doc, "This PDF includes screenshot evidence for the completed lab work.", 14, y, 180, 6) + 5;
+
+        const attached = Object.values(shots);
+        if (!attached.length) {
+          doc.setTextColor(192, 57, 43);
+          doc.setFont("helvetica", "bold");
+          doc.text("No screenshots were attached.", 14, y);
+        }
+        for (const shot of attached) {
+          y = ensureRoom(doc, y, 16);
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12);
+          doc.setTextColor(26, 92, 138);
+          doc.text(shot.label + ": " + shot.filename, 14, y, { maxWidth: 180 });
+          y += 7;
+          y = await addScreenshot(doc, shot, y);
+        }
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let page = 1; page <= pageCount; page += 1) {
+          doc.setPage(page);
+          addFooter(doc, page);
+        }
+        doc.save("Lab_4_3_1_8_" + safeFilePart(studentName) + ".pdf");
+        message.textContent = "PDF generated. Check your downloads folder.";
+      } catch (error) {
+        console.error(error);
+        message.textContent = "";
+        alert(error.message || "The PDF could not be generated.");
+      }
+    });
+  </script>
+</body>
+</html>
